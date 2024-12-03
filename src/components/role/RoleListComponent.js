@@ -6,10 +6,23 @@ const RoleListComponent = () => {
     const [roles, setRoles] = useState([]);
 
     useEffect(() => {
-        RoleService.getRoles().then((res) => {
-            setRoles(res.data);
-        });
+        RoleService.getRoles()
+            .then((res) => setRoles(res.data))
+            .catch((error) => console.error('Error fetching roles:', error));
     }, []);
+
+    const deleteRole = (id) => {
+        RoleService.deleteRole(id)
+            .then(() => setRoles(roles.filter((role) => role.roleId !== id)))
+            .catch((error) => console.error('Error deleting role:', error));
+    };
+
+    const confirmDelete = (id) => {
+        if (window.confirm('Are you sure you want to delete this role?')) {
+            deleteRole(id);
+        }
+    };
+    const formatDate = (date) => (date ? new Date(date).toLocaleDateString() : 'N/A');
 
     return (
         <div>
@@ -38,14 +51,14 @@ const RoleListComponent = () => {
                                 <td>{role.roleId}</td>
                                 <td>{role.roleName}</td>
                                 <td>{role.description}</td>
-                                <td>{role.enabled}</td>
+                                <td>{role.enabled ? 'Yes' : 'No'}</td>
                                 <td>{role.createdUserId}</td>
-                                <td>{role.createdAt}</td>
+                                <td>{formatDate(role.createdAt)}</td>
                                 <td>{role.updatedUserId}</td>
-                                <td>{role.updatedAt}</td>
+                                <td>{formatDate(role.updatedAt)}</td>
                                 <td>
-                                    <Link to={`/update-role/${role.roleId}`} className="btn btn-info">Update</Link>
-                                    <button className="btn btn-danger" onClick={() => RoleService.deleteRole(role.roleId).then(() => setRoles(roles.filter(p => p.id !== role.roleId)))}>Delete</button>
+                                    <Link to={`/update-role/${role.roleId}`} className="btn btn-info me-2">Update</Link>
+                                    <button className="btn btn-danger" onClick={() => confirmDelete(role.roleId)}>Delete</button>
                                 </td>
                             </tr>
                         ))}

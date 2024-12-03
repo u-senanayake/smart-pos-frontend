@@ -13,7 +13,7 @@ const App = () => {
                     <Route path="/" element={<RoleListComponent />} />
                     <Route path="/roles" element={<RoleListComponent />} />
                     <Route path="/add-role" element={<AddRoleComponent />} />
-                    <Route path="/update-role/:id" element={<UpdateRoleComponent />} />
+                    <Route path="/update-role/:roleId" element={<UpdateRoleComponent />} />
                 </Routes>
             </div>
         </Router>
