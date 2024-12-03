@@ -1,36 +1,23 @@
-import React, {Component} from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import RoleListComponent from './components/role/RoleListComponent';
+import AddRoleComponent from './components/role/AddRoleComponent';
+import UpdateRoleComponent from './components/role/UpdateRoleComponent';
+import HomeComponents from './components/home/HomeComponent';
 
-class App extends Component {
-
-    state = {};
-
-    componentDidMount() {
-        setInterval(this.hello, 250);
-    }
-
-    hello = () => {
-        fetch('/api/hello')
-            .then(response => response.text())
-            .then(message => {
-                this.setState({message: message});
-            });
-    };
-
-    render() {
-        return (
-            <div className="App">
-                <header className="App-header">
-                    <img src={logo} className="App-logo" alt="logo"/>
-                    <h1 className="App-title">{this.state.message}</h1>
-                </header>
-                <p className="App-intro">
-                    To get started, edit <code>src/App.js</code> and save to reload.
-                </p>
+const App = () => {
+    return (
+        <Router>
+            <div className="container">
+                <Routes>
+                    <Route path="/" element={<RoleListComponent />} />
+                    <Route path="/roles" element={<RoleListComponent />} />
+                    <Route path="/add-role" element={<AddRoleComponent />} />
+                    <Route path="/update-role/:id" element={<UpdateRoleComponent />} />
+                </Routes>
             </div>
-        );
-    }
-}
+        </Router>
+    );
+};
 
 export default App;
