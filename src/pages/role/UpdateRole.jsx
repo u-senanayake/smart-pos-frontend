@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import RoleService from '../../services/RoleService';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Container, TextField, Button, Checkbox, FormControlLabel, Typography, Box, CircularProgress } from '@mui/material';
 
 const UpdateRole = () => {
     const { roleId } = useParams();
     const [roleName, setRoleName] = useState('');
     const [description, setDescription] = useState('');
-    const [enabled, setEnabled] = useState('');
+    const [enabled, setEnabled] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -16,14 +18,14 @@ const UpdateRole = () => {
                 const role = res.data;
                 setRoleName(role.roleName);
                 setDescription(role.description);
-                setEnabled(role.enabled ? 'true' : 'false');
+                setEnabled(role.enabled);
             })
             .catch((error) => console.error('Error fetching role:', error))
             .finally(() => setLoading(false));
     }, [roleId]);
 
     const validateForm = () => {
-        if (!roleName || !description || enabled === '') {
+        if (!roleName.trim() || !description.trim()) {
             alert('Please fill all fields.');
             return false;
         }
@@ -34,66 +36,81 @@ const UpdateRole = () => {
         e.preventDefault();
         if (!validateForm()) return;
 
-        const role = { roleName, description, enabled: enabled === 'true' };
-        RoleService.updateRole(role, roleId)
-            .then(() => navigate('/roles'))
-            .catch((error) => console.error('Error updating role:', error));
+        setIsSaving(true);
+        const role = { roleName, description, enabled };
+
+        RoleService.updateRole(roleId, role)
+            .then(() => navigate('/usermanagement/role'))
+            .catch((error) => {
+                console.error('Error updating role:', error);
+                alert('Failed to update role. Please try again.');
+                setIsSaving(false);
+            });
     };
 
+    const cancel = () => navigate('/usermanagement/role');
+
+    if (loading) {
+        return (
+            <Container maxWidth="sm" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <CircularProgress />
+            </Container>
+        );
+    }
+
     return (
-        <div>
-            <div className="container">
-                <div className="row">
-                    <div className="card col-md-6 offset-md-3 offset-md-3">
-                        <h3 className="text-center">Update Role</h3>
-                        <div className="card-body">
-                            {loading ? (
-                                <div>Loading...</div>
-                            ) : (
-                                <form onSubmit={updateRole}>
-                                    <div className="form-group mb-3">
-                                        <label>Role Name:</label>
-                                        <input
-                                            type="text"
-                                            placeholder="Name"
-                                            className="form-control"
-                                            value={roleName}
-                                            onChange={(e) => setRoleName(e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="form-group mb-3">
-                                        <label>Role Description:</label>
-                                        <input
-                                            type="text"
-                                            placeholder="Description"
-                                            className="form-control"
-                                            value={description}
-                                            onChange={(e) => setDescription(e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="form-group mb-3">
-                                        <label>Role Enabled?</label>
-                                        <select
-                                            className="form-control"
-                                            value={enabled}
-                                            onChange={(e) => setEnabled(e.target.value)}
-                                        >
-                                            <option value="">Select</option>
-                                            <option value="true">Yes</option>
-                                            <option value="false">No</option>
-                                        </select>
-                                    </div>
-                                    <button type="submit" className="btn btn-success">Save</button>
-                                    <button type="button" className="btn btn-secondary ms-2" onClick={() => navigate('/roles')}>
-                                        Cancel
-                                    </button>
-                                </form>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <Container maxWidth="sm">
+            <Box component="form" onSubmit={updateRole} sx={{ mt: 3 }}>
+                <Typography variant="h4" component="h1" gutterBottom>
+                    Update Role
+                </Typography>
+                <TextField
+                    label="Role Name"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    value={roleName}
+                    onChange={(e) => setRoleName(e.target.value)}
+                    required
+                />
+                <TextField
+                    label="Description"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    required
+                />
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={enabled}
+                            onChange={(e) => setEnabled(e.target.checked)}
+                            color="primary"
+                        />
+                    }
+                    label="Enabled"
+                />
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        disabled={isSaving}
+                    >
+                        {isSaving ? 'Saving...' : 'Update'}
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        color="secondary"
+                        onClick={cancel}
+                    >
+                        Cancel
+                    </Button>
+                </Box>
+            </Box>
+        </Container>
     );
 };
 

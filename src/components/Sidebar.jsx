@@ -14,6 +14,7 @@ const Sidebar = () => {
   };
 
   const menuItems = [
+    { name: "Home", icon: <Home />, subMenus: [] },
     {name: "Sale", icon: <PointOfSale />, subMenus: ["Sale History", "Add Sale", "Sales Return", "List Return", "POS", "List Drafts", 
       "Add Quotation", "List Quotation", "Shipments" ] },
     { name: "Purchase", icon: <AttachMoney />, subMenus: ["List Purchase", "Add Purchase", "List Purchase Return"] },
@@ -31,7 +32,6 @@ const Sidebar = () => {
     { name: "Notification", icon: <CircleNotifications />, subMenus: ["Notification"] },
     { name: "Settings", icon: <Settings />, subMenus: ["General Settings", "Payment Settings", "Notification Settings"] },
     { name: "Help/Support", icon: <Help />, subMenus: ["FAQ", "Contact Support", "User Guide"] }
-    // Add more menus like Brand, Distributer, etc.
   ];
 
   return (

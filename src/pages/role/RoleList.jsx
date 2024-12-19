@@ -13,7 +13,7 @@ const RoleList = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    RoleService.getAllRoles()
+    RoleService.getRoles()
       .then((res) => {
         setRoles(res.data);
         setLoading(false);
