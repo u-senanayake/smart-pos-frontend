@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import RoleService from '../../services/RoleService';
 import { useNavigate, useParams } from 'react-router-dom';
 
-const UpdateRoleComponent = () => {
+const UpdateRole = () => {
     const { roleId } = useParams();
     const [roleName, setRoleName] = useState('');
     const [description, setDescription] = useState('');
@@ -97,4 +97,4 @@ const UpdateRoleComponent = () => {
     );
 };
 
-export default UpdateRoleComponent;
+export default UpdateRole;

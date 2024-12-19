@@ -4,10 +4,10 @@ const ROLE_API_BASE_URL = "/api/v1/role";
 
 class RoleService {
     getRoles() {
-        return axios.get(`${ROLE_API_BASE_URL}/exist`);
+        return axios.get(ROLE_API_BASE_URL);
     }
     getAllRoles() {
-        return axios.get(ROLE_API_BASE_URL);
+        return axios.get(`${ROLE_API_BASE_URL}/all`);
     }
 
     createRole(role) {
