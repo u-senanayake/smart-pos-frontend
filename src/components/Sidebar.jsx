@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {  Drawer,  List,  ListItemButton,  ListItemText,  Collapse,  IconButton,  useTheme,  Box,} from "@mui/material";
+import {  Drawer,  List,  ListItemButton,  ListItemText,  Collapse,  IconButton,  useTheme,  Box, ListItem, ListItemIcon} from "@mui/material";
 import {  ExpandLess,  ExpandMore,  Home,  People,  Category,  Inventory,  ShoppingCart, PointOfSale, AttachMoney, Money, ProductionQuantityLimits, NaturePeople
   ,SdCardAlert, Report, CircleNotifications, Settings, Help, VerifiedUser
 } from "@mui/icons-material";
@@ -14,8 +14,7 @@ const Sidebar = () => {
   };
 
   const menuItems = [
-    { name: "Home", icon: <Home />, subMenus: [] },
-    {name: "Sale", icon: <PointOfSale />, subMenus: ["Sale History", "Add Sale", "Sales Return", "List Return", "POS", "List Drafts", 
+    {name: "Sale", icon: <PointOfSale />, subMenus: ["POS", "Add Sale", "List Drafts", "Sales History", "Sales Return", "List Return",  
       "Add Quotation", "List Quotation", "Shipments" ] },
     { name: "Purchase", icon: <AttachMoney />, subMenus: ["List Purchase", "Add Purchase", "List Purchase Return"] },
     { name: "Expenses", icon: <Money />, subMenus: ["List Expenses", "Add Expenses", "Expense Category"] },
@@ -23,7 +22,7 @@ const Sidebar = () => {
       "Stock Adjustment", "Selling Price Group", "Units", "Category", "Brand", "Warranties"] },
     { name: "Customer Management", icon: <NaturePeople />, subMenus: ["Customer List", "Loyalty Point", "Feedback"] },
     { name: "Promotion/Discount", icon: <SdCardAlert />, subMenus: ["Active Promotion", "Create new Promotion", "Promotion History"] },
-    { name: "User Management", icon: <VerifiedUser />, subMenus: ["User List", "Role", "Permission", "Sales Commission"] },
+    { name: "User Management", icon: <VerifiedUser />, subMenus: ["User List", "Role List", "Permission", "Sales Commission"] },
     { name: "Report Management", icon: <Report />, subMenus: ["Profit/Loss Report", "Product Purchase Report", "Sales Representative Report", 
       "Register Report", "Expense Report", "Sell Payment Report", "Purchase Payment Report", "Product Sell Report", "Item Report", 
       "Purchase & Sell", "Trending Product", "Stock Adjustment Report", "Stock Report", "Customer Group Report", "Supplier & Customer Report", 
@@ -46,6 +45,14 @@ const Sidebar = () => {
       }}
     >
       <List>
+        {/* Home Menu */}
+        <ListItem button component={Link} to="/">
+          <ListItemIcon>
+            <Home />
+          </ListItemIcon>
+          <ListItemText primary="Home" />
+        </ListItem>
+        {/* Other Menu */}
         {menuItems.map((menu) => (
           <Box key={menu.name}>
             <ListItemButton onClick={() => handleToggle(menu.name)}>

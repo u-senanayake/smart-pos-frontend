@@ -23,7 +23,7 @@ class RoleService {
     }
 
     deleteRole(roleId) {
-        return axios.delete(`${ROLE_API_BASE_URL}/${roleId}?deletedUserId=1`);
+        return axios.delete(`${ROLE_API_BASE_URL}/${roleId}`);
     }
 }
 

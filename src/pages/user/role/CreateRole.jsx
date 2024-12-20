@@ -1,68 +1,40 @@
-import React, { useState, useEffect } from 'react';
-import RoleService from '../../services/RoleService';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Container, TextField, Button, Checkbox, FormControlLabel, Typography, Box, CircularProgress } from '@mui/material';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import RoleService from '../../../services/RoleService';
+import { Container, TextField, Button, Checkbox, FormControlLabel, Typography, Box } from '@mui/material';
 
-const UpdateRole = () => {
-    const { roleId } = useParams();
+const CreateRole = () => {
     const [roleName, setRoleName] = useState('');
     const [description, setDescription] = useState('');
     const [enabled, setEnabled] = useState(false);
-    const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        RoleService.getRoleById(roleId)
-            .then((res) => {
-                const role = res.data;
-                setRoleName(role.roleName);
-                setDescription(role.description);
-                setEnabled(role.enabled);
-            })
-            .catch((error) => console.error('Error fetching role:', error))
-            .finally(() => setLoading(false));
-    }, [roleId]);
-
-    const validateForm = () => {
-        if (!roleName.trim() || !description.trim()) {
-            alert('Please fill all fields.');
-            return false;
-        }
-        return true;
-    };
-
-    const updateRole = (e) => {
+    const saveRole = (e) => {
         e.preventDefault();
-        if (!validateForm()) return;
-
+        if (!roleName.trim() || !description.trim()) {
+            alert('Role Name and Description are required.');
+            return;
+        }
         setIsSaving(true);
-        const role = { roleName, description, enabled };
-
-        RoleService.updateRole(roleId, role)
-            .then(() => navigate('/usermanagement/role'))
+        const role = { roleName, description, enabled, createdUserId: 1 };
+        
+        RoleService.createRole(role)
+            .then(() => navigate('/usermanagement/rolelist'))
             .catch((error) => {
-                console.error('Error updating role:', error);
-                alert('Failed to update role. Please try again.');
+                console.error('Error creating role:', error);
+                alert('Failed to create role. Please try again.');
                 setIsSaving(false);
             });
     };
 
-    const cancel = () => navigate('/usermanagement/role');
-
-    if (loading) {
-        return (
-            <Container maxWidth="sm" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                <CircularProgress />
-            </Container>
-        );
-    }
+    const cancel = () => navigate('/usermanagement/rolelist');
 
     return (
         <Container maxWidth="sm">
-            <Box component="form" onSubmit={updateRole} sx={{ mt: 3 }}>
+            <Box component="form" onSubmit={saveRole} sx={{ mt: 3 }}>
                 <Typography variant="h4" component="h1" gutterBottom>
-                    Update Role
+                    Create Role
                 </Typography>
                 <TextField
                     label="Role Name"
@@ -99,7 +71,7 @@ const UpdateRole = () => {
                         color="primary"
                         disabled={isSaving}
                     >
-                        {isSaving ? 'Saving...' : 'Update'}
+                        {isSaving ? 'Saving...' : 'Save'}
                     </Button>
                     <Button
                         variant="outlined"
@@ -114,4 +86,4 @@ const UpdateRole = () => {
     );
 };
 
-export default UpdateRole;
+export default CreateRole;

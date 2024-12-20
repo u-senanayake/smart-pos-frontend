@@ -1,12 +1,26 @@
 import React, { useState, useEffect } from "react";
-import RoleService from "../../services/RoleService";
 import { Link } from "react-router-dom";
-import {  Table,  TableBody,  TableCell,  TableContainer,  TableHead, TableRow,  Paper,  Button, IconButton,  Typography,  CircularProgress,} from "@mui/material";
+
+import RoleService from "../../../services/RoleService";
+import { renderStatusIcon } from "../../../utils/utils";
+import { formatDate } from '../../../utils/Dateutils';
+
+import {  
+  Table,  
+  TableBody,  
+  TableCell,  
+  TableContainer,  
+  TableHead, 
+  TableRow,  
+  Paper,  
+  Button, 
+  IconButton,  
+  Typography,  
+  CircularProgress,} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import ViewIcon from "@mui/icons-material/Preview"
-import styles from './roleList.module.css';
 
 const RoleList = () => {
   const [roles, setRoles] = useState([]);
@@ -35,8 +49,6 @@ const RoleList = () => {
       deleteRole(id);
     }
   };
-
-  const formatDate = (date) => (date ? new Date(date).toLocaleDateString() : "N/A");
 
   if (loading) {
     return (
@@ -96,10 +108,10 @@ const RoleList = () => {
             {roles.map((role) => (
               <TableRow key={role.roleId}>
                 <TableCell>{role.roleName}</TableCell>
-                <TableCell>{role.enabled ? "Yes" : "No"}</TableCell>
-                <TableCell>{role.createdUserId}</TableCell>
+                <TableCell>{renderStatusIcon(role.enabled)}</TableCell>
+                <TableCell>{role.createdUser.username}</TableCell>
                 <TableCell>{formatDate(role.createdAt)}</TableCell>
-                <TableCell>{role.updatedUserId}</TableCell>
+                <TableCell>{role.updatedUser.username}</TableCell>
                 <TableCell>{formatDate(role.updatedAt)}</TableCell>
                 <TableCell>
                   <IconButton component={Link} to={`/usermanagement/role/updaterole/${role.roleId}`}>
