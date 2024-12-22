@@ -38,20 +38,16 @@ const Sidebar = () => {
       variant="permanent"
       sx={{
         width: 240,
+        marginTop: '80px',
         "& .MuiDrawer-paper": {
           width: 240,
           backgroundColor: theme.palette.background.default,
+          marginTop: '80px',
         },
       }}
     >
       <List>
-        {/* Home Menu */}
-        <ListItem button component={Link} to="/">
-          <ListItemIcon>
-            <Home />
-          </ListItemIcon>
-          <ListItemText primary="Home" />
-        </ListItem>
+        
         {/* Other Menu */}
         {menuItems.map((menu) => (
           <Box key={menu.name}>

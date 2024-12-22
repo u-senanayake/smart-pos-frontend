@@ -3,6 +3,7 @@ import { Box, Typography, Paper, Container, TextField, Button, MenuItem, Circula
 import { useNavigate } from 'react-router-dom';
 import UserService from '../../services/UserService';
 import RoleService from '../../services/RoleService';
+import { validateEmail, validatePassword, validateRequired } from '../../utils/Validations';
 
 const CreateUser = () => {
   const [user, setUser] = useState({
@@ -21,8 +22,9 @@ const CreateUser = () => {
   });
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
   const [errors, setErrors] = useState({});
+  const [serverError, setServerError] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     RoleService.getRoles()
@@ -75,12 +77,13 @@ const CreateUser = () => {
 
   const validateForm = (user) => {
     const errors = {};
-    if (user.phoneNo1.length !== 10) {
-      errors.phoneNo1 = 'Phone number should be 10 characters';
-    }
-    if (user.password.length < 8) {
-      errors.password = 'Password must be at least 8 characters';
-    }
+    if (!validateRequired(user.username)) errors.username = 'Userame is required';
+    if (!validateRequired(user.firstName)) errors.firstName = 'First Name is required';
+    if (!validateEmail(user.email)) errors.email = 'Invalid email address';
+    if (!validateRequired(user.address)) errors.address = 'Address is required';
+    if (!validateRequired(user.phoneNo1)) errors.phoneNo1 = 'Phone Number is required';
+    if (!validatePassword(user.password)) errors.password = 'Password must be at least 6 characters long';
+    if (!validateRequired(user.role)) errors.role = 'Role is required';
     return errors;
   };
 
@@ -196,7 +199,6 @@ const CreateUser = () => {
               fullWidth
               variant="outlined"
               margin="normal"
-              required
               error={!!errors.phoneNo2}
               helperText={errors.phoneNo2}
             />
