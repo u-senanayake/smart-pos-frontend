@@ -3,19 +3,23 @@ import { Box, Typography, Paper, Container, TextField, Button, MenuItem, Circula
 import { useNavigate, useParams } from 'react-router-dom';
 import UserService from '../../services/UserService';
 import RoleService from '../../services/RoleService';
-import { validateEmail, validatePassword, validateRequired } from '../../utils/Validations';
+import { validateEmail, validatePassword, validateRequired, validateLength } from '../../utils/Validations';
 
 const UpdateUser = () => {
   const { userId } = useParams();
   const [user, setUser] = useState({
     username: '',
     firstName: '',
+    lastName: '',
     email: '',
     address: '',
     phoneNo1: '',
     password: '',
-    role: '',
-    enabled: false,
+    enabled: true,
+    locked: false,
+    role: {
+      roleId: ''
+    }
   });
   const [roles, setRoles] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
@@ -27,52 +31,87 @@ const UpdateUser = () => {
   useEffect(() => {
     RoleService.getRoles()
       .then((res) => setRoles(res.data))
-      .catch((error) => console.error('Error fetching roles:', error));
+      .catch((error) => console.error('Error fetching roles:', error))
+      .finally(() => setLoading(false));
+  }, []);
 
+  useEffect(() => {
     UserService.getUserById(userId)
-      .then((res) => {
-        setUser(res.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Error fetching user:', error);
-        setLoading(false);
-      });
+      .then((res) => setUser(res.data))
+      .catch((error) => console.error('Error fetching user:', error));
   }, [userId]);
 
   const handleChange = (e) => {
-    const { name, value, checked, type } = e.target;
+    const { name, value } = e.target;
     setUser((prevUser) => ({
       ...prevUser,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: value
     }));
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-    if (!validateRequired(user.username)) newErrors.username = 'Username is required';
-    if (!validateRequired(user.firstName)) newErrors.firstName = 'First Name is required';
-    if (!validateEmail(user.email)) newErrors.email = 'Invalid email address';
-    if (!validateRequired(user.address)) newErrors.address = 'Address is required';
-    if (!validateRequired(user.phoneNo1)) newErrors.phoneNo1 = 'Phone Number is required';
-    if (user.password && !validatePassword(user.password)) newErrors.password = 'Password must be at least 6 characters long';
-    if (!validateRequired(user.role)) newErrors.role = 'Role is required';
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    setUser((prevUser) => ({
+      ...prevUser,
+      [name]: checked
+    }));
   };
 
-  const updateUser = (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
+  const handleRoleChange = (e) => {
+    const { value } = e.target;
+    setUser((prevUser) => ({
+      ...prevUser,
+      role: {
+        roleId: value
+      }
+    }));
+  };
 
-    setIsSaving(true);
-    UserService.updateUser(userId, user)
-      .then(() => navigate('/usermanagement/userlist'))
-      .catch((error) => {
-        console.error('Error updating user:', error);
-        setServerError('Failed to update user. Please try again.');
-        setIsSaving(false);
-      });
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const validationErrors = validateForm(user);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+    } else {
+      setIsSaving(true);
+      UserService.updateUser(userId, user)
+        .then(() => {
+          navigate('/usermanagement/userlist');
+        })
+        .catch((error) => {
+          if (error.response && error.response.data) {
+            setServerError(error.response.data.message);
+          } else {
+            console.error('Error updating user:', error);
+          }
+        })
+        .finally(() => setIsSaving(false));
+    }
+  };
+
+  const validateForm = (user) => {
+    const errors = {};
+    // Username
+    if (!validateRequired(user.username)) errors.username = 'Username is required';
+    if (!validateLength(user.username, 5, 50)) errors.username = 'Username must be between 5 and 50 characters';
+    // First name
+    if (!validateRequired(user.firstName)) errors.firstName = 'First Name is required';
+    if (!validateLength(user.firstName, 1, 50)) errors.firstName = 'First name must be between 1 and 50 characters';
+    // Last name
+    if (!validateRequired(user.lastName)) errors.lastName = 'Last Name is required';
+    if (!validateLength(user.lastName, 1, 50)) errors.lastName = 'Last name must be between 1 and 50 characters';
+    // Email
+    if (!validateRequired(user.email)) errors.email = 'Email is required';
+    if (!validateEmail(user.email)) errors.email = 'Invalid email address';
+    // Phone number 1
+    if (!validateRequired(user.phoneNo1)) errors.phoneNo1 = 'Phone number 1 cannot be blank';
+    if (!validateLength(user.phoneNo1, 10, 10)) errors.phoneNo1 = 'Phone number should be 10 characters';
+    // Role
+    //if (!validateRequired(user.role?.roleId)) errors.role = 'Role is required';
+    // Password
+    if (!validatePassword(user.password)) errors.password = 'Password must be at least 6 characters long';
+
+    return errors;
   };
 
   const handleCancel = () => {
@@ -93,132 +132,150 @@ const UpdateUser = () => {
         <Typography variant="h4" gutterBottom>
           Update User
         </Typography>
-        {serverError && (
-          <Typography variant="body1" color="error" gutterBottom>
-            {serverError}
-          </Typography>
-        )}
-        <Box component="form" onSubmit={updateUser}>
-          <TextField
-            label="Username"
-            name="username"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={user.username}
-            onChange={handleChange}
-            error={!!errors.username}
-            helperText={errors.username}
-            required
-          />
-          <TextField
-            label="First Name"
-            name="firstName"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={user.firstName}
-            onChange={handleChange}
-            error={!!errors.firstName}
-            helperText={errors.firstName}
-            required
-          />
-          <TextField
-            label="Email"
-            name="email"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={user.email}
-            onChange={handleChange}
-            error={!!errors.email}
-            helperText={errors.email}
-            required
-          />
-          <TextField
-            label="Address"
-            name="address"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={user.address}
-            onChange={handleChange}
-            error={!!errors.address}
-            helperText={errors.address}
-            required
-          />
-          <TextField
-            label="Phone Number"
-            name="phoneNo1"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={user.phoneNo1}
-            onChange={handleChange}
-            error={!!errors.phoneNo1}
-            helperText={errors.phoneNo1}
-            required
-          />
-          <TextField
-            label="Password"
-            name="password"
-            type="password"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={user.password}
-            onChange={handleChange}
-            error={!!errors.password}
-            helperText={errors.password}
-          />
-          <TextField
-            label="Role"
-            name="role"
-            select
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={user.role}
-            onChange={handleChange}
-            error={!!errors.role}
-            helperText={errors.role}
-            required
-          >
-            {roles.map((role) => (
-              <MenuItem key={role.id} value={role.id}>
-                {role.name}
-              </MenuItem>
-            ))}
-          </TextField>
+        <form onSubmit={handleSubmit}>
+          {serverError && (
+            <Box sx={{ mb: 2 }}>
+              <Typography color="error">
+                {serverError}
+              </Typography>
+            </Box>
+          )}
+          <Box sx={{ mb: 2 }}>
+            <TextField
+              label="Username"
+              name="username"
+              value={user.username}
+              onChange={handleChange}
+              fullWidth
+              variant="outlined"
+              margin="normal"
+              required
+              error={!!errors.username}
+              helperText={errors.username}
+            />
+          </Box>
+          <Box sx={{ mb: 2 }}>
+            <TextField
+              label="First Name"
+              name="firstName"
+              value={user.firstName}
+              onChange={handleChange}
+              fullWidth
+              variant="outlined"
+              margin="normal"
+              required
+              error={!!errors.firstName}
+              helperText={errors.firstName}
+            />
+          </Box>
+          <Box sx={{ mb: 2 }}>
+            <TextField
+              label="Last Name"
+              name="lastName"
+              value={user.lastName}
+              onChange={handleChange}
+              fullWidth
+              variant="outlined"
+              margin="normal"
+              required
+              error={!!errors.lastName}
+              helperText={errors.lastName}
+            />
+          </Box>
+          <Box sx={{ mb: 2 }}>
+            <TextField
+              label="Email"
+              name="email"
+              value={user.email}
+              onChange={handleChange}
+              fullWidth
+              variant="outlined"
+              margin="normal"
+              required
+              error={!!errors.email}
+              helperText={errors.email}
+            />
+          </Box>
+          <Box sx={{ mb: 2 }}>
+            <TextField
+              label="Phone Number"
+              name="phoneNo1"
+              value={user.phoneNo1}
+              onChange={handleChange}
+              fullWidth
+              variant="outlined"
+              margin="normal"
+              required
+              error={!!errors.phoneNo1}
+              helperText={errors.phoneNo1}
+            />
+          </Box>
+          <Box sx={{ mb: 2 }}>
+            <TextField
+              label="Password"
+              name="password"
+              value={user.password}
+              onChange={handleChange}
+              fullWidth
+              variant="outlined"
+              margin="normal"
+              required
+              error={!!errors.password}
+              helperText={errors.password}
+            />
+          </Box>
+          <Box sx={{ mb: 2 }}>
+            <TextField
+              select
+              label="Role"
+              name="role"
+              value={user.role.roleId}
+              onChange={handleRoleChange}
+              fullWidth
+              variant="outlined"
+              margin="normal"
+              required
+              error={!!errors.role}
+              helperText={errors.role}
+            >
+              {roles.map((role) => (
+                <MenuItem key={role.roleId} value={role.roleId}>
+                  {role.roleName}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
           <FormControlLabel
             control={
               <Checkbox
-                name="enabled"
                 checked={user.enabled}
-                onChange={handleChange}
+                onChange={handleCheckboxChange}
+                name="enabled"
                 color="primary"
               />
             }
             label="Enabled"
           />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={user.locked}
+                onChange={handleCheckboxChange}
+                name="locked"
+                color="primary"
+              />
+            }
+            label="Locked"
+          />
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={isSaving}
-            >
-              {isSaving ? 'Saving...' : 'Update'}
+            <Button type="submit" variant="contained" color="primary">
+              Update User
             </Button>
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={handleCancel}
-            >
+            <Button variant="outlined" color="secondary" onClick={handleCancel}>
               Cancel
             </Button>
           </Box>
-        </Box>
+        </form>
       </Paper>
     </Container>
   );

@@ -50,7 +50,6 @@ const ViewUser = () => {
         <Typography variant="h4" gutterBottom>
           View User
         </Typography>
-
         <Grid2 container spacing={2}>
           <Grid2 item xs={6}>
             <Box sx={{ mb: 2 }}>
@@ -184,7 +183,7 @@ const ViewUser = () => {
         <Box sx={{ mb: 2 }}>
           <TextField
             label="Role"
-            value={user.userRole.roleName}
+            value={user.role.roleName}
             fullWidth
             slotProps={{
               input: {

@@ -3,7 +3,7 @@ import { Box, Typography, Paper, Container, TextField, Button, MenuItem, Circula
 import { useNavigate } from 'react-router-dom';
 import UserService from '../../services/UserService';
 import RoleService from '../../services/RoleService';
-import { validateEmail, validatePassword, validateRequired } from '../../utils/Validations';
+import { validateEmail, validatePassword, validateRequired, validateLength } from '../../utils/Validations';
 
 const CreateUser = () => {
   const [user, setUser] = useState({
@@ -23,13 +23,12 @@ const CreateUser = () => {
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
-  const [serverError, setServerError] = useState('');
+  const [serverErrors, setServerErrors] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
     RoleService.getRoles()
-      .then((res) => {
-        setRoles(res.data);
+      .then((res) => { setRoles(res.data);
       })
       .catch((error) => console.error('Error fetching roles:', error))
       .finally(() => setLoading(false));
@@ -71,19 +70,43 @@ const CreateUser = () => {
       .then(() => {
         navigate('/usermanagement/userlist');
       })
-      .catch((error) => console.error('Error creating user:', error));
+      .catch((error) => {
+        if (error.response && error.response.data) {
+          setServerErrors(error.response.data);
+        } else {
+          console.error('Error creating user:', error);
+        }
+      });
     }
   };
 
   const validateForm = (user) => {
     const errors = {};
+    //Username
     if (!validateRequired(user.username)) errors.username = 'Userame is required';
+    if (!validateLength(user.username, 5, 50)) errors.username='Username must be between 5 and 50 characters';
+    //First name
     if (!validateRequired(user.firstName)) errors.firstName = 'First Name is required';
+    if (!validateLength(user.firstName, 1, 50))errors.firstName ='First name must be between 1 and 50 characters';
+    //Last name
+    if (!validateRequired(user.lastName)) errors.lastName = 'Last Name is required';
+    if (!validateLength(user.lastName, 1, 50))errors.lastName ='Last name must be between 1 and 50 characters';
+    //Email
+    if (!validateRequired(user.email))errors.email ='Email is required';
     if (!validateEmail(user.email)) errors.email = 'Invalid email address';
+    //Address
     if (!validateRequired(user.address)) errors.address = 'Address is required';
-    if (!validateRequired(user.phoneNo1)) errors.phoneNo1 = 'Phone Number is required';
+    if (!validateLength(user.address, 1, 255)) errors.address = 'Address must be less than 255 characters';
+    //Phone number 1
+    if (!validateRequired(user.phoneNo1)) errors.phoneNo1 = 'Phone number 1 cannot be blank';
+    if (!validateLength(user.phoneNo1, 10, 10)) errors.phoneNo1 ='Phone number should be 10 characters';
+    //Phone number 2
+    if (!validateLength(user.phoneNo2, 0, 10)) errors.phoneNo2 ='Phone number 2 should be 10 characters';
+    //Role
+    //if (!validateRequired(user.role.roleId)) errors.role = 'Role is required';
+    //Password
     if (!validatePassword(user.password)) errors.password = 'Password must be at least 6 characters long';
-    if (!validateRequired(user.role)) errors.role = 'Role is required';
+
     return errors;
   };
 
@@ -98,7 +121,7 @@ const CreateUser = () => {
       </Container>
     );
   }
-
+  const errorMessages = Object.values(serverErrors);
   return (
     <Container maxWidth="sm">
       <Paper sx={{ p: 3, mt: 3 }}>
@@ -106,6 +129,13 @@ const CreateUser = () => {
           Create User
         </Typography>
         <form onSubmit={handleSubmit}>
+          {Object.keys(serverErrors).length > 0 && (
+            <Box sx={{ mb: 2 }}>
+              <Typography color="error">
+                {errorMessages}
+              </Typography>
+            </Box>
+          )}
           <Box sx={{ mb: 2 }}>
             <TextField
               label="Username"
@@ -229,6 +259,8 @@ const CreateUser = () => {
               variant="outlined"
               margin="normal"
               required
+              error={!!errors.role}
+              helperText={errors.role}  
             >
               {roles.map((role) => (
                 <MenuItem key={role.roleId} value={role.roleId}>

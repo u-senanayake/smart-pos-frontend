@@ -110,7 +110,7 @@ const UserList = () => {
                 <TableCell>{`${user.firstName} ${user.lastName}`}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{formatPhoneNumber(user.phoneNo1)}</TableCell>
-                <TableCell>{user.userRole.roleName}</TableCell>
+                <TableCell>{user.role.roleName}</TableCell>
                 <TableCell>{renderStatusIcon(user.enabled)}</TableCell>
                 <TableCell>{renderLockIcon(user.locked)}</TableCell>
                 <TableCell>
