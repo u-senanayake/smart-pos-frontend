@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const ROLE_API_BASE_URL = "/api/v1/category";
+const API_URL = "/api/v1/category";
 
 class CategoryService {
 

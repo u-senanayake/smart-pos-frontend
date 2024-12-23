@@ -26,6 +26,11 @@ import Shipments from './pages/sale/Shipments';
 //Expense Pages
 
 //Product Pages
+//Category
+import CategoryList from "./pages/product/category/CategoryList"
+import ViewCategory from "./pages/product/category/ViewCategory"
+import CreateCategory from "./pages/product/category/CreateCategory"
+import UpdateCategory from "./pages/product/category/UpdateCategory"
 
 //Customer Pages
 
@@ -101,19 +106,24 @@ const App = () => {
                     <Route path="/sale/listquotation" element={<ListQuotation />} />
                     <Route path="/sale/shipments" element={<Shipments />} />
 
-                    {/* Role Management Routes */}
+                    {/* User Management */}
+                    {/* Role Routes */}
                     <Route path="/usermanagement/rolelist" element={<RoleList />} />
                     <Route path="/usermanagement/role/createrole" element={<CreateRole />} />
                     <Route path="/usermanagement/role/updaterole/:roleId" element={<UpdateRole />} />
                     <Route path="/usermanagement/role/viewrole/:roleId" element={<ViewRole />} />
-                    {/* User screen */}
+                    {/* User Routes */}
                     <Route path="/usermanagement/userlist" element={<UserList />} />
                     <Route path="/usermanagement/user/createuser" element={<CreateUser />} />
                     <Route path="/usermanagement/user/updateuser/:userId" element={<UpdateUser />} />
                     <Route path="/usermanagement/user/viewuser/:userId" element={<ViewUser />} />
                     
-                    
-
+                    {/* Product Management */}
+                    {/* Category Routes */}
+                    <Route path="/productmanagement/categorylist" element={<CategoryList />}/>
+                    <Route path="/productmanagement/category/createcategory" element={<CreateCategory />}/>
+                    <Route path="/productmanagement/category/updatecategory/:categoryId" element={<UpdateCategory />}/>
+                    <Route path="/productmanagement/category/viewcategory/:categoryId" element={<ViewCategory />}/>
                 </Routes>
             </Layout>
         </Router>
