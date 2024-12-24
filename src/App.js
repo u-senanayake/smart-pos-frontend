@@ -36,6 +36,12 @@ import Brandlist from "./pages/product/brand/BrandList"
 import ViewBrand from "./pages/product/brand/ViewBrand"
 import CreateBrand from "./pages/product/brand/CreateBrand"
 import UpdateBrand from "./pages/product/brand/Updatebrand"
+//Distributor
+import DistributorList from "./pages/product/distributor/DistributorList"
+import ViewDistributor from "./pages/product/distributor/ViewDistributor"
+import CreateDistributor from "./pages/product/distributor/CreateDistributor"
+import UpdateDistributor from "./pages/product/distributor/UpdateDistributor"
+
 
 
 //Customer Pages
@@ -135,6 +141,11 @@ const App = () => {
                     <Route path="/productmanagement/brand/createbrand" element={<CreateBrand />}/>
                     <Route path="/productmanagement/brand/updatebrand/:brandId" element={<UpdateBrand />}/>
                     <Route path="/productmanagement/brand/viewbrand/:brandId" element={<ViewBrand />}/>
+                    {/* Distributor */}
+                    <Route path="/productmanagement/distributorlist" element={<DistributorList />}/>
+                    <Route path="/productmanagement/distributor/createdistributor" element={<CreateDistributor />}/>
+                    <Route path="/productmanagement/distributor/updatedistributor/:distributorId" element={<UpdateDistributor />}/>
+                    <Route path="/productmanagement/distributor/viewdistributor/:distributorId" element={<ViewDistributor />}/>
 
                 </Routes>
             </Layout>
