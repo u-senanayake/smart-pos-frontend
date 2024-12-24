@@ -6,35 +6,19 @@ import { validateRequired, validateLength } from '../../../utils/Validations';
 
 const CreateCategory = () => {
 
-    const [category, setCategory] = useState({
-        name: '',
-        description: '',
-        catPrefix: '',
-        enabled: ''
-    });    
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
+    const [catPrefix, setCatPrefix] = useState('');
+    const [enabled, setEnabled] = useState(true);
+    
     //const [loading, setLoading] = useState(true);
     const [errors, setErrors] = useState({});
     const [serverErrors, setServerErrors] = useState({});
     const navigate = useNavigate();
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setCategory((prevCategory) => ({
-          ...prevCategory,
-          [name]: value
-        }));
-    };
-
-    const handleCheckboxChange = (e) => {
-        const { name, checked } = e.target;
-        setCategory((prevCategory) => ({
-          ...prevCategory,
-          [name]: checked
-        }));
-    };
-
     const handleSubmit = (e) => {
         e.preventDefault();
+        const category = { name, description, catPrefix, enabled };
         const validationErrors = validateForm(category);
         if (Object.keys(validationErrors).length > 0) {
           setErrors(validationErrors);
@@ -97,8 +81,8 @@ const CreateCategory = () => {
                         <TextField
                             label="Name"
                             name="name"
-                            value={category.name}
-                            onChange={handleChange}
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
                             fullWidth
                             variant="outlined"
                             margin="normal"
@@ -111,8 +95,8 @@ const CreateCategory = () => {
                         <TextField
                             label="Description"
                             name="description"
-                            value={category.description}
-                            onChange={handleChange}
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
                             fullWidth
                             variant="outlined"
                             margin="normal"
@@ -125,8 +109,8 @@ const CreateCategory = () => {
                         <TextField
                             label="Category Prefix"
                             name="catPrefix"
-                            value={category.catPrefix}
-                            onChange={handleChange}
+                            value={catPrefix}
+                            onChange={(e) => setCatPrefix(e.target.value)}
                             fullWidth
                             variant="outlined"
                             margin="normal"
@@ -139,8 +123,8 @@ const CreateCategory = () => {
                         <FormControlLabel
                             control={
                                 <Checkbox
-                                    checked={category.enabled}
-                                    onChange={handleCheckboxChange}
+                                    checked={enabled}
+                                    onChange={(e) => setEnabled(e.target.checked)}
                                     name="enabled"
                                     color="primary"
                                 />
