@@ -188,6 +188,18 @@ const ViewCategory = () => {
               />
             </>
           )}
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+            <Button variant="contained" color="primary" onClick={handleUpdate}>
+              Update
+            </Button>
+            <Button
+              variant="outlined"
+                color="secondary"
+                onClick={cancel}
+              >
+              Cancel
+            </Button>
+          </Box>
       </Paper>
     </Container>
   );
