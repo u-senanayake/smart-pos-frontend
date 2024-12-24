@@ -1,79 +1,80 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import CategoryService from '../../../services/CategoryService';
-import { Box, Typography, Paper, Container, TextField, Button, MenuItem, CircularProgress, FormControlLabel, Checkbox } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, Paper, Container, TextField, Button, FormControlLabel, Checkbox } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
+import BrandService from '../../../services/BrandService';
 import { validateRequired, validateLength } from '../../../utils/Validations';
 
-const CreateCategory = () => {
+const UpdateBrand = () => {
 
+    const { brandId } = useParams();
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [catPrefix, setCatPrefix] = useState('');
     const [enabled, setEnabled] = useState(true);
     
-    //const [loading, setLoading] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
     const [errors, setErrors] = useState({});
-    const [serverErrors, setServerErrors] = useState({});
+    const [serverError, setServerError] = useState('');
     const navigate = useNavigate();
+
+    useEffect(() => {
+        BrandService.getBrandById(brandId)
+        .then((res) => {
+            const brand = res.data;
+            setName(brand.name);
+            setDescription(brand.description);
+            setEnabled(brand.enabled);
+        })
+          .catch((error) => console.error('Error fetching brand:', error));
+      }, [brandId]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const category = { name, description, catPrefix, enabled };
-        const validationErrors = validateForm(category);
+        const brand = { name, description, enabled };
+        const validationErrors = validateForm(brand);
         if (Object.keys(validationErrors).length > 0) {
           setErrors(validationErrors);
         } else {
-          CategoryService.createCategory(category)
-          .then(() => {
-            navigate('/productmanagement/categorylist');
-          })
-          .catch((error) => {
-            if (error.response && error.response.data) {
-              setServerErrors(error.response.data);
-            } else {
-              console.error('Error creating category:', error);
-            }
-          });
+          setIsSaving(true);
+          BrandService.updateBrand(brandId, brand)
+            .then(() => {
+              navigate('/productmanagement/brandlist');
+            })
+            .catch((error) => {
+              if (error.response && error.response.data) {
+                setServerError(error.response.data.message);
+              } else {
+                console.error('Error updating brand:', error);
+              }
+            })
+            .finally(() => setIsSaving(false));
         }
       };
-    
-    const validateForm = (category) => {
-        const errors = {};
-        //Name
-        if (!validateRequired(category.name)) errors.name = 'Name is required';
-        if (!validateLength(category.name, 1, 10)) errors.name='Name must be between 5 and 50 characters';
-        //Description
-        if (!validateRequired(category.description)) errors.description = 'Description is required';
-        if (!validateLength(category.description, 1, 255)) errors.description = 'Description must be less than 255 characters';
-        //Category prefix
-        if (!validateRequired(category.catPrefix)) errors.catPrefix = 'Category prefix is required';
-        if (!validateLength(category.catPrefix, 1, 1)) errors.catPrefix='Category prefix must 1 character';
-
-        return errors;
-    };
+      const validateForm = (brand) => {
+              const errors = {};
+              //Name
+              if (!validateRequired(brand.name)) errors.name = 'Name is required';
+              if (!validateLength(brand.name, 1, 30)) errors.name='Name must be between 5 and 30 characters';
+              //Description
+              if (!validateRequired(brand.description)) errors.description = 'Description is required';
+              if (!validateLength(brand.description, 1, 255)) errors.description = 'Description must be less than 255 characters';
+      
+              return errors;
+          };
     const handleCancel = () => {
-        navigate('/productmanagement/categorylist');
-      };
-    // if (loading) {
-    //     return (
-    //       <Container maxWidth="sm" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-    //         <CircularProgress />
-    //       </Container>
-    //     );
-    //   }
-    const errorMessages = Object.values(serverErrors);
+        navigate('/productmanagement/brandlist');
+    };
 
-      return (
+    return (
         <Container maxWidth="md">
             <Paper sx={{ p: 3, mt: 3 }}>
                 <Typography variant="h4" gutterBottom>
-                    Create Brand
+                    Update Category
                 </Typography>
                 <form onSubmit={handleSubmit}>
-                    {Object.keys(serverErrors).length > 0 && (
+                    {serverError && (
                         <Box sx={{ mb: 2 }}>
                             <Typography color="error">
-                                {errorMessages}
+                                {serverError}
                             </Typography>
                         </Box>
                     )}
@@ -106,20 +107,6 @@ const CreateCategory = () => {
                         />
                     </Box>
                     <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="Category Prefix"
-                            name="catPrefix"
-                            value={catPrefix}
-                            onChange={(e) => setCatPrefix(e.target.value)}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!errors.catPrefix}
-                            helperText={errors.catPrefix}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
                         <FormControlLabel
                             control={
                                 <Checkbox
@@ -129,22 +116,21 @@ const CreateCategory = () => {
                                     color="primary"
                                 />
                             }
-                        label="Enabled"
+                            label="Enabled"
                         />
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                         <Button type="submit" variant="contained" color="primary">
-                            Create Category
+                            Update User
                         </Button>
                         <Button variant="outlined" color="secondary" onClick={handleCancel}>
                             Cancel
                         </Button>
                     </Box>
+
                 </form>
-        </Paper>
+            </Paper>
         </Container>
-
-      );
+    );
 };
-
-export default CreateCategory;
+export default UpdateBrand;

@@ -19,7 +19,7 @@ const Sidebar = () => {
     { name: "Purchase", icon: <AttachMoney />, subMenus: ["List Purchase", "Add Purchase", "List Purchase Return"] },
     { name: "Expenses", icon: <Money />, subMenus: ["List Expenses", "Add Expenses", "Expense Category"] },
     { name: "Product Management", icon: <ProductionQuantityLimits />, subMenus: ["View Inventory", "Add New Product", "Stock Alert", "Stock Transfer", 
-      "Stock Adjustment", "Selling Price Group", "Units", "Category List", "Brand", "Warranties"] },
+      "Stock Adjustment", "Selling Price Group", "Units", "Category List", "Brand List", "Warranties"] },
     { name: "Customer Management", icon: <NaturePeople />, subMenus: ["Customer List", "Loyalty Point", "Feedback"] },
     { name: "Promotion/Discount", icon: <SdCardAlert />, subMenus: ["Active Promotion", "Create new Promotion", "Promotion History"] },
     { name: "User Management", icon: <VerifiedUser />, subMenus: ["User List", "Role List", "Permission", "Sales Commission"] },

@@ -31,6 +31,12 @@ import CategoryList from "./pages/product/category/CategoryList"
 import ViewCategory from "./pages/product/category/ViewCategory"
 import CreateCategory from "./pages/product/category/CreateCategory"
 import UpdateCategory from "./pages/product/category/UpdateCategory"
+//Brand
+import Brandlist from "./pages/product/brand/BrandList"
+import ViewBrand from "./pages/product/brand/ViewBrand"
+import CreateBrand from "./pages/product/brand/CreateBrand"
+import UpdateBrand from "./pages/product/brand/Updatebrand"
+
 
 //Customer Pages
 
@@ -124,6 +130,12 @@ const App = () => {
                     <Route path="/productmanagement/category/createcategory" element={<CreateCategory />}/>
                     <Route path="/productmanagement/category/updatecategory/:categoryId" element={<UpdateCategory />}/>
                     <Route path="/productmanagement/category/viewcategory/:categoryId" element={<ViewCategory />}/>
+                    {/* Brand */}
+                    <Route path="/productmanagement/brandlist" element={<Brandlist />}/>
+                    <Route path="/productmanagement/brand/createbrand" element={<CreateBrand />}/>
+                    <Route path="/productmanagement/brand/updatebrand/:brandId" element={<UpdateBrand />}/>
+                    <Route path="/productmanagement/brand/viewbrand/:brandId" element={<ViewBrand />}/>
+
                 </Routes>
             </Layout>
         </Router>
