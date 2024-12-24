@@ -45,7 +45,7 @@ const ViewUser = () => {
   }
 
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="md">
       <Paper sx={{ p: 3, mt: 3 }}>
         <Typography variant="h4" gutterBottom>
           View User
@@ -82,6 +82,22 @@ const ViewUser = () => {
                 margin="normal"
               />
             </Box>    
+          </Grid2>
+          <Grid2 item xs={6}>
+            <Box sx={{ mb: 2 }}>
+              <TextField
+                label="Role"
+                value={user.role.roleName}
+                fullWidth
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                  },
+                }}
+                variant="outlined"
+                margin="normal"
+              />
+            </Box>
           </Grid2>
         </Grid2>
         <Grid2 container spacing={2}>
@@ -180,20 +196,7 @@ const ViewUser = () => {
             </Box>
           </Grid2>
         </Grid2>
-        <Box sx={{ mb: 2 }}>
-          <TextField
-            label="Role"
-            value={user.role.roleName}
-            fullWidth
-            slotProps={{
-              input: {
-                readOnly: true,
-              },
-            }}
-            variant="outlined"
-            margin="normal"
-          />
-        </Box>
+        
         <Grid2 container spacing={2}>
           <Grid2 item xs={6}>
             <Box sx={{ mb: 2 }}>
