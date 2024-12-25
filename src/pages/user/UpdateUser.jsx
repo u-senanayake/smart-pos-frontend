@@ -37,7 +37,10 @@ const UpdateUser = () => {
 
   useEffect(() => {
     UserService.getUserById(userId)
-      .then((res) => setUser(res.data))
+      .then((res) => {
+        const user = res.data;
+        setUser(user);
+      })
       .catch((error) => console.error('Error fetching user:', error));
   }, [userId]);
 

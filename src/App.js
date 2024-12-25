@@ -41,7 +41,11 @@ import DistributorList from "./pages/product/distributor/DistributorList"
 import ViewDistributor from "./pages/product/distributor/ViewDistributor"
 import CreateDistributor from "./pages/product/distributor/CreateDistributor"
 import UpdateDistributor from "./pages/product/distributor/UpdateDistributor"
-
+//Product
+import ProductList from "./pages/product/ProductList"
+import ViewProduct from "./pages/product/ViewProduct"
+import CreateProduct from "./pages/product/CreateProduct"
+import UpdateProduct from "./pages/product/UpdateProduct"
 
 
 //Customer Pages
@@ -146,7 +150,11 @@ const App = () => {
                     <Route path="/productmanagement/distributor/createdistributor" element={<CreateDistributor />}/>
                     <Route path="/productmanagement/distributor/updatedistributor/:distributorId" element={<UpdateDistributor />}/>
                     <Route path="/productmanagement/distributor/viewdistributor/:distributorId" element={<ViewDistributor />}/>
-
+                    {/* Product */}
+                    <Route path="/productmanagement/productlist" element={<ProductList />}/>
+                    <Route path="/productmanagement/product/createproduct" element={<CreateProduct />}/>
+                    <Route path="/productmanagement/product/updateproduct/:id" element={<UpdateProduct />}/>
+                    <Route path="/productmanagement/product/viewproduct/:id" element={<ViewProduct />}/>
                 </Routes>
             </Layout>
         </Router>
