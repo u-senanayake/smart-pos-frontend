@@ -4,13 +4,16 @@ import RoleService from '../../../services/RoleService';
 import { renderStatusIcon, renderDeletedIcon, } from "../../../utils/utils";
 import { formatDate } from "../../../utils/Dateutils";
 import Loading from "../../../components/Loading";
+import ErrorMessage from "../../../components/ErrorMessage";
 
-import { Container, Typography, Box, Paper, CircularProgress, Button, TextField, Grid2,} from "@mui/material";
+import { Container, Typography, Box, Paper, Button, TextField, } from "@mui/material";
 
 const ViewRole = () => {
+
   const { roleId } = useParams();
   const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,29 +21,43 @@ const ViewRole = () => {
       .then((res) => {
         setRole(res.data);
       })
-      .catch((error) => console.error('Error fetching role:', error))
-      .finally(() => setLoading(false));
+      .catch((error) =>{ 
+        console.error('Error fetching role:', error);
+        setError("Failed to fetch role. Please try again later.");
+      }).finally(() => setLoading(false));
+      
   }, [roleId]);
 
   const cancel = () => navigate('/usermanagement/rolelist');
+
+  const handleUpdate = () => {
+    navigate(`/usermanagement/role/updaterole/${roleId}`);
+  };
+
+  const ReadOnlyTextField = ({ label, value }) => (
+    <TextField
+      label={label}
+      value={value}
+      fullWidth
+      slotProps={{ input: { readOnly: true } }}
+      variant="outlined"
+      margin="normal"
+    />
+  );
 
   if (loading) {
     return <Loading />;
   }
 
-  if (!role) {
+  if (error) {
     return (
-      <Container maxWidth="sm">
-        <Typography variant="h6" color="error">
-          Role not found.
-        </Typography>
-      </Container>
+      <ErrorMessage
+        message={error}
+        actionText="Retry"
+        onAction={() => window.location.reload()}
+      />
     );
   }
-
-  const handleUpdate = () => {
-    navigate(`/usermanagement/role/updaterole/${roleId}`);
-  };
 
   return (
     <Container maxWidth="sm">
@@ -48,153 +65,24 @@ const ViewRole = () => {
         <Typography variant="h4" gutterBottom>
           View Role
         </Typography>
-        <Box sx={{ mb: 2 }}>
-          <TextField
-            label="Role ID"
-            value={role.roleId}
-            fullWidth
-            slotProps={{
-              input: {
-                readOnly: true,
-              },
-            }}
-            variant="outlined"
-            margin="normal"
-          />
-        </Box>
-        <Box sx={{ mb: 2 }}>
-          <TextField
-            label="Role Name"
-            value={role.roleName}
-            fullWidth
-            slotProps={{
-              input: {
-                readOnly: true,
-              },
-            }}
-            variant="outlined"
-            margin="normal"
-          />
-        </Box>
-        <Box sx={{ mb: 2 }}>
-          <TextField
-            label="Description"
-            value={role.description}
-            fullWidth
-            slotProps={{
-              input: {
-                readOnly: true,
-              },
-            }}
-            variant="outlined"
-            margin="normal"
-          />
-        </Box>
+        <ReadOnlyTextField label="Role ID" value={role.roleId} />
+        <ReadOnlyTextField label="Role Name" value={role.roleName} />
+        <ReadOnlyTextField label="Description" value={role.description} />
+        <ReadOnlyTextField label="Created At" value={formatDate(role.createdAt)} />
+        <ReadOnlyTextField label={`Created By`} value={`${role.createdUser.firstName} ${role.createdUser.lastName} (${role.createdUser.username})`} />
+        <ReadOnlyTextField label="Updated At" value={formatDate(role.updatedAt)} />
+        <ReadOnlyTextField label={`Updated By`} value={`${role.updatedUser.firstName} ${role.updatedUser.lastName} (${role.updatedUser.username})`} />
+        {role.deleted && (<>
+        <ReadOnlyTextField label="Deleted At" value={formatDate(role.deletedAt)} />
+        <ReadOnlyTextField label={`Deleted By`} value={`${role.deletedUser.firstName} ${role.deletedUser.lastName} (${role.deletedUser.username})`} />
+        </>)}
         <Box sx={{ mb: 2 }}>
           <Typography variant="h6">Enabled:</Typography>
           <Typography variant="body1">{renderStatusIcon(role.enabled)}</Typography>
-        </Box>
-        <Grid2 container spacing={2}>
-          <Grid2 item xs={6}>
-            <TextField
-              label="Created At"
-              value={formatDate(role.createdAt)}
-              fullWidth
-              slotProps={{
-                input: {
-                  readOnly: true,
-                },
-              }}
-              variant="outlined"
-              margin="normal"
-            />
-          </Grid2>
-          <Grid2 item xs={6}>
-            <TextField
-              label="Created By"
-              value={`${role.createdUser.firstName} ${role.createdUser.lastName} (${role.createdUser.username})`}
-              fullWidth
-              slotProps={{
-                input: {
-                  readOnly: true,
-                },
-              }}
-              variant="outlined"
-              margin="normal"
-            />
-          </Grid2>
-          <Grid2 item xs={6}>
-            <TextField
-              label="Updated At"
-              value={formatDate(role.updatedAt)}
-              fullWidth
-              slotProps={{
-                input: {
-                  readOnly: true,
-                },
-              }}
-              variant="outlined"
-              margin="normal"
-            />
-          </Grid2>
-          <Grid2 item xs={6}>
-            <TextField
-              label="Updated By"
-              value={`${role.updatedUser.firstName} ${role.updatedUser.lastName} (${role.updatedUser.username})`}
-              fullWidth
-              slotProps={{
-                input: {
-                  readOnly: true,
-                },
-              }}
-              variant="outlined"
-              margin="normal"
-            />
-          </Grid2>
-          {role.deleted && (
-            <>
-              <Grid2 item xs={6}>
-                <TextField
-                  label="Deleted At"
-                  value={formatDate(role.deletedAt)}
-                  fullWidth
-                  slotProps={{
-                    input: {
-                      readOnly: true,
-                    },
-                  }}
-                  variant="outlined"
-                  margin="normal"
-                />
-              </Grid2>
-              <Grid2 item xs={6}>
-                <TextField
-                  label="Deleted By"
-                  value={`${role.deletedUser?.firstName} ${role.deletedUser?.lastName} (${role.deletedUser?.username})`}
-                  fullWidth
-                  slotProps={{
-                    input: {
-                      readOnly: true,
-                    },
-                  }}
-                  variant="outlined"
-                  margin="normal"
-                />
-              </Grid2>
-            </>
-          )}
-        </Grid2>
+        </Box>          
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-          <Button variant="contained" color="primary" onClick={handleUpdate}>
-            Update
-          </Button>
-          <Button
-            variant="outlined"
-            color="secondary"
-            onClick={cancel}
-          >
-            Cancel
-          </Button>
+          <Button variant="contained" color="primary" onClick={handleUpdate}> Update </Button>
+          <Button variant="outlined" color="secondary" onClick={cancel}> Cancel</Button>
         </Box>
       </Paper>
     </Container>
