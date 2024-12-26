@@ -35,7 +35,7 @@ const RoleList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedRoleId, setSelectedRoleId] = useState(null);
+  const [selectedId, setSelectedId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [paginationLoading, setPaginationLoading] = useState(false);
 
@@ -64,21 +64,21 @@ const RoleList = () => {
   };  
 
   const confirmDelete = (id) => {
-    setSelectedRoleId(id);
+    setSelectedId(id);
     setDialogOpen(true);
   };
 
   const handleDialogConfirm = () => {
-    if (selectedRoleId) {
-      deleteRole(selectedRoleId);
+    if (selectedId) {
+      deleteRole(selectedId);
     }
     setDialogOpen(false);
-    setSelectedRoleId(null);
+    setSelectedId(null);
   };
 
   const handleDialogCancel = () => {
     setDialogOpen(false);
-    setSelectedRoleId(null);
+    setSelectedId(null);
   };
   
   const handlePageChange = (event, value) => {
