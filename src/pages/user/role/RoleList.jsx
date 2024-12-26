@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import RoleService from "../../../services/RoleService";
 import { renderStatusIcon } from "../../../utils/utils";
 import { formatDate } from '../../../utils/Dateutils';
+import Loading from "../../../components/Loading";
 
 import {  
   Table,  
@@ -25,6 +26,7 @@ import ViewIcon from "@mui/icons-material/Preview"
 const RoleList = () => {
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     RoleService.getRoles()
@@ -34,6 +36,7 @@ const RoleList = () => {
       })
       .catch((error) => {
         console.error("Error fetching roles:", error);
+        setError("Failed to fetch roles. Please try again later.");
         setLoading(false);
       });
   }, []);
@@ -49,13 +52,17 @@ const RoleList = () => {
       deleteRole(id);
     }
   };
-
-  if (loading) {
+  
+  if (error) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-        <CircularProgress />
+      <div style={{ textAlign: "center", marginTop: "20px" }}>
+        <Typography variant="h6" color="error">{error}</Typography>
       </div>
     );
+  }
+
+  if (loading) {
+    return <Loading />;
   }
 
   if (roles.length === 0) {

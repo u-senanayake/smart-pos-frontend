@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import UserService from "../../services/UserService";
 import { formatPhoneNumber, renderStatusIcon, renderLockIcon,} from "../../utils/utils";
+import Loading from "../../components/Loading";
+
 import { Link } from "react-router-dom";
 import {  Table,  
   TableBody,  
@@ -11,8 +13,7 @@ import {  Table,
   Paper,  
   Button, 
   IconButton,  
-  Typography,  
-  CircularProgress,} from "@mui/material";
+  Typography, } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
@@ -49,11 +50,7 @@ const UserList = () => {
   const formatDate = (date) => (date ? new Date(date).toLocaleDateString() : "N/A");
 
   if (loading) {
-    return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-        <CircularProgress />
-      </div>
-    );
+    return <Loading />;
   }
 
   if (users.length === 0) {

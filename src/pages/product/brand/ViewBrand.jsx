@@ -3,8 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import BrandService from '../../../services/BrandService';
 import { renderStatusIcon, } from "../../../utils/utils";
 import { formatDate } from "../../../utils/Dateutils";
-
-import { Container, Typography, Box, Paper, CircularProgress, Button, TextField, Grid2,} from "@mui/material";
+import Loading from "../../../components/Loading";
+import { Container, Typography, Box, Paper, Button, TextField, Grid2,} from "@mui/material";
 
 const ViewBrand = () => {
 
@@ -23,13 +23,9 @@ const ViewBrand = () => {
   }, [brandId]);
 
   const cancel = () => navigate('/productmanagement/brandlist');
-
+  
   if (loading) {
-    return (
-      <Container maxWidth="sm" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <CircularProgress />
-      </Container>
-    );
+    return <Loading />;
   }
 
   if (!brand) {

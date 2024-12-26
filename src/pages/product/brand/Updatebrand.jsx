@@ -3,6 +3,7 @@ import { Box, Typography, Paper, Container, TextField, Button, FormControlLabel,
 import { useNavigate, useParams } from 'react-router-dom';
 import BrandService from '../../../services/BrandService';
 import { validateRequired, validateLength } from '../../../utils/Validations';
+import Loading from "../../../components/Loading";
 
 const UpdateBrand = () => {
 
@@ -10,7 +11,7 @@ const UpdateBrand = () => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [enabled, setEnabled] = useState(true);
-    
+    const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [errors, setErrors] = useState({});
     const [serverError, setServerError] = useState('');
@@ -24,7 +25,8 @@ const UpdateBrand = () => {
             setDescription(brand.description);
             setEnabled(brand.enabled);
         })
-          .catch((error) => console.error('Error fetching brand:', error));
+          .catch((error) => console.error('Error fetching brand:', error))
+          .finally(() => setLoading(false));;
       }, [brandId]);
 
     const handleSubmit = (e) => {
@@ -63,6 +65,10 @@ const UpdateBrand = () => {
     const handleCancel = () => {
         navigate('/productmanagement/brandlist');
     };
+    
+    if (loading) {
+        return <Loading />;
+    }
 
     return (
         <Container maxWidth="md">

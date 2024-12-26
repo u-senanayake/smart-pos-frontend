@@ -3,8 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import ProductService from '../../services/ProductService';
 import { renderStatusIcon, formatPrice, formatPhoneNumber,} from "../../utils/utils";
 import { formatDate } from "../../utils/Dateutils";
+import Loading from "../../components/Loading";
 
-import { Container, Typography, Box, Paper, CircularProgress, Button, TextField, Grid2,} from "@mui/material";
+import { Container, Typography, Box, Paper, Button, TextField, Grid2,} from "@mui/material";
 
 const ViewProduct = () => {
     const { id } = useParams();
@@ -22,14 +23,11 @@ const ViewProduct = () => {
         }, [id]);
 
     const cancel = () => navigate('/productmanagement/productlist');
-
+    
     if (loading) {
-        return (
-        <Container maxWidth="sm" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-            <CircularProgress />
-        </Container>
-        );
+      return <Loading />;
     }
+
     if (!product) {
         return (
             <Container maxWidth="sm">

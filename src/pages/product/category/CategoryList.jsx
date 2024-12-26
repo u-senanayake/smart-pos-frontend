@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import CategoryService from "../../../services/CategoryService";
 import { renderStatusIcon } from "../../../utils/utils";
 import { formatDate } from '../../../utils/Dateutils';
+import Loading from "../../../components/Loading";
 
 import {  
     Table,  
@@ -15,8 +16,7 @@ import {
     Paper,  
     Button, 
     IconButton,  
-    Typography,  
-    CircularProgress,} from "@mui/material";
+    Typography,  } from "@mui/material";
   import DeleteIcon from "@mui/icons-material/Delete";
   import EditIcon from "@mui/icons-material/Edit";
   import AddIcon from "@mui/icons-material/Add";
@@ -51,13 +51,9 @@ import {
         }
       };
     
-        if (loading) {
-            return (
-                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-                <CircularProgress />
-               </div>
-          );
-        }
+    if (loading) {
+      return <Loading />;
+    }
 
         if (categories.length === 0) {
             return (

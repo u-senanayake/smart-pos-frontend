@@ -3,6 +3,7 @@ import { Box, Typography, Paper, Container, TextField, Button, FormControlLabel,
 import { useNavigate, useParams } from 'react-router-dom';
 import CategoryService from '../../../services/CategoryService';
 import { validateRequired, validateLength } from '../../../utils/Validations';
+import Loading from "../../../components/Loading";
 
 const UpdateCategory = () => {
     const { categoryId } = useParams();
@@ -10,7 +11,7 @@ const UpdateCategory = () => {
     const [description, setDescription] = useState('');
     const [catPrefix, setCatPrefix] = useState('');
     const [enabled, setEnabled] = useState(true);
-
+    const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [errors, setErrors] = useState({});
     const [serverError, setServerError] = useState('');
@@ -25,7 +26,8 @@ const UpdateCategory = () => {
             setCatPrefix(category.catPrefix);
             setEnabled(category.enabled);
         })
-          .catch((error) => console.error('Error fetching category:', error));
+          .catch((error) => console.error('Error fetching category:', error))
+          .finally(() => setLoading(false));
       }, [categoryId]);
 
     const handleSubmit = (e) => {
@@ -68,6 +70,10 @@ const UpdateCategory = () => {
         navigate('/productmanagement/categorylist');
     };
     
+    if (loading) {
+        return <Loading />;
+    }
+
     return (
         <Container maxWidth="sm">
             <Paper sx={{ p: 3, mt: 3 }}>

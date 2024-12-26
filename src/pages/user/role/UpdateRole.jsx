@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import RoleService from '../../../services/RoleService';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Container, TextField, Button, Checkbox, FormControlLabel, Typography, Box, CircularProgress } from '@mui/material';
+import { Container, TextField, Button, Checkbox, FormControlLabel, Typography, Box,} from '@mui/material';
+import Loading from "../../../components/Loading";
 
 const UpdateRole = () => {
     const { roleId } = useParams();
@@ -51,12 +52,8 @@ const UpdateRole = () => {
     const cancel = () => navigate('/usermanagement/rolelist');
 
     if (loading) {
-        return (
-            <Container maxWidth="sm" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                <CircularProgress />
-            </Container>
-        );
-    }
+        return <Loading />;
+      }
 
     return (
         <Container maxWidth="sm">

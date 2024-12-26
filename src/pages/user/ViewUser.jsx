@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Container, TextField, Grid2, CircularProgress, Button } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
-import { renderStatusIcon, renderLockIcon, renderDeletedIcon } from '../../utils/utils';
+import { renderStatusIcon, renderLockIcon, } from '../../utils/utils';
 import { formatDate } from '../../utils/Dateutils';
 import UserService from '../../services/UserService';
+import Loading from "../../components/Loading";
 
 const ViewUser = () => {
   const [user, setUser] = useState(null);
@@ -27,11 +28,7 @@ const ViewUser = () => {
   const cancel = () => navigate('/usermanagement/userlist');
 
   if (loading) {
-    return (
-      <Container maxWidth="sm" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <CircularProgress />
-      </Container>
-    );
+    return <Loading />;
   }
 
   if (!user) {

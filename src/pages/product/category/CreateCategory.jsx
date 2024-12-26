@@ -10,8 +10,6 @@ const CreateCategory = () => {
     const [description, setDescription] = useState('');
     const [catPrefix, setCatPrefix] = useState('');
     const [enabled, setEnabled] = useState(true);
-    
-    //const [loading, setLoading] = useState(true);
     const [errors, setErrors] = useState({});
     const [serverErrors, setServerErrors] = useState({});
     const navigate = useNavigate();
@@ -54,13 +52,7 @@ const CreateCategory = () => {
     const handleCancel = () => {
         navigate('/productmanagement/categorylist');
       };
-    // if (loading) {
-    //     return (
-    //       <Container maxWidth="sm" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-    //         <CircularProgress />
-    //       </Container>
-    //     );
-    //   }
+
     const errorMessages = Object.values(serverErrors);
 
       return (

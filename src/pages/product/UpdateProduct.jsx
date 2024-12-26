@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Container, TextField, Button, MenuItem, CircularProgress, FormControlLabel, Checkbox, Grid2 } from '@mui/material';
+import { Box, Typography, Paper, Container, TextField, Button, MenuItem, FormControlLabel, Checkbox, Grid2 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import ProductService from '../../services/ProductService';
 import CategoryService from '../../services/CategoryService';
 import DistributorService from '../../services/DistributorService';
 import { validateRequired, validateLength } from '../../utils/Validations';
 import { formatDateToYYYYMMDD } from '../../utils/Dateutils';
+import Loading from "../../components/Loading";
 
 const UpdateProduct = () => {
     const { id } = useParams();
@@ -58,7 +59,8 @@ const UpdateProduct = () => {
             const product = res.data;
             setProduct(product);
         })
-          .catch((error) => console.error('Error fetching product:', error));
+          .catch((error) => console.error('Error fetching product:', error))
+          .finally(() => setLoading(false));
       }, [id]);
 
     const handleChange = (e) => {
@@ -153,6 +155,10 @@ const UpdateProduct = () => {
     const handleCancel = () => {
         navigate('/productmanagement/productlist');
     };
+    
+    if (loading) {
+        return <Loading />;
+    }
 
     return (
         <Container maxWidth="md">

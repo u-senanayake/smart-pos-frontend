@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import ProductService from "../../services/ProductService";
 import { renderStatusIcon, formatPrice } from "../../utils/utils";
 import { formatDate } from '../../utils/Dateutils';
+import Loading from "../../components/Loading";
 
 import {  
     Table,  
@@ -14,8 +15,7 @@ import {
     Paper,  
     Button, 
     IconButton,  
-    Typography,  
-    CircularProgress,} from "@mui/material";
+    Typography, } from "@mui/material";
   import DeleteIcon from "@mui/icons-material/Delete";
   import EditIcon from "@mui/icons-material/Edit";
   import AddIcon from "@mui/icons-material/Add";
@@ -51,11 +51,9 @@ import {
       };
     
     if (loading) {
-        return (
-            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-                <CircularProgress />
-            </div>
-    );}
+        return <Loading />;
+    }
+
     if (products.length === 0) {
         return (
           <div style={{ textAlign: "center", marginTop: "20px" }}>

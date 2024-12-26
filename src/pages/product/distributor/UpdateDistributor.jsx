@@ -3,6 +3,7 @@ import { Box, Typography, Paper, Container, TextField, Button, FormControlLabel,
 import { useNavigate, useParams } from 'react-router-dom';
 import DistributorService from '../../../services/DistributorService';
 import { validateRequired, validateLength, validateEmail } from '../../../utils/Validations';
+import Loading from "../../../components/Loading";
 
 const UpdateDistributor = () => {
     const { distributorId } = useParams();
@@ -16,6 +17,7 @@ const UpdateDistributor = () => {
     const [isSaving, setIsSaving] = useState(false);
     const [errors, setErrors] = useState({});
     const [serverError, setServerError] = useState('');
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -29,7 +31,8 @@ const UpdateDistributor = () => {
                 setAddress(distributor.address);
                 setEnabled(distributor.enabled);
             })
-              .catch((error) => console.error('Error fetching distributor:', error));
+              .catch((error) => console.error('Error fetching distributor:', error))
+              .finally(() => setLoading(false));
           }, [distributorId]);
 
     const handleSubmit = (e) => {
@@ -78,6 +81,10 @@ const UpdateDistributor = () => {
     const handleCancel = () => {
         navigate('/productmanagement/distributorlist');
     };
+    
+    if (loading) {
+        return <Loading />;
+    }
 
     return (
         <Container maxWidth="md">

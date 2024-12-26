@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Container, TextField, Button, MenuItem, CircularProgress, FormControlLabel, Checkbox } from '@mui/material';
+import { Box, Typography, Paper, Container, TextField, Button, MenuItem, FormControlLabel, Checkbox } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import UserService from '../../services/UserService';
 import RoleService from '../../services/RoleService';
 import { validateEmail, validatePassword, validateRequired, validateLength } from '../../utils/Validations';
+import Loading from "../../components/Loading";
 
 const UpdateUser = () => {
   const { userId } = useParams();
@@ -122,11 +123,7 @@ const UpdateUser = () => {
   };
 
   if (loading) {
-    return (
-      <Container maxWidth="sm" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <CircularProgress />
-      </Container>
-    );
+    return <Loading />;
   }
 
   return (

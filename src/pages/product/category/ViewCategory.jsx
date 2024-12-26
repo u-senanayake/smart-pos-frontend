@@ -3,8 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import CategoryService from '../../../services/CategoryService';
 import { renderStatusIcon, } from "../../../utils/utils";
 import { formatDate } from "../../../utils/Dateutils";
+import Loading from "../../../components/Loading";
 
-import { Container, Typography, Box, Paper, CircularProgress, Button, TextField, Grid2,} from "@mui/material";
+import { Container, Typography, Box, Paper, Button, TextField, Grid2,} from "@mui/material";
 
 const ViewCategory = () => {
   const { categoryId } = useParams();
@@ -24,11 +25,7 @@ const ViewCategory = () => {
   const cancel = () => navigate('/productmanagement/categorylist');
 
   if (loading) {
-    return (
-      <Container maxWidth="sm" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <CircularProgress />
-      </Container>
-    );
+    return <Loading />;
   }
   
   if (!category) {
