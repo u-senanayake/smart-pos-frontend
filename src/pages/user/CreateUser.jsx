@@ -22,17 +22,19 @@ const CreateUser = () => {
     }
   });
   const [roles, setRoles] = useState([]);
+  const [isSaving, setIsSaving] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [errors, setErrors] = useState({});
-  const [serverErrors, setServerErrors] = useState({});
+  const [formError, setFormError] = useState({});
+  const [serverError, setServerError] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
     RoleService.getRoles()
       .then((res) => { setRoles(res.data);
       })
-      .catch((error) => console.error('Error fetching roles:', error))
-      .finally(() => setLoading(false));
+      .catch((error) =>{ 
+        console.error('Error fetching role:', error);
+      }).finally(() => setLoading(false));
   }, []);
 
   const handleChange = (e) => {
@@ -59,26 +61,6 @@ const CreateUser = () => {
         roleId: value
       }
     }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const validationErrors = validateForm(user);
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-    } else {
-      UserService.createUser(user)
-      .then(() => {
-        navigate('/usermanagement/userlist');
-      })
-      .catch((error) => {
-        if (error.response && error.response.data) {
-          setServerErrors(error.response.data);
-        } else {
-          console.error('Error creating user:', error);
-        }
-      });
-    }
   };
 
   const validateForm = (user) => {
@@ -111,15 +93,34 @@ const CreateUser = () => {
     return errors;
   };
 
-  const handleCancel = () => {
-    navigate('/usermanagement/userlist');
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const validationErrors = validateForm(user);
+    if (Object.keys(validationErrors).length > 0) {
+      setFormError(validationErrors);
+    } else {
+      UserService.createUser(user)
+      .then(() => {
+        navigate('/usermanagement/userlist');
+      })
+      .catch((error) => {
+        if (error.response && error.response.data) {
+            setServerError(error.response.data.message);
+          } else {
+            console.error('Error updating user:', error);
+          }
+    }).finally(() => setIsSaving(false));
+    }
   };
-  
+
+  const handleCancel = () => { navigate('/usermanagement/userlist'); };
+
   if (loading) {
     return <Loading />;
   }
 
-  const errorMessages = Object.values(serverErrors);
+  const serverErrorMessages = Object.values(serverError);
+
   return (
     <Container maxWidth="sm">
       <Paper sx={{ p: 3, mt: 3 }}>
@@ -127,10 +128,10 @@ const CreateUser = () => {
           Create User
         </Typography>
         <form onSubmit={handleSubmit}>
-          {Object.keys(serverErrors).length > 0 && (
+          {Object.keys(serverError).length > 0 && (
             <Box sx={{ mb: 2 }}>
               <Typography color="error">
-                {errorMessages}
+                {serverErrorMessages}
               </Typography>
             </Box>
           )}
@@ -144,8 +145,8 @@ const CreateUser = () => {
               variant="outlined"
               margin="normal"
               required
-              error={!!errors.username}
-              helperText={errors.username}
+              error={!!formError.username}
+              helperText={formError.username}
             />
           </Box>
           <Box sx={{ mb: 2 }}>
@@ -158,8 +159,8 @@ const CreateUser = () => {
               variant="outlined"
               margin="normal"
               required
-              error={!!errors.firstName}
-              helperText={errors.firstName}
+              error={!!formError.firstName}
+              helperText={formError.firstName}
             />
           </Box>
           <Box sx={{ mb: 2 }}>
@@ -172,8 +173,8 @@ const CreateUser = () => {
               variant="outlined"
               margin="normal"
               required
-              error={!!errors.lastName}
-              helperText={errors.lastName}
+              error={!!formError.lastName}
+              helperText={formError.lastName}
             />
           </Box>
           <Box sx={{ mb: 2 }}>
@@ -186,8 +187,8 @@ const CreateUser = () => {
               variant="outlined"
               margin="normal"
               required
-              error={!!errors.email}
-              helperText={errors.email}
+              error={!!formError.email}
+              helperText={formError.email}
             />
           </Box>
           <Box sx={{ mb: 2 }}>
@@ -200,8 +201,8 @@ const CreateUser = () => {
               variant="outlined"
               margin="normal"
               required
-              error={!!errors.address}
-              helperText={errors.address}
+              error={!!formError.address}
+              helperText={formError.address}
             />
           </Box>
           <Box sx={{ mb: 2 }}>
@@ -214,8 +215,8 @@ const CreateUser = () => {
               variant="outlined"
               margin="normal"
               required
-              error={!!errors.phoneNo1}
-              helperText={errors.phoneNo1}
+              error={!!formError.phoneNo1}
+              helperText={formError.phoneNo1}
             />
           </Box>
           <Box sx={{ mb: 2 }}>
@@ -227,8 +228,8 @@ const CreateUser = () => {
               fullWidth
               variant="outlined"
               margin="normal"
-              error={!!errors.phoneNo2}
-              helperText={errors.phoneNo2}
+              error={!!formError.phoneNo2}
+              helperText={formError.phoneNo2}
             />
           </Box>
           <Box sx={{ mb: 2 }}>
@@ -242,8 +243,8 @@ const CreateUser = () => {
               variant="outlined"
               margin="normal"
               required
-              error={!!errors.password}
-              helperText={errors.password}
+              error={!!formError.password}
+              helperText={formError.password}
             />
           </Box>
           <Box sx={{ mb: 2 }}>
@@ -257,8 +258,8 @@ const CreateUser = () => {
               variant="outlined"
               margin="normal"
               required
-              error={!!errors.role}
-              helperText={errors.role}  
+              error={!!formError.role}
+              helperText={formError.role}  
             >
               {roles.map((role) => (
                 <MenuItem key={role.roleId} value={role.roleId}>
@@ -295,7 +296,7 @@ const CreateUser = () => {
           </Box>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
             <Button type="submit" variant="contained" color="primary">
-              Create User
+            {isSaving ? 'Saving...' : 'Save'}
             </Button>
             <Button variant="outlined" color="secondary" onClick={handleCancel}>
               Cancel

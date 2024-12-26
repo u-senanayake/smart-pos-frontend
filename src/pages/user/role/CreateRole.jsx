@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import RoleService from '../../../services/RoleService';
 import { validateRequired, validateLength, } from '../../../utils/Validations';
-import { Container, TextField, Button, Typography, Box, Paper } from '@mui/material';
+import { Container, TextField, Button, Typography, Box, Paper, FormControlLabel, Checkbox } from '@mui/material';
 
 const CreateRole = () => {
     const [roleName, setRoleName] = useState('');
@@ -43,6 +43,7 @@ const CreateRole = () => {
     };
 
     const handleCancel = () => navigate('/usermanagement/rolelist');
+    const serverErrorMessages = Object.values(serverError);
 
     return (
         <Container maxWidth="sm">
@@ -51,13 +52,13 @@ const CreateRole = () => {
                     Update Role
                 </Typography>
                 <form onSubmit={handleSubmit}>
-                    {serverError && (
-                        <Box sx={{ mb: 2 }}>
-                            <Typography color="error">
-                                {serverError}
-                            </Typography>
-                        </Box>
-                    )}
+                    {Object.keys(serverError).length > 0 && (
+                                <Box sx={{ mb: 2 }}>
+                                  <Typography color="error">
+                                    {serverErrorMessages}
+                                  </Typography>
+                                </Box>
+                              )}
                     <TextField
                         label="Role Name"
                         variant="outlined"
@@ -83,10 +84,23 @@ const CreateRole = () => {
                         error={!!formError.description}
                         helperText={formError.description}
                         slotProps={{ htmlInput: { autoComplete: 'off' } }}
-                />
+                    />
+                    <Box sx={{ mb: 2 }}>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={enabled}
+                                    onChange={(e) => setEnabled(e.target.checked)}
+                                    name="enabled"
+                                    color="primary"
+                                />
+                            }
+                            label="Enabled"
+                        />
+                    </Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                     <Button type="submit" variant="contained" color="primary">
-                        {isSaving ? 'Saving...' : 'Update'}
+                        {isSaving ? 'Updating...' : 'Update'}
                     </Button>
                     <Button variant="outlined" color="secondary" onClick={handleCancel}>
                         Cancel

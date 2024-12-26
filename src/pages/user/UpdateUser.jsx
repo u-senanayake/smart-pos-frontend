@@ -5,6 +5,7 @@ import UserService from '../../services/UserService';
 import RoleService from '../../services/RoleService';
 import { validateEmail, validatePassword, validateRequired, validateLength } from '../../utils/Validations';
 import Loading from "../../components/Loading";
+import ErrorMessage from "../../components/ErrorMessage";
 
 const UpdateUser = () => {
   const { userId } = useParams();
@@ -23,17 +24,21 @@ const UpdateUser = () => {
     }
   });
   const [roles, setRoles] = useState([]);
-  const [isSaving, setIsSaving] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [serverError, setServerError] = useState('');
   const [loading, setLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState(null);
+  const [serverError, setServerError] = useState('');
+ 
+  const [formError, setFormError] = useState({}); 
   const navigate = useNavigate();
 
   useEffect(() => {
     RoleService.getRoles()
       .then((res) => setRoles(res.data))
-      .catch((error) => console.error('Error fetching roles:', error))
-      .finally(() => setLoading(false));
+      .catch((error) =>{ 
+        console.error('Error fetching role:', error);
+        setError("Failed to fetch role. Please try again later.");
+      }).finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -42,8 +47,36 @@ const UpdateUser = () => {
         const user = res.data;
         setUser(user);
       })
-      .catch((error) => console.error('Error fetching user:', error));
+      .catch((error) =>{ 
+        console.error('Error fetching user:', error);
+        setError("Failed to fetch user. Please try again later.");
+      }).finally(() => setLoading(false));
   }, [userId]);
+
+  const validateForm = (user) => {
+    const errors = {};
+    // Username
+    if (!validateRequired(user.username)) errors.username = 'Username is required';
+    if (!validateLength(user.username, 5, 50)) errors.username = 'Username must be between 5 and 50 characters';
+    // First name
+    if (!validateRequired(user.firstName)) errors.firstName = 'First Name is required';
+    if (!validateLength(user.firstName, 1, 50)) errors.firstName = 'First name must be between 1 and 50 characters';
+    // Last name
+    if (!validateRequired(user.lastName)) errors.lastName = 'Last Name is required';
+    if (!validateLength(user.lastName, 1, 50)) errors.lastName = 'Last name must be between 1 and 50 characters';
+    // Email
+    if (!validateRequired(user.email)) errors.email = 'Email is required';
+    if (!validateEmail(user.email)) errors.email = 'Invalid email address';
+    // Phone number 1
+    if (!validateRequired(user.phoneNo1)) errors.phoneNo1 = 'Phone number 1 cannot be blank';
+    if (!validateLength(user.phoneNo1, 10, 10)) errors.phoneNo1 = 'Phone number should be 10 characters';
+    // Role
+    //if (!validateRequired(user.role?.roleId)) errors.role = 'Role is required';
+    // Password
+    if (!validatePassword(user.password)) errors.password = 'Password must be at least 6 characters long';
+
+    return errors;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -75,7 +108,7 @@ const UpdateUser = () => {
     e.preventDefault();
     const validationErrors = validateForm(user);
     if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
+      setFormError(validationErrors);
     } else {
       setIsSaving(true);
       UserService.updateUser(userId, user)
@@ -93,38 +126,22 @@ const UpdateUser = () => {
     }
   };
 
-  const validateForm = (user) => {
-    const errors = {};
-    // Username
-    if (!validateRequired(user.username)) errors.username = 'Username is required';
-    if (!validateLength(user.username, 5, 50)) errors.username = 'Username must be between 5 and 50 characters';
-    // First name
-    if (!validateRequired(user.firstName)) errors.firstName = 'First Name is required';
-    if (!validateLength(user.firstName, 1, 50)) errors.firstName = 'First name must be between 1 and 50 characters';
-    // Last name
-    if (!validateRequired(user.lastName)) errors.lastName = 'Last Name is required';
-    if (!validateLength(user.lastName, 1, 50)) errors.lastName = 'Last name must be between 1 and 50 characters';
-    // Email
-    if (!validateRequired(user.email)) errors.email = 'Email is required';
-    if (!validateEmail(user.email)) errors.email = 'Invalid email address';
-    // Phone number 1
-    if (!validateRequired(user.phoneNo1)) errors.phoneNo1 = 'Phone number 1 cannot be blank';
-    if (!validateLength(user.phoneNo1, 10, 10)) errors.phoneNo1 = 'Phone number should be 10 characters';
-    // Role
-    //if (!validateRequired(user.role?.roleId)) errors.role = 'Role is required';
-    // Password
-    if (!validatePassword(user.password)) errors.password = 'Password must be at least 6 characters long';
 
-    return errors;
-  };
-
-  const handleCancel = () => {
-    navigate('/usermanagement/userlist');
-  };
+  const handleCancel = () => { navigate('/usermanagement/userlist'); };
 
   if (loading) {
     return <Loading />;
   }
+
+  if (error) {
+    return (
+      <ErrorMessage
+        message={error}
+        actionText="Retry"
+        onAction={() => window.location.reload()}
+      />
+    );
+}
 
   return (
     <Container maxWidth="sm">
@@ -150,8 +167,8 @@ const UpdateUser = () => {
               variant="outlined"
               margin="normal"
               required
-              error={!!errors.username}
-              helperText={errors.username}
+              error={!!formError.username}
+              helperText={formError.username}
             />
           </Box>
           <Box sx={{ mb: 2 }}>
@@ -164,8 +181,8 @@ const UpdateUser = () => {
               variant="outlined"
               margin="normal"
               required
-              error={!!errors.firstName}
-              helperText={errors.firstName}
+              error={!!formError.firstName}
+              helperText={formError.firstName}
             />
           </Box>
           <Box sx={{ mb: 2 }}>
@@ -178,8 +195,8 @@ const UpdateUser = () => {
               variant="outlined"
               margin="normal"
               required
-              error={!!errors.lastName}
-              helperText={errors.lastName}
+              error={!!formError.lastName}
+              helperText={formError.lastName}
             />
           </Box>
           <Box sx={{ mb: 2 }}>
@@ -192,8 +209,8 @@ const UpdateUser = () => {
               variant="outlined"
               margin="normal"
               required
-              error={!!errors.email}
-              helperText={errors.email}
+              error={!!formError.email}
+              helperText={formError.email}
             />
           </Box>
           <Box sx={{ mb: 2 }}>
@@ -206,8 +223,8 @@ const UpdateUser = () => {
               variant="outlined"
               margin="normal"
               required
-              error={!!errors.phoneNo1}
-              helperText={errors.phoneNo1}
+              error={!!formError.phoneNo1}
+              helperText={formError.phoneNo1}
             />
           </Box>
           <Box sx={{ mb: 2 }}>
@@ -220,8 +237,8 @@ const UpdateUser = () => {
               variant="outlined"
               margin="normal"
               required
-              error={!!errors.password}
-              helperText={errors.password}
+              error={!!formError.password}
+              helperText={formError.password}
             />
           </Box>
           <Box sx={{ mb: 2 }}>
@@ -235,8 +252,8 @@ const UpdateUser = () => {
               variant="outlined"
               margin="normal"
               required
-              error={!!errors.role}
-              helperText={errors.role}
+              error={!!formError.role}
+              helperText={formError.role}
             >
               {roles.map((role) => (
                 <MenuItem key={role.roleId} value={role.roleId}>
@@ -269,7 +286,7 @@ const UpdateUser = () => {
           />
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
             <Button type="submit" variant="contained" color="primary">
-              Update User
+            {isSaving ? 'Saving...' : 'Update'}
             </Button>
             <Button variant="outlined" color="secondary" onClick={handleCancel}>
               Cancel

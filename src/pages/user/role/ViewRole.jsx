@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import RoleService from '../../../services/RoleService';
-import { renderStatusIcon, renderDeletedIcon, } from "../../../utils/utils";
+import { renderStatusIcon, } from "../../../utils/utils";
 import { formatDate } from "../../../utils/Dateutils";
 import Loading from "../../../components/Loading";
 import ErrorMessage from "../../../components/ErrorMessage";

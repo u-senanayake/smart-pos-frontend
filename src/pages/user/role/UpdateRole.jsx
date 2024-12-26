@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import RoleService from '../../../services/RoleService';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Container, TextField, Button, Typography, Box, Paper} from '@mui/material';
+import { Container, TextField, Button, Typography, Box, Paper, FormControlLabel, Checkbox} from '@mui/material';
 import Loading from "../../../components/Loading";
 import ErrorMessage from "../../../components/ErrorMessage";
 import { validateRequired, validateLength, } from '../../../utils/Validations';
@@ -119,6 +119,19 @@ const UpdateRole = () => {
                         helperText={formError.description}
                         slotProps={{ htmlInput: { autoComplete: 'off' } }}
                 />
+                <Box sx={{ mb: 2 }}>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={enabled}
+                                    onChange={(e) => setEnabled(e.target.checked)}
+                                    name="enabled"
+                                    color="primary"
+                                />
+                            }
+                            label="Enabled"
+                        />
+                </Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                     <Button type="submit" variant="contained" color="primary">
                         {isSaving ? 'Saving...' : 'Update'}

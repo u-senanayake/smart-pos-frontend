@@ -5,11 +5,14 @@ import { renderStatusIcon, renderLockIcon, } from '../../utils/utils';
 import { formatDate } from '../../utils/Dateutils';
 import UserService from '../../services/UserService';
 import Loading from "../../components/Loading";
+import ErrorMessage from "../../components/ErrorMessage";
 
 const ViewUser = () => {
+
+  const { userId } = useParams();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { userId } = useParams();
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,27 +20,40 @@ const ViewUser = () => {
       .then((res) => {
         setUser(res.data);
       })
-      .catch((error) => console.error('Error fetching user:', error))
-      .finally(() => setLoading(false));
+      .catch((error) =>{ 
+        console.error('Error fetching user:', error);
+        setError("Failed to fetch user. Please try again later.");
+      }).finally(() => setLoading(false));
   }, [userId]);
+
+  const handleCancel = () => navigate('/usermanagement/userlist');
 
   const handleUpdate = () => {
     navigate(`/usermanagement/user/updateuser/${userId}`);
   };
 
-  const cancel = () => navigate('/usermanagement/userlist');
+  const ReadOnlyTextField = ({ label, value }) => (
+    <TextField
+      label={label}
+      value={value}
+      fullWidth
+      slotProps={{ input: { readOnly: true } }}
+      variant="outlined"
+      margin="normal"
+    />
+  );
 
   if (loading) {
     return <Loading />;
   }
 
-  if (!user) {
+  if (error) {
     return (
-      <Container maxWidth="sm">
-        <Typography variant="h6" color="error">
-          User not found.
-        </Typography>
-      </Container>
+      <ErrorMessage
+        message={error}
+        actionText="Retry"
+        onAction={() => window.location.reload()}
+      />
     );
   }
 
@@ -49,264 +65,52 @@ const ViewUser = () => {
         </Typography>
         <Grid2 container spacing={2}>
           <Grid2 item xs={6}>
-            <Box sx={{ mb: 2 }}>
-              <TextField
-                label="User ID"
-                value={user.userId}
-                fullWidth
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-                variant="outlined"
-                margin="normal"
-              />
-            </Box>
+              <ReadOnlyTextField label="User ID" value={user.userId} />
           </Grid2>
           <Grid2 item xs={6}>
-            <Box sx={{ mb: 2 }}>
-              <TextField
-                label="Username"
-                value={user.username}
-                fullWidth
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-                variant="outlined"
-                margin="normal"
-              />
-            </Box>    
+              <ReadOnlyTextField label="Username" value={user.username} />
           </Grid2>
           <Grid2 item xs={6}>
-            <Box sx={{ mb: 2 }}>
-              <TextField
-                label="Role"
-                value={user.role.roleName}
-                fullWidth
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-                variant="outlined"
-                margin="normal"
-              />
-            </Box>
+            <ReadOnlyTextField label="Role" value={user.role.roleName} />
           </Grid2>
         </Grid2>
         <Grid2 container spacing={2}>
           <Grid2 item xs={6}>
-            <Box sx={{ mb: 2 }}>
-              <TextField
-                label="First Name"
-                value={user.firstName}
-                fullWidth
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-                variant="outlined"
-                margin="normal"
-              />
-            </Box>
+            <ReadOnlyTextField label="First Name" value={user.firstName} />
           </Grid2>
           <Grid2 item xs={6}>
-            <Box sx={{ mb: 2 }}>
-              <TextField
-                label="Last Name"
-                value={user.lastName}
-                fullWidth
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-                variant="outlined"
-                margin="normal"
-              />
-            </Box>
+            <ReadOnlyTextField label="Last Name" value={user.lastName} />
           </Grid2>
         </Grid2>
-        <Box sx={{ mb: 2 }}>
-          <TextField
-            label="Email"
-            value={user.email}
-            fullWidth
-            slotProps={{
-              input: {
-                readOnly: true,
-              },
-            }}
-            variant="outlined"
-            margin="normal"
-          />
-        </Box>
-        <Box sx={{ mb: 2 }}>
-          <TextField
-            label="Address"
-            value={user.address}
-            fullWidth
-            slotProps={{
-              input: {
-                readOnly: true,
-              },
-            }}
-            variant="outlined"
-            margin="normal"
-          />
-        </Box>
+        <ReadOnlyTextField label="Email" value={user.email} />
+        <ReadOnlyTextField label="Address" value={user.address} />
         <Grid2 container spacing={2}>
           <Grid2 item xs={6}>
-            <Box sx={{ mb: 2 }}>
-              <TextField
-                label="Phone Number 1"
-                value={user.phoneNo1}
-                fullWidth
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-                variant="outlined"
-                margin="normal"
-              />
-            </Box>
+            <ReadOnlyTextField label="Phone Number 1" value={user.phoneNo1} />
           </Grid2>
           <Grid2 item xs={6}>
-            <Box sx={{ mb: 2 }}>
-              <TextField
-                label="Phone Number 2"
-                value={user.phoneNo2}
-                fullWidth
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-                variant="outlined"
-                margin="normal"
-              />
-            </Box>
+            <ReadOnlyTextField label="Phone Number 2" value={user.phoneNo2} />
           </Grid2>
         </Grid2>
-        
         <Grid2 container spacing={2}>
           <Grid2 item xs={6}>
-            <Box sx={{ mb: 2 }}>
               <Typography variant="h5">Enabled: {renderStatusIcon(user.enabled)}</Typography>
-            </Box>
           </Grid2>
           <Grid2 item xs={6}>
-            <Box sx={{ mb: 2 }}>
               <Typography variant="h5">Locked:{renderLockIcon(user.locked)}</Typography>
-            </Box>
           </Grid2>
         </Grid2>
-        <Grid2 container spacing={2}>
-          <Grid2 item xs={6}>
-            <TextField
-              label="Created At"
-              value={formatDate(user.createdAt)}
-              fullWidth
-              slotProps={{
-                input: {
-                  readOnly: true,
-                },
-              }}
-              variant="outlined"
-              margin="normal"
-            />
-          </Grid2>
-          <Grid2 item xs={6}>
-            <TextField
-              label="Created By"
-              value={`${user.createdUser.firstName} ${user.createdUser.lastName} (${user.createdUser.username})`}
-              fullWidth
-              slotProps={{
-                input: {
-                  readOnly: true,
-                },
-              }}
-              variant="outlined"
-              margin="normal"
-            />
-          </Grid2>
-          <Grid2 item xs={6}>
-            <TextField
-              label="Updated At"
-              value={formatDate(user.updatedAt)}
-              fullWidth
-              slotProps={{
-                input: {
-                  readOnly: true,
-                },
-              }}
-              variant="outlined"
-              margin="normal"
-            />
-          </Grid2>
-          <Grid2 item xs={6}>
-            <TextField
-              label="Updated By"
-              value={`${user.updatedUser.firstName} ${user.updatedUser.lastName} (${user.updatedUser.username})`}
-              fullWidth
-              slotProps={{
-                input: {
-                  readOnly: true,
-                },
-              }}
-              variant="outlined"
-              margin="normal"
-            />
-          </Grid2>
-          {user.deleted && (
-            <>
-              <Grid2 item xs={6}>
-                <TextField
-                  label="Deleted At"
-                  value={formatDate(user.deletedAt)}
-                  fullWidth
-                  slotProps={{
-                    input: {
-                      readOnly: true,
-                    },
-                  }}
-                  variant="outlined"
-                  margin="normal"
-                />
-              </Grid2>
-              <Grid2 item xs={6}>
-                <TextField
-                  label="Deleted By"
-                  value={`${user.deletedUser?.firstName} ${user.deletedUser?.lastName} (${user.deletedUser?.username})`}
-                  fullWidth
-                  slotProps={{
-                    input: {
-                      readOnly: true,
-                    },
-                  }}
-                  variant="outlined"
-                  margin="normal"
-                />
-              </Grid2>
-            </>
-          )}
-        </Grid2>
+        <ReadOnlyTextField label="Created At" value={formatDate(user.createdAt)} />
+        <ReadOnlyTextField label="Created By" value={`${user.createdUser.firstName} ${user.createdUser.lastName} (${user.createdUser.username})`} />
+        <ReadOnlyTextField label="Updated At" value={formatDate(user.updatedAt)} />
+        <ReadOnlyTextField label="Updated By" value={`${user.updatedUser.firstName} ${user.updatedUser.lastName} (${user.updatedUser.username})`} />
+        {user.deleted && (<>
+          <ReadOnlyTextField label="Deleted At" value={formatDate(user.deletedAt)} /> 
+          <ReadOnlyTextField label="Delete By" value={`${user.deletedUser?.firstName} ${user.deletedUser?.lastName} (${user.deletedUser?.username})`} /> 
+        </>)}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-          <Button variant="contained" color="primary" onClick={handleUpdate}>
-            Update
-          </Button>
-          <Button
-            variant="outlined"
-            color="secondary"
-            onClick={cancel}
-          >
-            Cancel
-          </Button>
+          <Button variant="contained" color="primary" onClick={handleUpdate}> Update </Button>
+          <Button variant="outlined" color="secondary" onClick={handleCancel} > Cancel </Button>
         </Box>
       </Paper>
     </Container>

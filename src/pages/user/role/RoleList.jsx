@@ -89,7 +89,6 @@ const RoleList = () => {
     }, 500); // Simulate a delay (replace this with actual fetching logic if needed)
   };
   
-
   const paginatedRoles = roles.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -111,7 +110,6 @@ const RoleList = () => {
     return <SkeletonLoading />;
   }
   
-
   if (roles.length === 0) {
     return (
       <div className={classes.title}>
@@ -146,10 +144,8 @@ const RoleList = () => {
         Add Role
       </Button>
       {paginationLoading ? (
-      <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
-        <Skeleton variant="rectangular" width="100%" height={200} />
-      </div>
-    ) : (
+        <SkeletonLoading />
+      ) : (
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
