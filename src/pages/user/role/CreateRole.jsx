@@ -1,87 +1,99 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import RoleService from '../../../services/RoleService';
-import { Container, TextField, Button, Checkbox, FormControlLabel, Typography, Box } from '@mui/material';
+import { validateRequired, validateLength, } from '../../../utils/Validations';
+import { Container, TextField, Button, Typography, Box, Paper } from '@mui/material';
 
 const CreateRole = () => {
     const [roleName, setRoleName] = useState('');
     const [description, setDescription] = useState('');
     const [enabled, setEnabled] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
+    const [formError, setFormError] = useState({});
+    const [serverError, setServerError] = useState('');
     const navigate = useNavigate();
 
-    const saveRole = (e) => {
+    const validateForm = (role) => {
+        const formError = {};
+        if (!validateRequired(role.roleName)) formError.roleName = 'Role name is required';
+        if (!validateLength(role.roleName, 10, 25)) formError.roleName='Role name must be between 10 and 25 characters';
+        if (!validateRequired(role.description)) formError.description = 'Role description is required';
+        if (!validateLength(role.description, 10, 100)) formError.description='Role description must be between 10 and 100 characters';
+        return formError;
+    };    
+
+    const handleSubmit = (e) => {
         e.preventDefault();
-        if (!roleName.trim() || !description.trim()) {
-            alert('Role Name and Description are required.');
-            return;
-        }
-        setIsSaving(true);
         const role = { roleName, description, enabled, createdUserId: 1 };
-        
-        RoleService.createRole(role)
+        const validationErrors = validateForm(role);
+        if (Object.keys(validationErrors).length > 0) {
+            setFormError(validationErrors);
+        } else {
+            setIsSaving(true);
+            RoleService.createRole(role)
             .then(() => navigate('/usermanagement/rolelist'))
             .catch((error) => {
-                console.error('Error creating role:', error);
-                alert('Failed to create role. Please try again.');
-                setIsSaving(false);
-            });
+                if (error.response && error.response.data) {
+                    setServerError(error.response.data.message);
+                  } else {
+                    console.error('Error updating user:', error);
+                  }
+            }).finally(() => setIsSaving(false));;
+        }
     };
 
-    const cancel = () => navigate('/usermanagement/rolelist');
+    const handleCancel = () => navigate('/usermanagement/rolelist');
 
     return (
         <Container maxWidth="sm">
-            <Box component="form" onSubmit={saveRole} sx={{ mt: 3 }}>
-                <Typography variant="h4" component="h1" gutterBottom>
-                    Create Role
+            <Paper sx={{ p: 3, mt: 3 }}>
+                <Typography variant="h4" gutterBottom>
+                    Update Role
                 </Typography>
-                <TextField
-                    label="Role Name"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    value={roleName}
-                    onChange={(e) => setRoleName(e.target.value)}
-                    required
-                />
-                <TextField
-                    label="Description"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    required
-                />
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={enabled}
-                            onChange={(e) => setEnabled(e.target.checked)}
-                            color="primary"
-                        />
-                    }
-                    label="Enabled"
+                <form onSubmit={handleSubmit}>
+                    {serverError && (
+                        <Box sx={{ mb: 2 }}>
+                            <Typography color="error">
+                                {serverError}
+                            </Typography>
+                        </Box>
+                    )}
+                    <TextField
+                        label="Role Name"
+                        variant="outlined"
+                        name="roleName"
+                        fullWidth
+                        margin="normal"
+                        value={roleName}
+                        onChange={(e) => setRoleName(e.target.value)}
+                        required
+                        error={!!formError.roleName}
+                        helperText={formError.roleName}
+                        slotProps={{ htmlInput: { autoComplete: 'off' } }}
+                    />
+                    <TextField
+                        label="Description"
+                        variant="outlined"
+                        name="description"
+                        fullWidth
+                        margin="normal"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        required
+                        error={!!formError.description}
+                        helperText={formError.description}
+                        slotProps={{ htmlInput: { autoComplete: 'off' } }}
                 />
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        disabled={isSaving}
-                    >
-                        {isSaving ? 'Saving...' : 'Save'}
+                    <Button type="submit" variant="contained" color="primary">
+                        {isSaving ? 'Saving...' : 'Update'}
                     </Button>
-                    <Button
-                        variant="outlined"
-                        color="secondary"
-                        onClick={cancel}
-                    >
+                    <Button variant="outlined" color="secondary" onClick={handleCancel}>
                         Cancel
                     </Button>
                 </Box>
-            </Box>
+                </form>
+            </Paper>
         </Container>
     );
 };

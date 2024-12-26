@@ -67,7 +67,7 @@ const UpdateRole = () => {
     
     if (loading) {
         return <Loading />;
-      }
+    }
     
     if (error) {
         return (
