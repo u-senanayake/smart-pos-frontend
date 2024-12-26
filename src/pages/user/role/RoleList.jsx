@@ -4,30 +4,43 @@ import { Link } from "react-router-dom";
 import RoleService from "../../../services/RoleService";
 import { renderStatusIcon } from "../../../utils/utils";
 import { formatDate } from '../../../utils/Dateutils';
-import Loading from "../../../components/Loading";
+import SkeletonLoading from "../../../components/SkeletonLoading";
+import ErrorMessage from "../../../components/ErrorMessage";
+import ConfirmationDialog from "./../../../components/ConfirmationDialog";
 
-import {  
-  Table,  
-  TableBody,  
-  TableCell,  
-  TableContainer,  
-  TableHead, 
-  TableRow,  
-  Paper,  
-  Button, 
-  IconButton,  
-  Typography,  
-  CircularProgress,} from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton,  Typography, Pagination, Skeleton, } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import ViewIcon from "@mui/icons-material/Preview"
+import { makeStyles } from '@mui/styles';
+
+const useStyles = makeStyles((theme) => ({
+  container: {
+    padding: theme.spacing(3),
+  },
+  title: {
+    textAlign: "center",
+    marginBottom: theme.spacing(3),
+  },
+  button: {
+    marginBottom: theme.spacing(2),
+  },
+}));
+
 
 const RoleList = () => {
+
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedRoleId, setSelectedRoleId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [paginationLoading, setPaginationLoading] = useState(false);
 
+  const itemsPerPage = 10;
+  
   useEffect(() => {
     RoleService.getRoles()
       .then((res) => {
@@ -44,30 +57,64 @@ const RoleList = () => {
   const deleteRole = (id) => {
     RoleService.deleteRole(id)
       .then(() => setRoles(roles.filter((role) => role.roleId !== id)))
-      .catch((error) => console.error("Error deleting role:", error));
-  };
+      .catch((error) => {
+        console.error("Error deleting role:", error);
+        setError("Failed to delete role. Please try again later.");
+      });
+  };  
 
   const confirmDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this role?")) {
-      deleteRole(id);
+    setSelectedRoleId(id);
+    setDialogOpen(true);
+  };
+
+  const handleDialogConfirm = () => {
+    if (selectedRoleId) {
+      deleteRole(selectedRoleId);
     }
+    setDialogOpen(false);
+    setSelectedRoleId(null);
+  };
+
+  const handleDialogCancel = () => {
+    setDialogOpen(false);
+    setSelectedRoleId(null);
   };
   
+  const handlePageChange = (event, value) => {
+    setPaginationLoading(true);
+    setTimeout(() => {
+      setCurrentPage(value);
+      setPaginationLoading(false);
+    }, 500); // Simulate a delay (replace this with actual fetching logic if needed)
+  };
+  
+
+  const paginatedRoles = roles.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+  
+  const classes = useStyles();
+
   if (error) {
     return (
-      <div style={{ textAlign: "center", marginTop: "20px" }}>
-        <Typography variant="h6" color="error">{error}</Typography>
-      </div>
+      <ErrorMessage
+        message={error}
+        actionText="Retry"
+        onAction={() => window.location.reload()}
+      />
     );
   }
 
-  if (loading) {
-    return <Loading />;
+  if (loading || paginationLoading) {
+    return <SkeletonLoading />;
   }
+  
 
   if (roles.length === 0) {
     return (
-      <div style={{ textAlign: "center", marginTop: "20px" }}>
+      <div className={classes.title}>
         <Typography variant="h6">No roles found. Add some roles to see them here.</Typography>
         <Button
           component={Link}
@@ -75,7 +122,7 @@ const RoleList = () => {
           variant="contained"
           color="primary"
           startIcon={<AddIcon />}
-          style={{ marginTop: "10px" }}
+          className={classes.button}
         >
           Add Role
         </Button>
@@ -84,8 +131,8 @@ const RoleList = () => {
   }
 
   return (
-    <div style={{ padding: "20px" }}>
-      <Typography variant="h4" style={{ textAlign: "center", marginBottom: "20px" }}>
+    <div className={classes.container}>
+      <Typography variant="h4" className={classes.title}>
         Role List
       </Typography>
       <Button
@@ -94,10 +141,15 @@ const RoleList = () => {
         variant="contained"
         color="primary"
         startIcon={<AddIcon />}
-        style={{ marginBottom: "20px" }}
+        className={classes.button}
       >
         Add Role
       </Button>
+      {paginationLoading ? (
+      <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+        <Skeleton variant="rectangular" width="100%" height={200} />
+      </div>
+    ) : (
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -112,7 +164,7 @@ const RoleList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {roles.map((role) => (
+          {paginatedRoles.map((role) => (
               <TableRow key={role.roleId}>
                 <TableCell>{role.roleName}</TableCell>
                 <TableCell>{renderStatusIcon(role.enabled)}</TableCell>
@@ -121,13 +173,16 @@ const RoleList = () => {
                 <TableCell>{role.updatedUser.username}</TableCell>
                 <TableCell>{formatDate(role.updatedAt)}</TableCell>
                 <TableCell>
-                  <IconButton component={Link} to={`/usermanagement/role/updaterole/${role.roleId}`}>
+                  <IconButton component={Link} to={`/usermanagement/role/updaterole/${role.roleId}`}
+                    aria-label="Edit role">
                     <EditIcon color="primary" />
                   </IconButton>
-                  <IconButton onClick={() => confirmDelete(role.roleId)}>
+                  <IconButton onClick={() => confirmDelete(role.roleId)}
+                    aria-label="Delete role">
                     <DeleteIcon color="error" />
                   </IconButton>
-                  <IconButton component={Link} to={`/usermanagement/role/viewrole/${role.roleId}`}>
+                  <IconButton component={Link} to={`/usermanagement/role/viewrole/${role.roleId}`}
+                    aria-label="Update role">
                     <ViewIcon color="primary" />
                   </IconButton>
                 </TableCell>
@@ -136,6 +191,21 @@ const RoleList = () => {
           </TableBody>
         </Table>
       </TableContainer>
+    )}
+      <Pagination
+        count={Math.ceil(roles.length / itemsPerPage)} // Total pages
+        page={currentPage}
+        onChange={handlePageChange}
+        color="primary"
+        style={{ marginTop: "20px", display: "flex", justifyContent: "center" }}
+      />
+      <ConfirmationDialog
+        open={dialogOpen}
+        title="Delete Role"
+        message="Are you sure you want to delete this role?"
+        onConfirm={handleDialogConfirm}
+        onCancel={handleDialogCancel}
+      />
     </div>
   );
 };
