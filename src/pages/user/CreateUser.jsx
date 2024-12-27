@@ -99,6 +99,7 @@ const CreateUser = () => {
     if (Object.keys(validationErrors).length > 0) {
       setFormError(validationErrors);
     } else {
+      setIsSaving(true);
       UserService.createUser(user)
       .then(() => {
         navigate('/usermanagement/userlist');

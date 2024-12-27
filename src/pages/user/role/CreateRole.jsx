@@ -17,15 +17,15 @@ const CreateRole = () => {
     const validateForm = (role) => {
         const formError = {};
         if (!validateRequired(role.roleName)) formError.roleName = 'Role name is required';
-        if (!validateLength(role.roleName, 10, 25)) formError.roleName = 'Role name must be between 10 and 25 characters';
+        if (!validateLength(role.roleName, 10, 25)) formError.roleName = 'Role name must be between 10 and 25 characters long';
         if (!validateRequired(role.description)) formError.description = 'Role description is required';
-        if (!validateLength(role.description, 10, 100)) formError.description = 'Role description must be between 10 and 100 characters';
+        if (!validateLength(role.description, 10, 100)) formError.description = 'Role description must be between 10 and 100 characters long';
         return formError;
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const role = { roleName, description, enabled, createdUserId: 1 };
+        const role = { roleName, description, enabled};
         const validationErrors = validateForm(role);
         if (Object.keys(validationErrors).length > 0) {
             setFormError(validationErrors);
@@ -39,18 +39,18 @@ const CreateRole = () => {
                     } else {
                         console.error('Error updating user:', error);
                     }
-                }).finally(() => setIsSaving(false));;
+                }).finally(() => setIsSaving(false));
         }
     };
 
     const handleCancel = () => navigate('/usermanagement/rolelist');
-    const serverErrorMessages = Object.values(serverError);
+    const serverErrorMessages = typeof serverError === 'string' ? [serverError] : Object.values(serverError);
 
     return (
         <Container maxWidth="sm">
             <Paper sx={{ p: 3, mt: 3 }}>
                 <Typography variant="h4" gutterBottom>
-                    Update Role
+                    Create Role
                 </Typography>
                 <form onSubmit={handleSubmit}>
                     {Object.keys(serverErrorMessages).length > 0 && (
@@ -101,7 +101,7 @@ const CreateRole = () => {
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                         <Button type="submit" variant="contained" color="primary">
-                            {isSaving ? 'Updating...' : 'Update'}
+                            {isSaving ? 'Creating...' : 'Create'}
                         </Button>
                         <Button variant="outlined" color="secondary" onClick={handleCancel}>
                             Cancel

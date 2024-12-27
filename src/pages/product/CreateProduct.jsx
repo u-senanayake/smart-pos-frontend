@@ -31,6 +31,8 @@ const CreateProduct = () => {
 
     const [categories, setCategories] = useState([]);
     const [distributors, setDistributors] = useState([]);
+
+    const [isSaving, setIsSaving] = useState(false);
     const [errors, setErrors] = useState({});
     const [serverErrors, setServerErrors] = useState({});
     const navigate = useNavigate();
@@ -127,6 +129,7 @@ const CreateProduct = () => {
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
         } else {
+            setIsSaving(true);
             ProductService.createProduct(product)
                 .then(() => {
                     navigate('/productmanagement/productlist');
@@ -137,7 +140,7 @@ const CreateProduct = () => {
                     } else {
                         console.error('Error creating product:', error);
                     }
-                });
+                }).finally(() => setIsSaving(false));
         }
     };
 
