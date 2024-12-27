@@ -11,61 +11,64 @@ const UpdateBrand = () => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [enabled, setEnabled] = useState(true);
+
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [errors, setErrors] = useState({});
     const [serverError, setServerError] = useState('');
     const navigate = useNavigate();
 
+    const validateForm = (brand) => {
+        const errors = {};
+        //Name
+        if (!validateRequired(brand.name)) errors.name = 'Name is required';
+        if (!validateLength(brand.name, 1, 30)) errors.name = 'Name must be between 5 and 30 characters';
+        //Description
+        if (!validateRequired(brand.description)) errors.description = 'Description is required';
+        if (!validateLength(brand.description, 1, 255)) errors.description = 'Description must be less than 255 characters';
+
+        return errors;
+    };
+
     useEffect(() => {
         BrandService.getBrandById(brandId)
-        .then((res) => {
-            const brand = res.data;
-            setName(brand.name);
-            setDescription(brand.description);
-            setEnabled(brand.enabled);
-        })
-          .catch((error) => console.error('Error fetching brand:', error))
-          .finally(() => setLoading(false));;
-      }, [brandId]);
+            .then((res) => {
+                const brand = res.data;
+                setName(brand.name);
+                setDescription(brand.description);
+                setEnabled(brand.enabled);
+            })
+            .catch((error) => console.error('Error fetching brand:', error))
+            .finally(() => setLoading(false));;
+    }, [brandId]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const brand = { name, description, enabled };
         const validationErrors = validateForm(brand);
         if (Object.keys(validationErrors).length > 0) {
-          setErrors(validationErrors);
+            setErrors(validationErrors);
         } else {
-          setIsSaving(true);
-          BrandService.updateBrand(brandId, brand)
-            .then(() => {
-              navigate('/productmanagement/brandlist');
-            })
-            .catch((error) => {
-              if (error.response && error.response.data) {
-                setServerError(error.response.data.message);
-              } else {
-                console.error('Error updating brand:', error);
-              }
-            })
-            .finally(() => setIsSaving(false));
+            setIsSaving(true);
+            BrandService.updateBrand(brandId, brand)
+                .then(() => {
+                    navigate('/productmanagement/brandlist');
+                })
+                .catch((error) => {
+                    if (error.response && error.response.data) {
+                        setServerError(error.response.data.message);
+                    } else {
+                        console.error('Error updating brand:', error);
+                    }
+                })
+                .finally(() => setIsSaving(false));
         }
-      };
-      const validateForm = (brand) => {
-              const errors = {};
-              //Name
-              if (!validateRequired(brand.name)) errors.name = 'Name is required';
-              if (!validateLength(brand.name, 1, 30)) errors.name='Name must be between 5 and 30 characters';
-              //Description
-              if (!validateRequired(brand.description)) errors.description = 'Description is required';
-              if (!validateLength(brand.description, 1, 255)) errors.description = 'Description must be less than 255 characters';
-      
-              return errors;
-          };
-    const handleCancel = () => {
-        navigate('/productmanagement/brandlist');
     };
-    
+
+    const handleCancel = () => { navigate('/productmanagement/brandlist'); };
+
+    const serverErrorMessages = Object.values(serverError);
+
     if (loading) {
         return <Loading />;
     }
@@ -77,10 +80,10 @@ const UpdateBrand = () => {
                     Update Category
                 </Typography>
                 <form onSubmit={handleSubmit}>
-                    {serverError && (
+                    {Object.keys(serverError).length > 0 && (
                         <Box sx={{ mb: 2 }}>
                             <Typography color="error">
-                                {serverError}
+                                {serverErrorMessages}
                             </Typography>
                         </Box>
                     )}
@@ -127,7 +130,7 @@ const UpdateBrand = () => {
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                         <Button type="submit" variant="contained" color="primary">
-                            Update User
+                            {isSaving ? 'Updating...' : 'Update'}
                         </Button>
                         <Button variant="outlined" color="secondary" onClick={handleCancel}>
                             Cancel

@@ -10,6 +10,7 @@ const CreateCategory = () => {
     const [description, setDescription] = useState('');
     const [catPrefix, setCatPrefix] = useState('');
     const [enabled, setEnabled] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
     const [errors, setErrors] = useState({});
     const [serverErrors, setServerErrors] = useState({});
     const navigate = useNavigate();
@@ -19,53 +20,52 @@ const CreateCategory = () => {
         const category = { name, description, catPrefix, enabled };
         const validationErrors = validateForm(category);
         if (Object.keys(validationErrors).length > 0) {
-          setErrors(validationErrors);
+            setErrors(validationErrors);
         } else {
-          CategoryService.createCategory(category)
-          .then(() => {
-            navigate('/productmanagement/categorylist');
-          })
-          .catch((error) => {
-            if (error.response && error.response.data) {
-              setServerErrors(error.response.data);
-            } else {
-              console.error('Error creating category:', error);
-            }
-          });
+            setIsSaving(true);
+            CategoryService.createCategory(category)
+                .then(() => {
+                    navigate('/productmanagement/categorylist');
+                })
+                .catch((error) => {
+                    if (error.response && error.response.data) {
+                        setServerErrors(error.response.data);
+                    } else {
+                        console.error('Error creating category:', error);
+                    }
+                }).finally(() => setIsSaving(false));
         }
-      };
-    
+    };
+
     const validateForm = (category) => {
         const errors = {};
         //Name
         if (!validateRequired(category.name)) errors.name = 'Name is required';
-        if (!validateLength(category.name, 1, 10)) errors.name='Name must be between 5 and 50 characters';
+        if (!validateLength(category.name, 1, 10)) errors.name = 'Name must be between 5 and 50 characters';
         //Description
         if (!validateRequired(category.description)) errors.description = 'Description is required';
         if (!validateLength(category.description, 1, 255)) errors.description = 'Description must be less than 255 characters';
         //Category prefix
         if (!validateRequired(category.catPrefix)) errors.catPrefix = 'Category prefix is required';
-        if (!validateLength(category.catPrefix, 1, 1)) errors.catPrefix='Category prefix must 1 character';
+        if (!validateLength(category.catPrefix, 1, 1)) errors.catPrefix = 'Category prefix must 1 character';
 
         return errors;
     };
-    const handleCancel = () => {
-        navigate('/productmanagement/categorylist');
-      };
+    const handleCancel = () => { navigate('/productmanagement/categorylist'); };
 
-    const errorMessages = Object.values(serverErrors);
+    const serverErrorMessages = Object.values(serverErrors);
 
-      return (
+    return (
         <Container maxWidth="md">
             <Paper sx={{ p: 3, mt: 3 }}>
                 <Typography variant="h4" gutterBottom>
                     Create Brand
                 </Typography>
                 <form onSubmit={handleSubmit}>
-                    {Object.keys(serverErrors).length > 0 && (
+                    {Object.keys(serverErrorMessages).length > 0 && (
                         <Box sx={{ mb: 2 }}>
                             <Typography color="error">
-                                {errorMessages}
+                                {serverErrorMessages}
                             </Typography>
                         </Box>
                     )}
@@ -121,22 +121,22 @@ const CreateCategory = () => {
                                     color="primary"
                                 />
                             }
-                        label="Enabled"
+                            label="Enabled"
                         />
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                         <Button type="submit" variant="contained" color="primary">
-                            Create Category
+                            {isSaving ? 'Saving...' : 'Save'}
                         </Button>
                         <Button variant="outlined" color="secondary" onClick={handleCancel}>
                             Cancel
                         </Button>
                     </Box>
                 </form>
-        </Paper>
+            </Paper>
         </Container>
 
-      );
+    );
 };
 
 export default CreateCategory;

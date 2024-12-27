@@ -128,7 +128,7 @@ const CreateUser = () => {
           Create User
         </Typography>
         <form onSubmit={handleSubmit}>
-          {Object.keys(serverError).length > 0 && (
+          {Object.keys(serverErrorMessages).length > 0 && (
             <Box sx={{ mb: 2 }}>
               <Typography color="error">
                 {serverErrorMessages}

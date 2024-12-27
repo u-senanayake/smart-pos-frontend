@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DistributorService from '../../../services/DistributorService';
 import { Box, Typography, Paper, Container, TextField, Button, MenuItem, CircularProgress, FormControlLabel, Checkbox } from '@mui/material';
-import { validateRequired, validateLength, validateEmail} from '../../../utils/Validations';
+import { validateRequired, validateLength, validateEmail } from '../../../utils/Validations';
 
 const CreateDistributor = () => {
 
@@ -13,36 +13,16 @@ const CreateDistributor = () => {
     const [address, setAddress] = useState('');
     const [enabled, setEnabled] = useState(true);
 
+    const [isSaving, setIsSaving] = useState(false);
     const [errors, setErrors] = useState({});
     const [serverErrors, setServerErrors] = useState({});
     const navigate = useNavigate();
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const distributor = { companyName, email, phoneNo1, phoneNo2, address, enabled };
-        const validationErrors = validateForm(distributor);
-        if (Object.keys(validationErrors).length > 0) {
-          setErrors(validationErrors);
-        } else {
-            DistributorService.createDistributor(distributor)
-          .then(() => {
-            navigate('/productmanagement/distributorlist');
-          })
-          .catch((error) => {
-            if (error.response && error.response.data) {
-              setServerErrors(error.response.data);
-            } else {
-              console.error('Error creating distributor:', error);
-            }
-          });
-        }
-      };
 
     const validateForm = (distributor) => {
         const errors = {};
         //Name
         if (!validateRequired(distributor.companyName)) errors.companyName = 'Name is required';
-        if (!validateLength(distributor.companyName, 10, 100)) errors.companyName='Name must be between 10 and 100 characters';
+        if (!validateLength(distributor.companyName, 10, 100)) errors.companyName = 'Name must be between 10 and 100 characters';
         //Email
         if (!validateRequired(distributor.email)) errors.email = 'Email is required';
         if (!validateLength(distributor.email, 5, 100)) errors.email = 'Email must be less than 100 characters';
@@ -54,17 +34,36 @@ const CreateDistributor = () => {
         if (distributor.phoneNo2 && !validateLength(distributor.phoneNo2, 10, 10)) errors.phoneNo2 = 'Phone number should be 10 characters';
         //Address
         if (!validateRequired(distributor.address)) errors.address = 'Address is required';
-        if (!validateLength(distributor.address, 10, 255)) errors.address = 'Address must be less than 255 characters';      
+        if (!validateLength(distributor.address, 10, 255)) errors.address = 'Address must be less than 255 characters';
         return errors;
     };
 
-    const handleCancel = () => {
-        navigate('/productmanagement/distributorlist');
-      };
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const distributor = { companyName, email, phoneNo1, phoneNo2, address, enabled };
+        const validationErrors = validateForm(distributor);
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+        } else {
+            DistributorService.createDistributor(distributor)
+                .then(() => {
+                    navigate('/productmanagement/distributorlist');
+                })
+                .catch((error) => {
+                    if (error.response && error.response.data) {
+                        setServerErrors(error.response.data);
+                    } else {
+                        console.error('Error creating distributor:', error);
+                    }
+                });
+        }
+    };
 
-      const errorMessages = Object.values(serverErrors);
+    const handleCancel = () => { navigate('/productmanagement/distributorlist'); };
 
-      return (
+    const serverErrorMessages = Object.values(serverErrors);
+
+    return (
         <Container maxWidth="md">
             <Paper sx={{ p: 3, mt: 3 }}>
                 <Typography variant="h4" gutterBottom>
@@ -74,7 +73,7 @@ const CreateDistributor = () => {
                     {Object.keys(serverErrors).length > 0 && (
                         <Box sx={{ mb: 2 }}>
                             <Typography color="error">
-                                {errorMessages}
+                                {serverErrorMessages}
                             </Typography>
                         </Box>
                     )}
@@ -160,7 +159,7 @@ const CreateDistributor = () => {
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                         <Button type="submit" variant="contained" color="primary">
-                            Create Distributor
+                            {isSaving ? 'Saving...' : 'Save'}
                         </Button>
                         <Button variant="outlined" color="secondary" onClick={handleCancel}>
                             Cancel
@@ -170,9 +169,7 @@ const CreateDistributor = () => {
                 </form>
             </Paper>
         </Container>
-      );
-
-
+    );
 };
 
 export default CreateDistributor;

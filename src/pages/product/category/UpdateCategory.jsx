@@ -19,57 +19,57 @@ const UpdateCategory = () => {
 
     useEffect(() => {
         CategoryService.getCategoryById(categoryId)
-        .then((res) => {
-            const category = res.data;
-            setName(category.name);
-            setDescription(category.description);
-            setCatPrefix(category.catPrefix);
-            setEnabled(category.enabled);
-        })
-          .catch((error) => console.error('Error fetching category:', error))
-          .finally(() => setLoading(false));
-      }, [categoryId]);
+            .then((res) => {
+                const category = res.data;
+                setName(category.name);
+                setDescription(category.description);
+                setCatPrefix(category.catPrefix);
+                setEnabled(category.enabled);
+            })
+            .catch((error) => console.error('Error fetching category:', error))
+            .finally(() => setLoading(false));
+    }, [categoryId]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const category = { name, description, catPrefix, enabled };
         const validationErrors = validateForm(category);
         if (Object.keys(validationErrors).length > 0) {
-          setErrors(validationErrors);
+            setErrors(validationErrors);
         } else {
-          setIsSaving(true);
-          CategoryService.updateCategory(categoryId, category)
-            .then(() => {
-              navigate('/productmanagement/categorylist');
-            })
-            .catch((error) => {
-              if (error.response && error.response.data) {
-                setServerError(error.response.data.message);
-              } else {
-                console.error('Error updating category:', error);
-              }
-            })
-            .finally(() => setIsSaving(false));
+            setIsSaving(true);
+            CategoryService.updateCategory(categoryId, category)
+                .then(() => {
+                    navigate('/productmanagement/categorylist');
+                })
+                .catch((error) => {
+                    if (error.response && error.response.data) {
+                        setServerError(error.response.data.message);
+                    } else {
+                        console.error('Error updating category:', error);
+                    }
+                })
+                .finally(() => setIsSaving(false));
         }
-      };
-      const validateForm = (category) => {
-              const errors = {};
-              //Name
-              if (!validateRequired(category.name)) errors.name = 'Name is required';
-              if (!validateLength(category.name, 1, 30)) errors.name='Name must be between 5 and 30 characters';
-              //Description
-              if (!validateRequired(category.description)) errors.description = 'Description is required';
-              if (!validateLength(category.description, 1, 255)) errors.description = 'Description must be less than 255 characters';
-              //Category prefix
-              if (!validateRequired(category.catPrefix)) errors.catPrefix = 'Category prefix is required';
-              if (!validateLength(category.catPrefix, 1, 1)) errors.catPrefix='Category prefix must 1 character';
-      
-              return errors;
-          };
+    };
+    const validateForm = (category) => {
+        const errors = {};
+        //Name
+        if (!validateRequired(category.name)) errors.name = 'Name is required';
+        if (!validateLength(category.name, 1, 30)) errors.name = 'Name must be between 5 and 30 characters';
+        //Description
+        if (!validateRequired(category.description)) errors.description = 'Description is required';
+        if (!validateLength(category.description, 1, 255)) errors.description = 'Description must be less than 255 characters';
+        //Category prefix
+        if (!validateRequired(category.catPrefix)) errors.catPrefix = 'Category prefix is required';
+        if (!validateLength(category.catPrefix, 1, 1)) errors.catPrefix = 'Category prefix must 1 character';
+
+        return errors;
+    };
     const handleCancel = () => {
         navigate('/productmanagement/categorylist');
     };
-    
+
     if (loading) {
         return <Loading />;
     }
@@ -145,15 +145,15 @@ const UpdateCategory = () => {
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                         <Button type="submit" variant="contained" color="primary">
-                            Update User
+                            {isSaving ? 'Updating...' : 'Update'}
                         </Button>
                         <Button variant="outlined" color="secondary" onClick={handleCancel}>
                             Cancel
                         </Button>
                     </Box>
                 </form>
-    </Paper>
-    </Container>
-      );
+            </Paper>
+        </Container>
+    );
 };
 export default UpdateCategory;

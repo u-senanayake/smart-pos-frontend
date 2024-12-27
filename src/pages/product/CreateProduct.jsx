@@ -4,8 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import ProductService from '../../services/ProductService';
 import CategoryService from '../../services/CategoryService';
 import DistributorService from '../../services/DistributorService';
-import { validateEmail, validatePassword, validateRequired, validateLength } from '../../utils/Validations';
+import {validateRequired, validateLength } from '../../utils/Validations';
 import { formatDateToYYYYMMDD } from '../../utils/Dateutils';
+import Loading from "../../components/Loading";
 
 const CreateProduct = () => {
     const [product, setProduct] = useState({
@@ -32,135 +33,133 @@ const CreateProduct = () => {
     const [distributors, setDistributors] = useState([]);
     const [errors, setErrors] = useState({});
     const [serverErrors, setServerErrors] = useState({});
-    const [serverError, setServerError] = useState('');
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         CategoryService.getCategories()
-        .then((res) => setCategories(res.data))
-        .catch((error) => console.error('Error fetching categories:', error))
-        .finally(() => setLoading(false));
+            .then((res) => setCategories(res.data))
+            .catch((error) => {
+                console.error('Error fetching role:', error);
+            }).finally(() => setLoading(false));
     }, []);
 
     useEffect(() => {
         DistributorService.getDistributors()
-        .then((res) => setDistributors(res.data))
-        .catch((error) => console.error('Error fetching distributors:', error))
-        .finally(() => setLoading(false));
+            .then((res) => setDistributors(res.data))
+            .catch((error) => {
+                console.error('Error fetching role:', error);
+            }).finally(() => setLoading(false));
     }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setProduct((prevProduct) => ({
-          ...prevProduct,
-          [name]: value
+            ...prevProduct,
+            [name]: value
         }));
-      };
-      
-      const handleCheckboxChange = (e) => {
+    };
+
+    const handleCheckboxChange = (e) => {
         const { name, checked } = e.target;
         setProduct((prevProduct) => ({
-          ...prevProduct,
-          [name]: checked
+            ...prevProduct,
+            [name]: checked
         }));
-      };
+    };
 
-      const handleCategoryChange = (e) => {
+    const handleCategoryChange = (e) => {
         const { value } = e.target;
         setProduct((prevProduct) => ({
-          ...prevProduct,
-          category: {
-            categoryId: value
-          }
+            ...prevProduct,
+            category: {
+                categoryId: value
+            }
         }));
-      };
+    };
 
-      const handleDistributorChange = (e) => {
+    const handleDistributorChange = (e) => {
         const { value } = e.target;
         setProduct((prevProduct) => ({
-          ...prevProduct,
-          distributor: {
-            distributorId: value
-          }
+            ...prevProduct,
+            distributor: {
+                distributorId: value
+            }
         }));
-      };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const validationErrors = validateForm(product);
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-    } else {
-      ProductService.createProduct(product)
-      .then(() => {
-        navigate('/productmanagement/productlist');
-      })
-      .catch((error) => {
-        if (error.response && error.response.data) {
-          setServerErrors(error.response.data);
-        } else {
-          console.error('Error creating product:', error);
-        }
-      });
-    }
-  };
+    };
 
     const validateForm = (prodcut) => {
-            const errors = {};
-            //Product Name
-            if (!validateRequired(prodcut.productName)) errors.productName = 'Name is required';
-            if (!validateLength(prodcut.productName, 1, 30)) errors.productName='Name must be between 5 and 30 characters';
-            //Description
-            if (!validateRequired(prodcut.description)) errors.description = 'Description is required';
-            if (!validateLength(prodcut.description, 1, 255)) errors.description = 'Description must be less than 255 characters';
-            //SKU
-            if (!validateRequired(prodcut.sku)) errors.sku = 'SKU is required';
-            if (!validateLength(prodcut.sku, 10, 100)) errors.sku='SKU must be between 10 and 100 character';
-            //Category
-            //if (!validateRequired(prodcut.category)) errors.category = 'Category is required';
-            //Distributor
-            //if (!validateRequired(prodcut.distributor)) errors.distributor = 'Distributor is required';
-            //Price
-            //if (!validateRequired(prodcut.price)) errors.price = 'Price is required';
-            //Cost Price
-            //if (!validateRequired(prodcut.costPrice)) errors.costPrice = 'Cost Price is required';
-            //Max Discount
-            //if (!validateRequired(prodcut.maxDiscount)) errors.maxDiscount = 'Max Discount is required';
-            //Stock Level
-            //if (!validateRequired(prodcut.stockLevel)) errors.stockLevel = 'Stock Level is required';
-            //Stock Alert Level
-            //if (!validateRequired(prodcut.stockAlertLevel)) errors.stockAlertLevel = 'Stock Alert Level is required';
-            //Manufacture Date
-            //if (!validateRequired(prodcut.manufactureDate)) errors.manufactureDate = 'Manufacture Date is required';
-            //Expiry Date
-            //if (!validateRequired(prodcut.expiryDate)) errors.expiryDate = 'Expiry Date is required';
-      
-              return errors;
-          };
-    const handleCancel = () => {
-        navigate('/productmanagement/productlist');
-    };
-    if (loading) {
-        return (
-        <Container maxWidth="sm" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-            <CircularProgress />
-        </Container>
-        );
-    }
-    const errorMessages = Object.values(serverErrors);
+        const errors = {};
+        //Product Name
+        if (!validateRequired(prodcut.productName)) errors.productName = 'Name is required';
+        if (!validateLength(prodcut.productName, 1, 30)) errors.productName = 'Name must be between 5 and 30 characters';
+        //Description
+        if (!validateRequired(prodcut.description)) errors.description = 'Description is required';
+        if (!validateLength(prodcut.description, 1, 255)) errors.description = 'Description must be less than 255 characters';
+        //SKU
+        if (!validateRequired(prodcut.sku)) errors.sku = 'SKU is required';
+        if (!validateLength(prodcut.sku, 10, 100)) errors.sku = 'SKU must be between 10 and 100 character';
+        //Category
+        //if (!validateRequired(prodcut.category)) errors.category = 'Category is required';
+        //Distributor
+        //if (!validateRequired(prodcut.distributor)) errors.distributor = 'Distributor is required';
+        //Price
+        //if (!validateRequired(prodcut.price)) errors.price = 'Price is required';
+        //Cost Price
+        //if (!validateRequired(prodcut.costPrice)) errors.costPrice = 'Cost Price is required';
+        //Max Discount
+        //if (!validateRequired(prodcut.maxDiscount)) errors.maxDiscount = 'Max Discount is required';
+        //Stock Level
+        //if (!validateRequired(prodcut.stockLevel)) errors.stockLevel = 'Stock Level is required';
+        //Stock Alert Level
+        //if (!validateRequired(prodcut.stockAlertLevel)) errors.stockAlertLevel = 'Stock Alert Level is required';
+        //Manufacture Date
+        //if (!validateRequired(prodcut.manufactureDate)) errors.manufactureDate = 'Manufacture Date is required';
+        //Expiry Date
+        //if (!validateRequired(prodcut.expiryDate)) errors.expiryDate = 'Expiry Date is required';
 
-      return (
+        return errors;
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const validationErrors = validateForm(product);
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+        } else {
+            ProductService.createProduct(product)
+                .then(() => {
+                    navigate('/productmanagement/productlist');
+                })
+                .catch((error) => {
+                    if (error.response && error.response.data) {
+                        setServerErrors(error.response.data);
+                    } else {
+                        console.error('Error creating product:', error);
+                    }
+                });
+        }
+    };
+
+    const handleCancel = () => { navigate('/productmanagement/productlist'); };
+
+    if (loading) {
+        return <Loading />;
+    }
+
+    const serverErrorMessages = Object.values(serverErrors);
+
+    return (
         <Container maxWidth="md">
-          <Paper sx={{ p: 3, mt: 3 }}>
-            <Typography variant="h4" gutterBottom>
-              Create Product
-            </Typography>
-            <form onSubmit={handleSubmit}>
-                    {serverError && (
+            <Paper sx={{ p: 3, mt: 3 }}>
+                <Typography variant="h4" gutterBottom>
+                    Create Product
+                </Typography>
+                <form onSubmit={handleSubmit}>
+                    {Object.keys(serverErrorMessages).length > 0 && (
                         <Box sx={{ mb: 2 }}>
                             <Typography color="error">
-                                {serverError}
+                                {serverErrorMessages}
                             </Typography>
                         </Box>
                     )}
@@ -208,44 +207,44 @@ const CreateProduct = () => {
                     </Box>
                     <Box sx={{ mb: 2 }}>
                         <TextField
-                        select
-                        label="Category"
-                        name="category"
-                        value={product.category.categoryId}
-                        onChange={handleCategoryChange}
-                        fullWidth
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        error={!!errors.category}
-                        helperText={errors.category}
+                            select
+                            label="Category"
+                            name="category"
+                            value={product.category.categoryId}
+                            onChange={handleCategoryChange}
+                            fullWidth
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            error={!!errors.category}
+                            helperText={errors.category}
                         >
-                        {categories.map((category) => (
-                            <MenuItem key={category.categoryId} value={category.categoryId}>
-                            {category.name}
-                            </MenuItem>
-                        ))}
+                            {categories.map((category) => (
+                                <MenuItem key={category.categoryId} value={category.categoryId}>
+                                    {category.name}
+                                </MenuItem>
+                            ))}
                         </TextField>
                     </Box>
                     <Box sx={{ mb: 2 }}>
                         <TextField
-                        select
-                        label="Distributor"
-                        name="distributer"
-                        value={product.distributor.distributorId}
-                        onChange={handleDistributorChange}
-                        fullWidth
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        error={!!errors.distributor}
-                        helperText={errors.distributor}
+                            select
+                            label="Distributor"
+                            name="distributer"
+                            value={product.distributor.distributorId}
+                            onChange={handleDistributorChange}
+                            fullWidth
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            error={!!errors.distributor}
+                            helperText={errors.distributor}
                         >
-                        {distributors.map((distributor) => (
-                            <MenuItem key={distributor.distributorId} value={distributor.distributorId}>
-                            {distributor.companyName}
-                            </MenuItem>
-                        ))}
+                            {distributors.map((distributor) => (
+                                <MenuItem key={distributor.distributorId} value={distributor.distributorId}>
+                                    {distributor.companyName}
+                                </MenuItem>
+                            ))}
                         </TextField>
                     </Box>
                     <Grid2 container spacing={2}>
@@ -343,8 +342,10 @@ const CreateProduct = () => {
                             required
                             error={!!errors.manufactureDate}
                             helperText={errors.manufactureDate}
-                            InputLabelProps={{
-                                shrink: true,
+                            slotProps={{
+                                inputLabel: {
+                                    shrink: true,
+                                },
                             }}
                         />
                     </Box>
@@ -361,8 +362,10 @@ const CreateProduct = () => {
                             required
                             error={!!errors.expireDate}
                             helperText={errors.expireDate}
-                            InputLabelProps={{
-                                shrink: true,
+                            slotProps={{
+                                inputLabel: {
+                                    shrink: true,
+                                },
                             }}
                         />
                     </Box>
@@ -381,16 +384,16 @@ const CreateProduct = () => {
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                         <Button type="submit" variant="contained" color="primary">
-                            Create Product
+                        {isSaving ? 'Saving...' : 'Save'}
                         </Button>
                         <Button variant="outlined" color="secondary" onClick={handleCancel}>
                             Cancel
                         </Button>
                     </Box>
                 </form>
-        </Paper>
+            </Paper>
         </Container>
-      );
+    );
 
 };
 

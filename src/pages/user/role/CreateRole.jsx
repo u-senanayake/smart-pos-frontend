@@ -8,6 +8,7 @@ const CreateRole = () => {
     const [roleName, setRoleName] = useState('');
     const [description, setDescription] = useState('');
     const [enabled, setEnabled] = useState(false);
+
     const [isSaving, setIsSaving] = useState(false);
     const [formError, setFormError] = useState({});
     const [serverError, setServerError] = useState('');
@@ -16,11 +17,11 @@ const CreateRole = () => {
     const validateForm = (role) => {
         const formError = {};
         if (!validateRequired(role.roleName)) formError.roleName = 'Role name is required';
-        if (!validateLength(role.roleName, 10, 25)) formError.roleName='Role name must be between 10 and 25 characters';
+        if (!validateLength(role.roleName, 10, 25)) formError.roleName = 'Role name must be between 10 and 25 characters';
         if (!validateRequired(role.description)) formError.description = 'Role description is required';
-        if (!validateLength(role.description, 10, 100)) formError.description='Role description must be between 10 and 100 characters';
+        if (!validateLength(role.description, 10, 100)) formError.description = 'Role description must be between 10 and 100 characters';
         return formError;
-    };    
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -31,14 +32,14 @@ const CreateRole = () => {
         } else {
             setIsSaving(true);
             RoleService.createRole(role)
-            .then(() => navigate('/usermanagement/rolelist'))
-            .catch((error) => {
-                if (error.response && error.response.data) {
-                    setServerError(error.response.data.message);
-                  } else {
-                    console.error('Error updating user:', error);
-                  }
-            }).finally(() => setIsSaving(false));;
+                .then(() => navigate('/usermanagement/rolelist'))
+                .catch((error) => {
+                    if (error.response && error.response.data) {
+                        setServerError(error.response.data.message);
+                    } else {
+                        console.error('Error updating user:', error);
+                    }
+                }).finally(() => setIsSaving(false));;
         }
     };
 
@@ -52,13 +53,13 @@ const CreateRole = () => {
                     Update Role
                 </Typography>
                 <form onSubmit={handleSubmit}>
-                    {Object.keys(serverError).length > 0 && (
-                                <Box sx={{ mb: 2 }}>
-                                  <Typography color="error">
-                                    {serverErrorMessages}
-                                  </Typography>
-                                </Box>
-                              )}
+                    {Object.keys(serverErrorMessages).length > 0 && (
+                        <Box sx={{ mb: 2 }}>
+                            <Typography color="error">
+                                {serverErrorMessages}
+                            </Typography>
+                        </Box>
+                    )}
                     <TextField
                         label="Role Name"
                         variant="outlined"
@@ -98,14 +99,14 @@ const CreateRole = () => {
                             label="Enabled"
                         />
                     </Box>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-                    <Button type="submit" variant="contained" color="primary">
-                        {isSaving ? 'Updating...' : 'Update'}
-                    </Button>
-                    <Button variant="outlined" color="secondary" onClick={handleCancel}>
-                        Cancel
-                    </Button>
-                </Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+                        <Button type="submit" variant="contained" color="primary">
+                            {isSaving ? 'Updating...' : 'Update'}
+                        </Button>
+                        <Button variant="outlined" color="secondary" onClick={handleCancel}>
+                            Cancel
+                        </Button>
+                    </Box>
                 </form>
             </Paper>
         </Container>
