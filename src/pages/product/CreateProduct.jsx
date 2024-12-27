@@ -24,6 +24,7 @@ const CreateProduct = () => {
         maxDiscount: '',
         stockLevel: '',
         stockAlertLevel: '',
+        initialStock:'',
         manufactureDate: '',
         expireDate: '',
         enabled: true
@@ -328,6 +329,22 @@ const CreateProduct = () => {
                                     required
                                     error={!!errors.stockAlertLevel}
                                     helperText={errors.stockAlertLevel}
+                                />
+                            </Box>
+                        </Grid2>
+                        <Grid2 item xs={4}>
+                            <Box sx={{ mb: 2 }}>
+                                <TextField
+                                    label="Initial Stock"
+                                    name="initialStock"
+                                    value={product.initialStock}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    variant="outlined"
+                                    margin="normal"
+                                    required
+                                    error={!!errors.initialStock}
+                                    helperText={errors.initialStock}
                                 />
                             </Box>
                         </Grid2>
