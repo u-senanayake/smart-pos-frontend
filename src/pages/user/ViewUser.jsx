@@ -5,7 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { renderStatusIcon, renderLockIcon, } from '../../utils/utils';
 import { formatDate } from '../../utils/Dateutils';
 import UserService from '../../services/UserService';
-import { Loading, ErrorMessage } from "../../utils/FieldUtils";
+import { Loading, ErrorMessage, ReadOnlyField } from "../../utils/FieldUtils";
 
 const ViewUser = () => {
 
@@ -32,17 +32,6 @@ const ViewUser = () => {
     navigate(`/usermanagement/user/updateuser/${userId}`);
   };
 
-  const ReadOnlyTextField = ({ label, value }) => (
-    <TextField
-      label={label}
-      value={value}
-      fullWidth
-      slotProps={{ input: { readOnly: true } }}
-      variant="outlined"
-      margin="normal"
-    />
-  );
-
   if (loading) {
     return <Loading />;
   }
@@ -65,31 +54,31 @@ const ViewUser = () => {
         </Typography>
         <Grid2 container spacing={2}>
           <Grid2 item xs={6}>
-              <ReadOnlyTextField label="User ID" value={user.userId} />
+              <ReadOnlyField label="User ID" value={user.userId} />
           </Grid2>
           <Grid2 item xs={6}>
-              <ReadOnlyTextField label="Username" value={user.username} />
+              <ReadOnlyField label="Username" value={user.username} />
           </Grid2>
           <Grid2 item xs={6}>
-            <ReadOnlyTextField label="Role" value={user.role.roleName} />
+            <ReadOnlyField label="Role" value={user.role.roleName} />
           </Grid2>
         </Grid2>
         <Grid2 container spacing={2}>
           <Grid2 item xs={6}>
-            <ReadOnlyTextField label="First Name" value={user.firstName} />
+            <ReadOnlyField label="First Name" value={user.firstName} />
           </Grid2>
           <Grid2 item xs={6}>
-            <ReadOnlyTextField label="Last Name" value={user.lastName} />
+            <ReadOnlyField label="Last Name" value={user.lastName} />
           </Grid2>
         </Grid2>
-        <ReadOnlyTextField label="Email" value={user.email} />
-        <ReadOnlyTextField label="Address" value={user.address} />
+        <ReadOnlyField label="Email" value={user.email} />
+        <ReadOnlyField label="Address" value={user.address} />
         <Grid2 container spacing={2}>
           <Grid2 item xs={6}>
-            <ReadOnlyTextField label="Phone Number 1" value={user.phoneNo1} />
+            <ReadOnlyField label="Phone Number 1" value={user.phoneNo1} />
           </Grid2>
           <Grid2 item xs={6}>
-            <ReadOnlyTextField label="Phone Number 2" value={user.phoneNo2} />
+            <ReadOnlyField label="Phone Number 2" value={user.phoneNo2} />
           </Grid2>
         </Grid2>
         <Grid2 container spacing={2}>
@@ -100,13 +89,13 @@ const ViewUser = () => {
               <Typography variant="h5">Locked:{renderLockIcon(user.locked)}</Typography>
           </Grid2>
         </Grid2>
-        <ReadOnlyTextField label="Created At" value={formatDate(user.createdAt)} />
-        <ReadOnlyTextField label="Created By" value={`${user.createdUser.firstName} ${user.createdUser.lastName} (${user.createdUser.username})`} />
-        <ReadOnlyTextField label="Updated At" value={formatDate(user.updatedAt)} />
-        <ReadOnlyTextField label="Updated By" value={`${user.updatedUser.firstName} ${user.updatedUser.lastName} (${user.updatedUser.username})`} />
+        <ReadOnlyField label="Created At" value={formatDate(user.createdAt)} />
+        <ReadOnlyField label="Created By" value={`${user.createdUser.firstName} ${user.createdUser.lastName} (${user.createdUser.username})`} />
+        <ReadOnlyField label="Updated At" value={formatDate(user.updatedAt)} />
+        <ReadOnlyField label="Updated By" value={`${user.updatedUser.firstName} ${user.updatedUser.lastName} (${user.updatedUser.username})`} />
         {user.deleted && (<>
-          <ReadOnlyTextField label="Deleted At" value={formatDate(user.deletedAt)} /> 
-          <ReadOnlyTextField label="Delete By" value={`${user.deletedUser?.firstName} ${user.deletedUser?.lastName} (${user.deletedUser?.username})`} /> 
+          <ReadOnlyField label="Deleted At" value={formatDate(user.deletedAt)} /> 
+          <ReadOnlyField label="Delete By" value={`${user.deletedUser?.firstName} ${user.deletedUser?.lastName} (${user.deletedUser?.username})`} /> 
         </>)}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
           <Button variant="contained" color="primary" onClick={handleUpdate}> Update </Button>

@@ -15,7 +15,7 @@ import {
 export const ReadOnlyField = ({ label, value }) => (
   <TextField
     label={label}
-    value={value || "N/A"} // Fallback to "N/A" if value is null or undefined
+    value={value || "N/A"}
     fullWidth
     slotProps={{ input: { readOnly: true } }}
     variant="outlined"

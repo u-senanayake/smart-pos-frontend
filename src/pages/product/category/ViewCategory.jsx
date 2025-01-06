@@ -4,9 +4,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import CategoryService from '../../../services/CategoryService';
 import { renderStatusIcon, } from "../../../utils/utils";
 import { formatDate } from "../../../utils/Dateutils";
-import { Loading } from '../../../utils/FieldUtils'
+import { Loading, ReadOnlyField } from '../../../utils/FieldUtils'
 
-import { Container, Typography, Box, Paper, Button, TextField, Grid2,} from "@mui/material";
+import { Container, Typography, Box, Paper, Button, TextField, Grid2, } from "@mui/material";
 
 const ViewCategory = () => {
   const { categoryId } = useParams();
@@ -28,15 +28,15 @@ const ViewCategory = () => {
   if (loading) {
     return <Loading />;
   }
-  
+
   if (!category) {
-      return (
-        <Container maxWidth="sm">
-          <Typography variant="h6" color="error">
-            Category not found.
-          </Typography>
-        </Container>
-      );
+    return (
+      <Container maxWidth="sm">
+        <Typography variant="h6" color="error">
+          Category not found.
+        </Typography>
+      </Container>
+    );
   }
 
   const handleUpdate = () => {
@@ -52,152 +52,48 @@ const ViewCategory = () => {
         <Grid2 container spacing={2}>
           <Grid2 item xs={4}>
             <Box sx={{ mb: 2 }}>
-              <TextField
-                label="Category ID"
-                value={category.categoryId}
-                fullWidth
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-                variant="outlined"
-                margin="normal"
-              />
+              <ReadOnlyField label="Category ID" value={category.categoryId} />
             </Box>
           </Grid2>
           <Grid2 item xs={4}>
             <Box sx={{ mb: 2 }}>
-              <TextField
-                label="Name"
-                value={category.name}
-                fullWidth
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-                variant="outlined"
-                margin="normal"
-              />
+              <ReadOnlyField label="Name" value={category.name} />
             </Box>
           </Grid2>
           <Grid2 item xs={4}>
             <Box sx={{ mb: 2 }}>
-              <TextField
-                label="Category Prefix"
-                value={category.catPrefix}
-                fullWidth
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-                variant="outlined"
-                margin="normal"
-              />
+              <ReadOnlyField label="Category Prefix" value={category.catPrefix} />
             </Box>
           </Grid2>
         </Grid2>
-          <Box sx={{ mb: 2 }}>
-              <TextField
-                label="Description"
-                value={category.description}
-                fullWidth
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-                variant="outlined"
-                margin="normal"
-              />
-          </Box>
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="h5">Enabled: {renderStatusIcon(category.enabled)}</Typography>
-          </Box>
-          <TextField
-            label="Created At"
-            value={formatDate(category.createdAt)}
-            fullWidth
-            slotProps={{
-            input: {
-              readOnly: true,
-            },}}
+        <Box sx={{ mb: 2 }}>
+          <ReadOnlyField label="Description" value={category.description} />
+        </Box>
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="h5">Enabled: {renderStatusIcon(category.enabled)}</Typography>
+        </Box>
+        <ReadOnlyField label="Created At" value={formatDate(category.createdAt)} />
+        <ReadOnlyField label="Created By" value={`${category.createdUser.firstName} ${category.createdUser.lastName} (${category.createdUser.username})`} />
+        <ReadOnlyField label="Updated At" value={formatDate(category.updatedAt)} />
+        <ReadOnlyField label="Updated By" value={`${category.updatedUser.firstName} ${category.updatedUser.lastName} (${category.updatedUser.username})`} />
+        {category.deleted && (
+          <>
+            <ReadOnlyField label="Deleted At" value={formatDate(category.deletedAt)} />
+            <ReadOnlyField label="Deleted By" value={`${category.deletedUser?.firstName} ${category.deletedUser?.lastName} (${category.deletedUser?.username})`} />
+          </>
+        )}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+          <Button variant="contained" color="primary" onClick={handleUpdate}>
+            Update
+          </Button>
+          <Button
             variant="outlined"
-            margin="normal"
-          />
-          <TextField
-            label="Created By"
-            value={`${category.createdUser.firstName} ${category.createdUser.lastName} (${category.createdUser.username})`}
-            fullWidth
-            slotProps={{
-            input: {
-              readOnly: true,
-            },}}
-            variant="outlined"
-            margin="normal"
-          />
-          <TextField
-            label="Updated At"
-            value={formatDate(category.updatedAt)}
-            fullWidth
-            slotProps={{
-            input: {
-              readOnly: true,
-            },}}
-            variant="outlined"
-            margin="normal"
-          />
-          <TextField
-            label="Updated By"
-            value={`${category.updatedUser.firstName} ${category.updatedUser.lastName} (${category.updatedUser.username})`}
-            fullWidth
-            slotProps={{
-            input: {
-              readOnly: true,
-            },}}
-            variant="outlined"
-            margin="normal"
-          />
-          {category.deleted && (
-            <>
-              <TextField
-                label="Deleted At"
-                value={formatDate(category.deletedAt)}
-                fullWidth
-                slotProps={{
-                input: {
-                  readOnly: true,
-                },}}
-                variant="outlined"
-                margin="normal"
-              />
-              <TextField
-                label="Deleted By"
-                value={`${category.deletedUser?.firstName} ${category.deletedUser?.lastName} (${category.deletedUser?.username})`}
-                fullWidth
-                slotProps={{
-                input: {
-                  readOnly: true,
-                  },}}
-                variant="outlined"
-                margin="normal"
-              />
-            </>
-          )}
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-            <Button variant="contained" color="primary" onClick={handleUpdate}>
-              Update
-            </Button>
-            <Button
-              variant="outlined"
-                color="secondary"
-                onClick={cancel}
-              >
-              Cancel
-            </Button>
-          </Box>
+            color="secondary"
+            onClick={cancel}
+          >
+            Cancel
+          </Button>
+        </Box>
       </Paper>
     </Container>
   );

@@ -5,7 +5,7 @@ import { Container, Typography, Box, Paper, Button, TextField, } from "@mui/mate
 import RoleService from '../../../services/RoleService';
 import { renderStatusIcon, } from "../../../utils/utils";
 import { formatDate } from "../../../utils/Dateutils";
-import { Loading, ErrorMessage } from "../../../utils/FieldUtils";
+import { Loading, ErrorMessage, ReadOnlyField } from "../../../utils/FieldUtils";
 
 
 const ViewRole = () => {
@@ -34,17 +34,6 @@ const ViewRole = () => {
     navigate(`/usermanagement/role/updaterole/${roleId}`);
   };
 
-  const ReadOnlyTextField = ({ label, value }) => (
-    <TextField
-      label={label}
-      value={value}
-      fullWidth
-      slotProps={{ input: { readOnly: true } }}
-      variant="outlined"
-      margin="normal"
-    />
-  );
-
   if (loading) {
     return <Loading />;
   }
@@ -65,16 +54,16 @@ const ViewRole = () => {
         <Typography variant="h4" gutterBottom>
           View Role
         </Typography>
-        <ReadOnlyTextField label="Role ID" value={role.roleId} />
-        <ReadOnlyTextField label="Role Name" value={role.roleName} />
-        <ReadOnlyTextField label="Description" value={role.description} />
-        <ReadOnlyTextField label="Created At" value={formatDate(role.createdAt)} />
-        <ReadOnlyTextField label={`Created By`} value={`${role.createdUser.firstName} ${role.createdUser.lastName} (${role.createdUser.username})`} />
-        <ReadOnlyTextField label="Updated At" value={formatDate(role.updatedAt)} />
-        <ReadOnlyTextField label={`Updated By`} value={`${role.updatedUser.firstName} ${role.updatedUser.lastName} (${role.updatedUser.username})`} />
+        <ReadOnlyField label="Role ID" value={role.roleId} />
+        <ReadOnlyField label="Role Name" value={role.roleName} />
+        <ReadOnlyField label="Description" value={role.description} />
+        <ReadOnlyField label="Created At" value={formatDate(role.createdAt)} />
+        <ReadOnlyField label={`Created By`} value={`${role.createdUser.firstName} ${role.createdUser.lastName} (${role.createdUser.username})`} />
+        <ReadOnlyField label="Updated At" value={formatDate(role.updatedAt)} />
+        <ReadOnlyField label={`Updated By`} value={`${role.updatedUser.firstName} ${role.updatedUser.lastName} (${role.updatedUser.username})`} />
         {role.deleted && (<>
-        <ReadOnlyTextField label="Deleted At" value={formatDate(role.deletedAt)} />
-        <ReadOnlyTextField label={`Deleted By`} value={`${role.deletedUser.firstName} ${role.deletedUser.lastName} (${role.deletedUser.username})`} />
+        <ReadOnlyField label="Deleted At" value={formatDate(role.deletedAt)} />
+        <ReadOnlyField label={`Deleted By`} value={`${role.deletedUser.firstName} ${role.deletedUser.lastName} (${role.deletedUser.username})`} />
         </>)}
         <Box sx={{ mb: 2 }}>
           <Typography variant="h6">Enabled:</Typography>
