@@ -4,41 +4,43 @@ import UpdateIcon from "@mui/icons-material/Update";
 import AddIcon from "@mui/icons-material/Add";
 import { Container, Typography, Box, Paper, Button, TextField, Grid2, } from "@mui/material";
 
-import AddStockDialog from '../../pages/product/inventory/AddStockDialog';
 import ProductService from '../../services/ProductService';
 import { ReadOnlyField, Loading } from '../../utils/FieldUtils'
 import { formatDate } from "../../utils/Dateutils";
 import { renderStatusIcon, formatPrice, formatPhoneNumber, } from "../../utils/utils";
+import AddStockDialog from '../../pages/product/inventory/AddStockDialog';
 
 const ViewProduct = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [open, setOpen] = useState(false);
+  const [openAddStockDialog, setOpenAddStockDialog] = useState(false);
   const navigate = useNavigate();
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleCloseAndRefresh = () => {
-    setOpen(false);
-    ProductService.getProductById(id)
-      .then((res) => {
-        setProduct(res.data);
-      })
-      .catch((error) => console.error('Error fetching updated product:', error)).finally(() => setLoading(false));
-  };
-
 
   useEffect(() => {
     ProductService.getProductById(id)
       .then((res) => {
         setProduct(res.data);
       })
-      .catch((error) => console.error('Error fetching product:', error))
+      .catch((error) => console.error('Error fetching product or inventory:', error))
       .finally(() => setLoading(false));
   }, [id]);
+
+  const handleStockAdded = () => {
+    ProductService.getProductById(product.id)
+      .then((res) => {
+        setProduct(res.data);
+      })
+      .catch((error) => console.error('Error fetching updated inventory:', error));
+  };
+
+  const handleOpenAddStockDialog = () => {
+    setOpenAddStockDialog(true);
+  };
+
+  const handleCloseAddStockDialog = () => {
+    setOpenAddStockDialog(false);
+  };
 
   const cancel = () => navigate('/productmanagement/productlist');
 
@@ -191,11 +193,11 @@ const ViewProduct = () => {
           </Grid2>
         </Grid2>
         <Box sx={{ display: 'flex', mt: 2, gap: 4 }}>
-          <Button variant="contained" startIcon={<AddIcon />} color="info" onClick={handleClickOpen}>
+          <Button variant="contained" startIcon={<AddIcon />} color="info" onClick={handleOpenAddStockDialog}>
             Add Stock
           </Button>
-          <AddStockDialog open={open} onClose={handleCloseAndRefresh} productId={product.id} />
-          <Button variant="contained" startIcon={<UpdateIcon />} color="secondary" onClick={handleClickOpen}>
+          <AddStockDialog open={openAddStockDialog} onClose={handleCloseAddStockDialog} productId={product.id} inventory={product.inventory} onStockAdded={handleStockAdded}/>
+          <Button variant="contained" startIcon={<UpdateIcon />} color="secondary" >
             Adjust Stock
           </Button>
         </Box>
