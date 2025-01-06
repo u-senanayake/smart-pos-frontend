@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
+
 import UserService from "../../services/UserService";
 import { formatPhoneNumber, renderStatusIcon, renderLockIcon,} from "../../utils/utils";
-import SkeletonLoading from "../../components/SkeletonLoading";
-import ErrorMessage from "../../components/ErrorMessage";
-import ConfirmationDialog from "./../../components/ConfirmationDialog";
+import { ConfirmationDialog, SkeletonLoading, ErrorMessage } from "./../../utils/FieldUtils";
 
 import { Link } from "react-router-dom";
 import {  Table,  

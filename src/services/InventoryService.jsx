@@ -48,6 +48,6 @@ class InventoryService {
         const response = await axios.get(`${API_BASE_URL}/checkLowStock`);
         return response;
     }
-}S
+}
 
 export default new InventoryService();

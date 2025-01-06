@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Container, TextField, Button, MenuItem, CircularProgress, FormControlLabel, Checkbox, Grid2 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+
 import ProductService from '../../services/ProductService';
 import CategoryService from '../../services/CategoryService';
 import DistributorService from '../../services/DistributorService';
 import {validateRequired, validateLength } from '../../utils/Validations';
 import { formatDateToYYYYMMDD } from '../../utils/Dateutils';
-import Loading from "../../components/Loading";
+import { Loading } from "../../utils/FieldUtils";
 
 const CreateProduct = () => {
     const [product, setProduct] = useState({

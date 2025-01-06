@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Container, TextField, Button, MenuItem, FormControlLabel, Checkbox } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+
 import UserService from '../../services/UserService';
 import RoleService from '../../services/RoleService';
 import { validateEmail, validatePassword, validateRequired, validateLength } from '../../utils/Validations';
-import Loading from "../../components/Loading";
+import { Loading }  from "../../utils/FieldUtils";
 
 const CreateUser = () => {
   const [user, setUser] = useState({

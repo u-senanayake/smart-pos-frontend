@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import RoleService from '../../../services/RoleService';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Container, TextField, Button, Typography, Box, Paper, FormControlLabel, Checkbox} from '@mui/material';
-import Loading from "../../../components/Loading";
-import ErrorMessage from "../../../components/ErrorMessage";
+
+import RoleService from '../../../services/RoleService';
+import { Loading , ErrorMessage} from "../../../utils/FieldUtils";
 import { validateRequired, validateLength, } from '../../../utils/Validations';
 
 const UpdateRole = () => {

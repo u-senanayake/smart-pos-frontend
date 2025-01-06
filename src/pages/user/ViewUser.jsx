@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Container, TextField, Grid2, CircularProgress, Button } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
+
 import { renderStatusIcon, renderLockIcon, } from '../../utils/utils';
 import { formatDate } from '../../utils/Dateutils';
 import UserService from '../../services/UserService';
-import Loading from "../../components/Loading";
-import ErrorMessage from "../../components/ErrorMessage";
+import { Loading, ErrorMessage } from "../../utils/FieldUtils";
 
 const ViewUser = () => {
 

@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Container, TextField, Button, FormControlLabel, Checkbox } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import BrandService from '../../../services/BrandService';
+
 import { validateRequired, validateLength } from '../../../utils/Validations';
-import Loading from "../../../components/Loading";
+import { Loading } from '../../../utils/FieldUtils'
 
 const UpdateBrand = () => {
 

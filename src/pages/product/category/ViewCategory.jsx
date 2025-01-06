@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+
 import CategoryService from '../../../services/CategoryService';
 import { renderStatusIcon, } from "../../../utils/utils";
 import { formatDate } from "../../../utils/Dateutils";
-import Loading from "../../../components/Loading";
+import { Loading } from '../../../utils/FieldUtils'
 
 import { Container, Typography, Box, Paper, Button, TextField, Grid2,} from "@mui/material";
 

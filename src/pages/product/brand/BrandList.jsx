@@ -3,9 +3,7 @@ import { Link } from "react-router-dom";
 import BrandService from "../../../services/BrandService";
 import { renderStatusIcon } from "../../../utils/utils";
 import { formatDate } from '../../../utils/Dateutils';
-import ErrorMessage from "../../../components/ErrorMessage";
-import ConfirmationDialog from "./../../../components/ConfirmationDialog";
-import SkeletonLoading from "../../../components/SkeletonLoading";
+import { SkeletonLoading, ConfirmationDialog, ErrorMessage } from '../../../utils/FieldUtils'
 
 import {
   Table,

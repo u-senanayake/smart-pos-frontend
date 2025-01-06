@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Container, TextField, Button, MenuItem, FormControlLabel, Checkbox } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
+
 import UserService from '../../services/UserService';
 import RoleService from '../../services/RoleService';
 import { validateEmail, validatePassword, validateRequired, validateLength } from '../../utils/Validations';
-import Loading from "../../components/Loading";
-import ErrorMessage from "../../components/ErrorMessage";
+import { Loading, ErrorMessage } from "../../utils/FieldUtils";
 
 const UpdateUser = () => {
   const { userId } = useParams();

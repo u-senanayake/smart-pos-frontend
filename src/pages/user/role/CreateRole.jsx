@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Container, TextField, Button, Typography, Box, Paper, FormControlLabel, Checkbox } from '@mui/material';
+
 import RoleService from '../../../services/RoleService';
 import { validateRequired, validateLength, } from '../../../utils/Validations';
-import { Container, TextField, Button, Typography, Box, Paper, FormControlLabel, Checkbox } from '@mui/material';
 
 const CreateRole = () => {
     const [roleName, setRoleName] = useState('');

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import CategoryService from '../../../services/CategoryService';
+
 import { Box, Typography, Paper, Container, TextField, Button, MenuItem, CircularProgress, FormControlLabel, Checkbox } from '@mui/material';
+
+import CategoryService from '../../../services/CategoryService';
 import { validateRequired, validateLength } from '../../../utils/Validations';
 
 const CreateCategory = () => {

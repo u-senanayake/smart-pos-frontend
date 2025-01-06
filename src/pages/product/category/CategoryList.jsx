@@ -4,9 +4,7 @@ import { Link } from "react-router-dom";
 import CategoryService from "../../../services/CategoryService";
 import { renderStatusIcon } from "../../../utils/utils";
 import { formatDate } from '../../../utils/Dateutils';
-import SkeletonLoading from "../../../components/SkeletonLoading";
-import ErrorMessage from "../../../components/ErrorMessage";
-import ConfirmationDialog from "./../../../components/ConfirmationDialog";
+import { SkeletonLoading, ErrorMessage, ConfirmationDialog} from '../../../utils/FieldUtils'
 
 import {
   Table,

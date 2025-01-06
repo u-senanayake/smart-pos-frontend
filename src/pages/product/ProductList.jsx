@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton, Typography, Pagination} from "@mui/material";
+
 import ProductService from "../../services/ProductService";
 import { renderStatusIcon, formatPrice } from "../../utils/utils";
 import { formatDate } from '../../utils/Dateutils';
-import SkeletonLoading from "../../components/SkeletonLoading";
-import ErrorMessage from "../../components/ErrorMessage";
-import ConfirmationDialog from "./../../components/ConfirmationDialog";
+import { SkeletonLoading, ErrorMessage, ConfirmationDialog } from "../../utils/FieldUtils";
 
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton, Typography, Pagination} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";

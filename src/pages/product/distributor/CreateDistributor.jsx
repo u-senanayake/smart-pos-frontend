@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Box, Typography, Paper, Container, TextField, Button, FormControlLabel, Checkbox } from '@mui/material';
+
 import DistributorService from '../../../services/DistributorService';
-import { Box, Typography, Paper, Container, TextField, Button, MenuItem, CircularProgress, FormControlLabel, Checkbox } from '@mui/material';
 import { validateRequired, validateLength, validateEmail } from '../../../utils/Validations';
 
 const CreateDistributor = () => {
