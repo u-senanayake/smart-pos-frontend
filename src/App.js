@@ -46,7 +46,8 @@ import ProductList from "./pages/product/ProductList"
 import ViewProduct from "./pages/product/ViewProduct"
 import CreateProduct from "./pages/product/CreateProduct"
 import UpdateProduct from "./pages/product/UpdateProduct"
-
+//Inventory
+import InventoryList from './pages/product/inventory/InventoryList'
 
 //Customer Pages
 
@@ -155,6 +156,8 @@ const App = () => {
                     <Route path="/productmanagement/product/createproduct" element={<CreateProduct />}/>
                     <Route path="/productmanagement/product/updateproduct/:id" element={<UpdateProduct />}/>
                     <Route path="/productmanagement/product/viewproduct/:id" element={<ViewProduct />}/>
+                    {/* Inventory */}
+                    <Route path="/productmanagement/inventorylist" element={<InventoryList />}/>
                 </Routes>
             </Layout>
         </Router>

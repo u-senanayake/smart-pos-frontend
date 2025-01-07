@@ -124,16 +124,6 @@ const ViewProduct = () => {
               <ReadOnlyField label="Min Price" value={formatPrice(product.minPrice)} />
             </Box>
           </Grid2>
-          <Grid2 item xs={4}>
-            <Box sx={{ mb: 2 }}>
-              <ReadOnlyField label="Stock Level" value={formatPrice(product.stockLevel)} />
-            </Box>
-          </Grid2>
-          <Grid2 item xs={4}>
-            <Box sx={{ mb: 2 }}>
-              <ReadOnlyField label="Stock Alert Level" value={formatPrice(product.stockAlertLevel)} />
-            </Box>
-          </Grid2>
         </Grid2>
         <Box sx={{ mb: 2 }}>
           <Typography variant="h5">Enabled: {renderStatusIcon(product.enabled)}</Typography>
@@ -196,6 +186,17 @@ const ViewProduct = () => {
               <ReadOnlyField label="Quantity" value={product.inventory.quantity} />
             </Box>
           </Grid2>
+          <Grid2 item xs={4}>
+            <Box sx={{ mb: 2 }}>
+              <ReadOnlyField label="Stock Warning Level" value={formatPrice(product.inventory.stockWarningLevel)} />
+            </Box>
+          </Grid2>
+          <Grid2 item xs={4}>
+            <Box sx={{ mb: 2 }}>
+              <ReadOnlyField label="Stock Alert Level" value={formatPrice(product.inventory.stockAlertLevel)} />
+            </Box>
+          </Grid2>
+
           <Grid2 item xs={4}>
             <Box sx={{ mb: 2 }}>
               <ReadOnlyField label="Last Updated" value={formatDate(product.inventory.lastUpdated)} />

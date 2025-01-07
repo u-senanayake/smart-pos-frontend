@@ -23,7 +23,7 @@ const CreateProduct = () => {
         price: '',
         costPrice: '',
         maxDiscount: '',
-        stockLevel: '',
+        stockWarningLevel: '',
         stockAlertLevel: '',
         initialStock:'',
         manufactureDate: '',
@@ -114,7 +114,7 @@ const CreateProduct = () => {
         //Max Discount
         //if (!validateRequired(prodcut.maxDiscount)) errors.maxDiscount = 'Max Discount is required';
         //Stock Level
-        //if (!validateRequired(prodcut.stockLevel)) errors.stockLevel = 'Stock Level is required';
+        //if (!validateRequired(prodcut.stockWarningLevel)) errors.stockWarningLevel = 'Stock Level is required';
         //Stock Alert Level
         //if (!validateRequired(prodcut.stockAlertLevel)) errors.stockAlertLevel = 'Stock Alert Level is required';
         //Manufacture Date
@@ -304,16 +304,16 @@ const CreateProduct = () => {
                         <Grid2 item xs={4}>
                             <Box sx={{ mb: 2 }}>
                                 <TextField
-                                    label="Stock Level"
-                                    name="stockLevel"
-                                    value={product.stockLevel}
+                                    label="Stock Warning Level"
+                                    name="stockWarningLevel"
+                                    value={product.stockWarningLevel}
                                     onChange={handleChange}
                                     fullWidth
                                     variant="outlined"
                                     margin="normal"
                                     required
-                                    error={!!errors.stockLevel}
-                                    helperText={errors.stockLevel}
+                                    error={!!errors.stockWarningLevel}
+                                    helperText={errors.stockWarningLevel}
                                 />
                             </Box>
                         </Grid2>
