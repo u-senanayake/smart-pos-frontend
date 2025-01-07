@@ -50,6 +50,16 @@ import UpdateProduct from "./pages/product/UpdateProduct"
 import InventoryList from './pages/product/inventory/InventoryList'
 
 //Customer Pages
+//Customer Group
+import CustomerGroupList from './pages/customer/customergroup/CustomerGroupList'
+import ViewCustomerGroup from './pages/customer/customergroup/ViewCustomerGroup'
+import CreateCustomerGroup from './pages/customer/customergroup/CreateCustomerGroup'
+import UpdateCustomerGroup from './pages/customer/customergroup/UpdateCustomerGroup'
+//Customer
+import CustomerList from './pages/customer/CustomerList';
+import ViewCustomer from './pages/customer/ViewCustomer';
+import CreateCustomer from './pages/customer/CreateCustomer';
+import UpdateCustomer from './pages/customer/UpdateCustomer';
 
 //Promotion Pages
 
@@ -158,6 +168,17 @@ const App = () => {
                     <Route path="/productmanagement/product/viewproduct/:id" element={<ViewProduct />}/>
                     {/* Inventory */}
                     <Route path="/productmanagement/inventorylist" element={<InventoryList />}/>
+                    {/* Customer management */}
+                    {/* Customer group */}
+                    <Route path="/customermanagement/customergrouplist" element={<CustomerGroupList />}/>
+                    <Route path="/customermanagement/customergroup/createcustomergroup" element={<CreateCustomerGroup />}/>
+                    <Route path="/customermanagement/customergroup/updatecustomergroup/:customerGroupId" element={<UpdateCustomerGroup />}/>
+                    <Route path="/customermanagement/customergroup/viewcustomergroup/:customerGroupId" element={<ViewCustomerGroup />}/>
+                    {/* Customer */}
+                    <Route path="/customermanagement/customerlist" element={<CustomerList />}/>
+                    <Route path="/customermanagement/customer/createcustomer" element={<CreateCustomer />}/>
+                    <Route path="/customermanagement/customer/updatecustomer/:customerId" element={<UpdateCustomer />}/>
+                    <Route path="/customermanagement/customer/viewcustomer/:customerId" element={<ViewCustomer />}/>
                 </Routes>
             </Layout>
         </Router>

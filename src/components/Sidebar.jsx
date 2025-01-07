@@ -20,7 +20,7 @@ const Sidebar = () => {
     { name: "Expenses", icon: <Money />, subMenus: ["List Expenses", "Add Expenses", "Expense Category"] },
     { name: "Product Management", icon: <ProductionQuantityLimits />, subMenus: ["Inventory List", "Product List", "Stock Alert", "Stock Transfer", 
       "Stock Adjustment", "Selling Price Group", "Units", "Category List", "Brand List", "Distributor List", "Warranties"] },
-    { name: "Customer Management", icon: <NaturePeople />, subMenus: ["Customer List", "Loyalty Point", "Feedback"] },
+    { name: "Customer Management", icon: <NaturePeople />, subMenus: ["Customer Group List", "Customer List", "Loyalty Point", "Feedback"] },
     { name: "Promotion/Discount", icon: <SdCardAlert />, subMenus: ["Active Promotion", "Create new Promotion", "Promotion History"] },
     { name: "User Management", icon: <VerifiedUser />, subMenus: ["User List", "Role List", "Permission", "Sales Commission"] },
     { name: "Report Management", icon: <Report />, subMenus: ["Profit/Loss Report", "Product Purchase Report", "Sales Representative Report", 
@@ -59,7 +59,7 @@ const Sidebar = () => {
             <Collapse in={open[menu.name]} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
                 {menu.subMenus.map((sub) => (
-                  <ListItemButton key={sub} sx={{ pl: 4 }} component={Link} to={`/${menu.name.toLowerCase().replace(" ", "")}/${sub.toLowerCase().replace(" ", "")}`}>
+                  <ListItemButton key={sub} sx={{ pl: 4 }} component={Link} to={`/${menu.name.toLowerCase().replace(" ", "")}/${sub.toLowerCase().replaceAll(" ", "")}`}>
                     <ListItemText primary={sub} />
                   </ListItemButton>
                 ))}
