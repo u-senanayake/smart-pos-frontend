@@ -9,12 +9,14 @@ import { ReadOnlyField, Loading } from '../../utils/FieldUtils'
 import { formatDate } from "../../utils/Dateutils";
 import { renderStatusIcon, formatPrice, formatPhoneNumber, } from "../../utils/utils";
 import AddStockDialog from '../../pages/product/inventory/AddStockDialog';
+import AdjustStockDialog from '../../pages/product/inventory/AdjustStockDialog';
 
 const ViewProduct = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [openAddStockDialog, setOpenAddStockDialog] = useState(false);
+  const [openAdjustStockDialog, setOpenAdjustStockDialog] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,8 +36,16 @@ const ViewProduct = () => {
       .catch((error) => console.error('Error fetching updated inventory:', error));
   };
 
+  const handleOpenAdjustStockDialog = () => {
+    setOpenAdjustStockDialog(true);
+  };
+
   const handleOpenAddStockDialog = () => {
     setOpenAddStockDialog(true);
+  };
+
+  const handleCloseAdjustStockDialog = () => {
+    setOpenAdjustStockDialog(false);
   };
 
   const handleCloseAddStockDialog = () => {
@@ -197,9 +207,10 @@ const ViewProduct = () => {
             Add Stock
           </Button>
           <AddStockDialog open={openAddStockDialog} onClose={handleCloseAddStockDialog} productId={product.id} inventory={product.inventory} onStockAdded={handleStockAdded}/>
-          <Button variant="contained" startIcon={<UpdateIcon />} color="secondary" >
+          <Button variant="contained" startIcon={<UpdateIcon />} color="secondary" onClick={handleOpenAdjustStockDialog}>
             Adjust Stock
           </Button>
+          <AdjustStockDialog open={openAdjustStockDialog} onClose={handleCloseAdjustStockDialog} productId={product.id} inventory={product.inventory} onStockAdjusted={handleStockAdded}/>
         </Box>
       </Paper>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
