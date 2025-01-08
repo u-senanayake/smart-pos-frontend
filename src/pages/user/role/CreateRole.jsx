@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, TextField, Button, Typography, Box, Paper, FormControlLabel, Checkbox } from '@mui/material';
+import { Container, TextField, Button, Typography, Box, Paper, FormControlLabel, Checkbox, Grid2 } from '@mui/material';
 
 import RoleService from '../../../services/RoleService';
 import { validateRequired, validateLength, } from '../../../utils/Validations';
@@ -26,7 +26,7 @@ const CreateRole = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const role = { roleName, description, enabled};
+        const role = { roleName, description, enabled };
         const validationErrors = validateForm(role);
         if (Object.keys(validationErrors).length > 0) {
             setFormError(validationErrors);
@@ -36,7 +36,7 @@ const CreateRole = () => {
                 .then(() => navigate('/usermanagement/rolelist'))
                 .catch((error) => {
                     if (error.response && error.response.data) {
-                        setServerError(error.response.data.message);
+                        setServerError(error.response.data);
                     } else {
                         console.error('Error updating user:', error);
                     }
@@ -45,10 +45,11 @@ const CreateRole = () => {
     };
 
     const handleCancel = () => navigate('/usermanagement/rolelist');
+
     const serverErrorMessages = typeof serverError === 'string' ? [serverError] : Object.values(serverError);
 
     return (
-        <Container maxWidth="sm">
+        <Container maxWidth="md">
             <Paper sx={{ p: 3, mt: 3 }}>
                 <Typography variant="h4" gutterBottom>
                     Create Role
@@ -61,48 +62,56 @@ const CreateRole = () => {
                             </Typography>
                         </Box>
                     )}
-                    <TextField
-                        label="Role Name"
-                        variant="outlined"
-                        name="roleName"
-                        fullWidth
-                        margin="normal"
-                        value={roleName}
-                        onChange={(e) => setRoleName(e.target.value)}
-                        required
-                        error={!!formError.roleName}
-                        helperText={formError.roleName}
-                        slotProps={{ htmlInput: { autoComplete: 'off' } }}
-                    />
-                    <TextField
-                        label="Description"
-                        variant="outlined"
-                        name="description"
-                        fullWidth
-                        margin="normal"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        required
-                        error={!!formError.description}
-                        helperText={formError.description}
-                        slotProps={{ htmlInput: { autoComplete: 'off' } }}
-                    />
-                    <Box sx={{ mb: 2 }}>
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={enabled}
-                                    onChange={(e) => setEnabled(e.target.checked)}
-                                    name="enabled"
-                                    color="primary"
-                                />
-                            }
-                            label="Enabled"
-                        />
-                    </Box>
+                    <Grid2 container spacing={2}>
+                        <Grid2 size={8}>
+                            <TextField
+                                label="Role Name"
+                                variant="outlined"
+                                name="roleName"
+                                fullWidth
+                                margin="normal"
+                                value={roleName}
+                                onChange={(e) => setRoleName(e.target.value)}
+                                required
+                                error={!!formError.roleName}
+                                helperText={formError.roleName}
+                                slotProps={{ htmlInput: { autoComplete: 'off' } }}
+                            />
+                        </Grid2>
+                        <Grid2 size={4}></Grid2>
+                        <Grid2 size={12}>
+                            <TextField
+                                label="Description"
+                                variant="outlined"
+                                name="description"
+                                fullWidth
+                                margin="normal"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                required
+                                error={!!formError.description}
+                                helperText={formError.description}
+                                slotProps={{ htmlInput: { autoComplete: 'off' } }}
+                            />
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={enabled}
+                                        onChange={(e) => setEnabled(e.target.checked)}
+                                        name="enabled"
+                                        color="primary"
+                                    />
+                                }
+                                label="Enabled"
+                            />
+                        </Grid2>
+                        <Grid2 size={6}></Grid2>
+                    </Grid2>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                         <Button type="submit" variant="contained" color="primary">
-                            {isSaving ? 'Creating...' : 'Create'}
+                            {isSaving ? 'Saving...' : 'Save'}
                         </Button>
                         <Button variant="outlined" color="secondary" onClick={handleCancel}>
                             Cancel

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Container, TextField, Grid2, CircularProgress, Button } from '@mui/material';
+import { Box, Typography, Paper, Container, Grid2, Button, } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
 
-import { renderStatusIcon, renderLockIcon, } from '../../utils/utils';
+import { renderStatusIcon, renderLockIcon, formatPhoneNumber } from '../../utils/utils';
 import { formatDate } from '../../utils/Dateutils';
 import UserService from '../../services/UserService';
 import { Loading, ErrorMessage, ReadOnlyField } from "../../utils/FieldUtils";
@@ -20,7 +20,7 @@ const ViewUser = () => {
       .then((res) => {
         setUser(res.data);
       })
-      .catch((error) =>{ 
+      .catch((error) => {
         console.error('Error fetching user:', error);
         setError("Failed to fetch user. Please try again later.");
       }).finally(() => setLoading(false));
@@ -50,53 +50,63 @@ const ViewUser = () => {
     <Container maxWidth="md">
       <Paper sx={{ p: 3, mt: 3 }}>
         <Typography variant="h4" gutterBottom>
-          View User
+          User Details
         </Typography>
         <Grid2 container spacing={2}>
-          <Grid2 item xs={6}>
-              <ReadOnlyField label="User ID" value={user.userId} />
+          <Grid2 size={4}>
+            <ReadOnlyField label="User ID" value={user.userId} />
           </Grid2>
-          <Grid2 item xs={6}>
-              <ReadOnlyField label="Username" value={user.username} />
+          <Grid2 size={4}>
+            <ReadOnlyField label="Username" value={user.username} />
           </Grid2>
-          <Grid2 item xs={6}>
+          <Grid2 size={4}>
             <ReadOnlyField label="Role" value={user.role.roleName} />
           </Grid2>
-        </Grid2>
-        <Grid2 container spacing={2}>
-          <Grid2 item xs={6}>
+          <Grid2 size={6}>
             <ReadOnlyField label="First Name" value={user.firstName} />
           </Grid2>
-          <Grid2 item xs={6}>
+          <Grid2 size={6}>
             <ReadOnlyField label="Last Name" value={user.lastName} />
           </Grid2>
+          <Grid2 size={12}>
+            <ReadOnlyField label="Email" value={user.email} />
+          </Grid2>
+          <Grid2 size={12}>
+            <ReadOnlyField label="Address" value={user.address} />
+          </Grid2>
+          <Grid2 size={6}>
+            <ReadOnlyField label="Phone Number 1" value={formatPhoneNumber(user.phoneNo1)} />
+          </Grid2>
+          <Grid2 size={6}>
+            <ReadOnlyField label="Phone Number 1" value={formatPhoneNumber(user.phoneNo2)} />
+          </Grid2>
+          <Grid2 size={6}>
+            <Typography variant="h5">Enabled: {renderStatusIcon(user.enabled)}</Typography>
+          </Grid2>
+          <Grid2 size={6}>
+            <Typography variant="h5">Locked:{renderLockIcon(user.locked)}</Typography>
+          </Grid2>
+          <Grid2 size={6}>
+            <ReadOnlyField label="Created At" value={formatDate(user.createdAt)} />
+          </Grid2>
+          <Grid2 size={6}>
+            <ReadOnlyField label="Created By" value={`${user.createdUser.firstName} ${user.createdUser.lastName} (${user.createdUser.username})`} />
+          </Grid2>
+          <Grid2 size={6}>
+            <ReadOnlyField label="Updated At" value={formatDate(user.updatedAt)} />
+          </Grid2>
+          <Grid2 size={6}>
+            <ReadOnlyField label="Updated By" value={`${user.updatedUser.firstName} ${user.updatedUser.lastName} (${user.updatedUser.username})`} />
+          </Grid2>
+          {user.deleted && (<>
+            <Grid2 size={6}>
+              <ReadOnlyField label="Deleted At" value={formatDate(user.deletedAt)} />
+            </Grid2>
+            <Grid2 size={6}>
+              <ReadOnlyField label="Delete By" value={`${user.deletedUser?.firstName} ${user.deletedUser?.lastName} (${user.deletedUser?.username})`} />
+            </Grid2>
+          </>)}
         </Grid2>
-        <ReadOnlyField label="Email" value={user.email} />
-        <ReadOnlyField label="Address" value={user.address} />
-        <Grid2 container spacing={2}>
-          <Grid2 item xs={6}>
-            <ReadOnlyField label="Phone Number 1" value={user.phoneNo1} />
-          </Grid2>
-          <Grid2 item xs={6}>
-            <ReadOnlyField label="Phone Number 2" value={user.phoneNo2} />
-          </Grid2>
-        </Grid2>
-        <Grid2 container spacing={2}>
-          <Grid2 item xs={6}>
-              <Typography variant="h5">Enabled: {renderStatusIcon(user.enabled)}</Typography>
-          </Grid2>
-          <Grid2 item xs={6}>
-              <Typography variant="h5">Locked:{renderLockIcon(user.locked)}</Typography>
-          </Grid2>
-        </Grid2>
-        <ReadOnlyField label="Created At" value={formatDate(user.createdAt)} />
-        <ReadOnlyField label="Created By" value={`${user.createdUser.firstName} ${user.createdUser.lastName} (${user.createdUser.username})`} />
-        <ReadOnlyField label="Updated At" value={formatDate(user.updatedAt)} />
-        <ReadOnlyField label="Updated By" value={`${user.updatedUser.firstName} ${user.updatedUser.lastName} (${user.updatedUser.username})`} />
-        {user.deleted && (<>
-          <ReadOnlyField label="Deleted At" value={formatDate(user.deletedAt)} /> 
-          <ReadOnlyField label="Delete By" value={`${user.deletedUser?.firstName} ${user.deletedUser?.lastName} (${user.deletedUser?.username})`} /> 
-        </>)}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
           <Button variant="contained" color="primary" onClick={handleUpdate}> Update </Button>
           <Button variant="outlined" color="secondary" onClick={handleCancel} > Cancel </Button>

@@ -10,7 +10,13 @@ import {
   DialogTitle,
   Button,
   Typography,
+  FormControl, 
+  InputLabel, 
+  Select, 
+  MenuItem,
 } from "@mui/material";
+
+import { styles } from "../style/FormStyle"
 
 export const ReadOnlyField = ({ label, value }) => (
   <TextField
@@ -20,6 +26,7 @@ export const ReadOnlyField = ({ label, value }) => (
     slotProps={{ input: { readOnly: true } }}
     variant="outlined"
     margin="normal"
+    style={styles.readOnlyField}
   />
 );
 
@@ -63,5 +70,33 @@ export const ErrorMessage = ({ message }) => {
         {message}
       </Typography>
     </div>
+  );
+};
+
+
+// Table filter
+export const ActiveStatusFilter = ({ value, onChange, style }) => {
+  return (
+    <FormControl style={style}>
+      <InputLabel>Active Status</InputLabel>
+      <Select value={value} onChange={onChange}>
+        <MenuItem value="">All</MenuItem>
+        <MenuItem value="true">Active</MenuItem>
+        <MenuItem value="false">Inactive</MenuItem>
+      </Select>
+    </FormControl>
+  );
+};
+
+export const LockStatusFilter = ({ value, onChange, style }) => {
+  return (
+    <FormControl style={style}>
+      <InputLabel>Lock Status</InputLabel>
+      <Select value={value} onChange={onChange}>
+        <MenuItem value="">All</MenuItem>
+        <MenuItem value="true">Locked</MenuItem>
+        <MenuItem value="false">Unlocked</MenuItem>
+      </Select>
+    </FormControl>
   );
 };

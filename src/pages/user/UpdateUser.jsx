@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Container, TextField, Button, MenuItem, FormControlLabel, Checkbox } from '@mui/material';
+import { Box, Typography, Paper, Container, TextField, Button, MenuItem, FormControlLabel, Checkbox, Grid2 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import UserService from '../../services/UserService';
 import RoleService from '../../services/RoleService';
 import { validateEmail, validatePassword, validateRequired, validateLength } from '../../utils/Validations';
-import { Loading, ErrorMessage } from "../../utils/FieldUtils";
+import { Loading, ErrorMessage, ReadOnlyField } from "../../utils/FieldUtils";
 
 const UpdateUser = () => {
   const { userId } = useParams();
@@ -16,7 +16,6 @@ const UpdateUser = () => {
     email: '',
     address: '',
     phoneNo1: '',
-    password: '',
     enabled: true,
     locked: false,
     role: {
@@ -28,14 +27,14 @@ const UpdateUser = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState(null);
   const [serverError, setServerError] = useState('');
- 
-  const [formError, setFormError] = useState({}); 
+
+  const [formError, setFormError] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
     RoleService.getRoles()
       .then((res) => setRoles(res.data))
-      .catch((error) =>{ 
+      .catch((error) => {
         console.error('Error fetching role:', error);
         setError("Failed to fetch role. Please try again later.");
       }).finally(() => setLoading(false));
@@ -47,7 +46,7 @@ const UpdateUser = () => {
         const user = res.data;
         setUser(user);
       })
-      .catch((error) =>{ 
+      .catch((error) => {
         console.error('Error fetching user:', error);
         setError("Failed to fetch user. Please try again later.");
       }).finally(() => setLoading(false));
@@ -72,9 +71,6 @@ const UpdateUser = () => {
     if (!validateLength(user.phoneNo1, 10, 10)) errors.phoneNo1 = 'Phone number should be 10 characters';
     // Role
     //if (!validateRequired(user.role?.roleId)) errors.role = 'Role is required';
-    // Password
-    if (!validatePassword(user.password)) errors.password = 'Password must be at least 6 characters long';
-
     return errors;
   };
 
@@ -117,7 +113,7 @@ const UpdateUser = () => {
         })
         .catch((error) => {
           if (error.response && error.response.data) {
-            setServerError(error.response.data.message);
+            setServerError(error.response.data);
           } else {
             console.error('Error updating user:', error);
           }
@@ -141,152 +137,163 @@ const UpdateUser = () => {
         onAction={() => window.location.reload()}
       />
     );
-}
-
+  }
+  const serverErrorMessages = Object.values(serverError);
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="md">
       <Paper sx={{ p: 3, mt: 3 }}>
         <Typography variant="h4" gutterBottom>
           Update User
         </Typography>
         <form onSubmit={handleSubmit}>
-          {serverError && (
+          {Object.keys(serverErrorMessages).length > 0 && (
             <Box sx={{ mb: 2 }}>
               <Typography color="error">
-                {serverError}
+                {serverErrorMessages}
               </Typography>
             </Box>
           )}
-          <Box sx={{ mb: 2 }}>
-            <TextField
-              label="Username"
-              name="username"
-              value={user.username}
-              onChange={handleChange}
-              fullWidth
-              variant="outlined"
-              margin="normal"
-              required
-              error={!!formError.username}
-              helperText={formError.username}
-            />
-          </Box>
-          <Box sx={{ mb: 2 }}>
-            <TextField
-              label="First Name"
-              name="firstName"
-              value={user.firstName}
-              onChange={handleChange}
-              fullWidth
-              variant="outlined"
-              margin="normal"
-              required
-              error={!!formError.firstName}
-              helperText={formError.firstName}
-            />
-          </Box>
-          <Box sx={{ mb: 2 }}>
-            <TextField
-              label="Last Name"
-              name="lastName"
-              value={user.lastName}
-              onChange={handleChange}
-              fullWidth
-              variant="outlined"
-              margin="normal"
-              required
-              error={!!formError.lastName}
-              helperText={formError.lastName}
-            />
-          </Box>
-          <Box sx={{ mb: 2 }}>
-            <TextField
-              label="Email"
-              name="email"
-              value={user.email}
-              onChange={handleChange}
-              fullWidth
-              variant="outlined"
-              margin="normal"
-              required
-              error={!!formError.email}
-              helperText={formError.email}
-            />
-          </Box>
-          <Box sx={{ mb: 2 }}>
-            <TextField
-              label="Phone Number"
-              name="phoneNo1"
-              value={user.phoneNo1}
-              onChange={handleChange}
-              fullWidth
-              variant="outlined"
-              margin="normal"
-              required
-              error={!!formError.phoneNo1}
-              helperText={formError.phoneNo1}
-            />
-          </Box>
-          <Box sx={{ mb: 2 }}>
-            <TextField
-              label="Password"
-              name="password"
-              value={user.password}
-              onChange={handleChange}
-              fullWidth
-              variant="outlined"
-              margin="normal"
-              required
-              error={!!formError.password}
-              helperText={formError.password}
-            />
-          </Box>
-          <Box sx={{ mb: 2 }}>
-            <TextField
-              select
-              label="Role"
-              name="role"
-              value={user.role.roleId}
-              onChange={handleRoleChange}
-              fullWidth
-              variant="outlined"
-              margin="normal"
-              required
-              error={!!formError.role}
-              helperText={formError.role}
-            >
-              {roles.map((role) => (
-                <MenuItem key={role.roleId} value={role.roleId}>
-                  {role.roleName}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Box>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={user.enabled}
-                onChange={handleCheckboxChange}
-                name="enabled"
-                color="primary"
+          <Grid2 container spacing={2}>
+            <Grid2 size={4}>
+              <ReadOnlyField label="User ID" value={user.userId} />
+            </Grid2>
+            <Grid2 size={4}>
+              <ReadOnlyField label="Username" value={user.username} />
+            </Grid2>
+            <Grid2 size={4}>
+              <TextField
+                select
+                label="Role"
+                name="role"
+                value={user.role.roleId}
+                onChange={handleRoleChange}
+                fullWidth
+                variant="outlined"
+                margin="normal"
+                required
+                error={!!formError.role}
+                helperText={formError.role}
+              >
+                {roles.map((role) => (
+                  <MenuItem key={role.roleId} value={role.roleId}>
+                    {role.roleName}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid2>
+            <Grid2 size={6}>
+              <TextField
+                label="First Name"
+                name="firstName"
+                value={user.firstName}
+                onChange={handleChange}
+                fullWidth
+                variant="outlined"
+                margin="normal"
+                required
+                error={!!formError.firstName}
+                helperText={formError.firstName}
               />
-            }
-            label="Enabled"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={user.locked}
-                onChange={handleCheckboxChange}
-                name="locked"
-                color="primary"
+            </Grid2>
+            <Grid2 size={6}>
+              <TextField
+                label="Last Name"
+                name="lastName"
+                value={user.lastName}
+                onChange={handleChange}
+                fullWidth
+                variant="outlined"
+                margin="normal"
+                required
+                error={!!formError.lastName}
+                helperText={formError.lastName}
               />
-            }
-            label="Locked"
-          />
+            </Grid2>
+            <Grid2 size={12}>
+              <TextField
+                label="Email"
+                name="email"
+                value={user.email}
+                onChange={handleChange}
+                fullWidth
+                variant="outlined"
+                margin="normal"
+                required
+                error={!!formError.email}
+                helperText={formError.email}
+              />
+            </Grid2>
+            <Grid2 size={12}>
+              <TextField
+                label="Adress"
+                name="address"
+                value={user.address}
+                onChange={handleChange}
+                fullWidth
+                variant="outlined"
+                margin="normal"
+                required
+                error={!!formError.address}
+                helperText={formError.address}
+              />
+            </Grid2>
+            <Grid2 size={6}>
+              <TextField
+                label="Phone Number"
+                name="phoneNo1"
+                value={user.phoneNo1}
+                onChange={handleChange}
+                fullWidth
+                variant="outlined"
+                margin="normal"
+                required
+                error={!!formError.phoneNo1}
+                helperText={formError.phoneNo1}
+              />
+            </Grid2>
+            <Grid2 size={6}>
+              <TextField
+                label="Phone Number"
+                name="phoneNo2"
+                value={user.phoneNo2}
+                onChange={handleChange}
+                fullWidth
+                variant="outlined"
+                margin="normal"
+                error={!!formError.phoneNo2}
+                helperText={formError.phoneNo2}
+              />
+            </Grid2>
+            <Grid2 size={6}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={user.enabled}
+                    onChange={handleCheckboxChange}
+                    name="enabled"
+                    color="primary"
+                  />
+                }
+                label="Enabled"
+              />
+            </Grid2>
+            <Grid2 size={6}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={user.locked}
+                    onChange={handleCheckboxChange}
+                    name="locked"
+                    color="primary"
+                  />
+                }
+                label="Locked"
+              />
+            </Grid2>
+          </Grid2>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
             <Button type="submit" variant="contained" color="primary">
-            {isSaving ? 'Saving...' : 'Update'}
+              {isSaving ? 'Saving...' : 'Update'}
             </Button>
             <Button variant="outlined" color="secondary" onClick={handleCancel}>
               Cancel
