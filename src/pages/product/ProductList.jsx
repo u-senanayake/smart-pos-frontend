@@ -1,28 +1,41 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton, Typography, Pagination} from "@mui/material";
-
+import {
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton,
+  Typography, Pagination, FormControl, InputLabel, Select, MenuItem, Box
+} from "@mui/material";
+import { Delete, Edit, Add, Preview } from "@mui/icons-material";
+//Service
 import ProductService from "../../services/ProductService";
+import CategoryService from "../../services/CategoryService";
+import DistributorService from "../../services/DistributorService";
+//Utils
 import { renderStatusIcon, formatPrice } from "../../utils/utils";
 import { formatDate } from '../../utils/Dateutils';
-import { SkeletonLoading, ErrorMessage, ConfirmationDialog } from "../../utils/FieldUtils";
-
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import AddIcon from "@mui/icons-material/Add";
-import ViewIcon from "@mui/icons-material/Preview"
+import { SkeletonLoading, ErrorMessage, ConfirmationDialog, ActiveStatusFilter } from "../../utils/FieldUtils";
+import { getSortedData, toggleSortDirection } from "../../utils/SortUtils";
+//Style
+import { styles } from "../../style/TableStyle";
 
 const ProductList = () => {
 
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [distributors, setDistributors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [paginationLoading, setPaginationLoading] = useState(false);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" }); // Sorting state
+  const [categoryFilter, setCategoryFilter] = useState(""); // Role filter state
+  const [distributorFilter, setDistributorFilter] = useState(""); // Role filter state
+  const [statusFilter, setStatusFilter] = useState(""); // Account status filter state
+  const [lockFilter, setLockFilter] = useState(""); // Account lock filter state
 
-  const itemsPerPage = 2;
+
+  const itemsPerPage = 10;
 
   useEffect(() => {
     ProductService.getProducts()
@@ -33,6 +46,32 @@ const ProductList = () => {
       .catch((error) => {
         console.error("Error fetching products:", error);
         setError("Failed to fetch products. Please try again later.");
+        setLoading(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    CategoryService.getCategories()
+      .then((res) => {
+        setCategories(res.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching categories:", error);
+        setError("Failed to fetch categories. Please try again later.");
+        setLoading(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    DistributorService.getDistributors()
+      .then((res) => {
+        setDistributors(res.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching distributors:", error);
+        setError("Failed to fetch distributors. Please try again later.");
         setLoading(false);
       });
   }, []);
@@ -71,10 +110,31 @@ const ProductList = () => {
     }, 500); // Simulate a delay (replace this with actual fetching logic if needed)
   };
 
-  const paginatedProduct = products.slice(
+  const handleSort = (key) => {
+    setSortConfig((currentConfig) => toggleSortDirection(currentConfig, key));
+  };
+
+  const applyFilters = () => {
+    return products.filter((product) => {
+      const matchesCategory = categoryFilter ? product.category.name === categoryFilter : true;
+      const matchesDistributor = distributorFilter ? product.distributor.name === distributorFilter : true;
+      const matchesStatus = statusFilter ? String(product.enabled) === statusFilter : true;
+
+      return matchesCategory && matchesDistributor && matchesStatus;
+    });
+  };
+  const filteredProduct = applyFilters();
+  const sortedProduct = getSortedData(filteredProduct, sortConfig);
+
+  const paginatedProduct = sortedProduct.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+
+  if (loading || paginationLoading) {
+    return <SkeletonLoading />;
+  }
 
   if (error) {
     return (
@@ -86,9 +146,6 @@ const ProductList = () => {
     );
   }
 
-  if (loading || paginationLoading) {
-    return <SkeletonLoading />;
-  }
 
   if (products.length === 0) {
     return (
@@ -99,7 +156,7 @@ const ProductList = () => {
           to="/productmanagement/product/createproduct"
           variant="contained"
           color="primary"
-          startIcon={<AddIcon />}
+          startIcon={<Add />}
           style={{ marginTop: "10px" }}
         >
           Add Product
@@ -107,65 +164,108 @@ const ProductList = () => {
       </div>
     );
   }
+
   return (
-    <div style={{ padding: "20px" }}>
-      <Typography variant="h4" style={{ textAlign: "center", marginBottom: "20px" }}>
+    <div style={styles.mainContainer}>
+      <Typography variant="h4" style={styles.title}>
         Product List
       </Typography>
-      <Button
-        component={Link}
-        to="/productmanagement/product/createproduct"
-        variant="contained"
-        color="primary"
-        startIcon={<AddIcon />}
-        style={{ marginBottom: "20px" }}
-      >
-        Add Product
-      </Button>
+      <div style={styles.filterContainer}>
+        <Button
+          component={Link}
+          to="/productmanagement/product/createproduct"
+          variant="contained"
+          color="primary"
+          startIcon={<Add />}
+          style={{ marginBottom: "20px" }}
+        >
+          Add Product
+        </Button>
+        <Paper sx={{ p: 1, mt: 1, mb: 1 }}>
+          <Typography variant="h6" style={styles.filterTitle}>
+            Filter data
+          </Typography>
+          <FormControl style={styles.filterFormController}>
+            <InputLabel>Category</InputLabel>
+            <Select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+            >
+              <MenuItem value="">All</MenuItem>
+              {categories.map((category) => (
+                <MenuItem key={category.categoryId} value={category.name}>
+                  {category.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl style={styles.filterFormController}>
+            <InputLabel>Distributor</InputLabel>
+            <Select
+              value={distributorFilter}
+              onChange={(e) => setDistributorFilter(e.target.value)}
+            >
+              <MenuItem value="">All</MenuItem>
+              {distributors.map((distributor) => (
+                <MenuItem key={distributor.distributorId} value={distributor.companyName}>
+                  {distributor.companyName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <ActiveStatusFilter
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            style={styles.filterFormController}
+          />
+        </Paper>
+      </div>
       {paginationLoading ? (
         <SkeletonLoading />
       ) : (
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Product ID</TableCell>
-                <TableCell>SKU</TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Category</TableCell>
-                <TableCell>Price</TableCell>
-                <TableCell>Enabled</TableCell>
-                <TableCell>Manufacture Date</TableCell>
-                <TableCell>Expiry Date</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-            {paginatedProduct.map((product) => (
-                <TableRow key={product.id}>
-                  <TableCell>{product.productId}</TableCell>
-                  <TableCell>{product.sku}</TableCell>
-                  <TableCell>{product.productName}</TableCell>
-                  <TableCell>{product.category.name}</TableCell>
-                  <TableCell>{formatPrice(product.price)}</TableCell>
-                  <TableCell>{renderStatusIcon(product.enabled)}</TableCell>
-                  <TableCell>{formatDate(product.manufactureDate)}</TableCell>
-                  <TableCell>{formatDate(product.expireDate)}</TableCell>
-                  <TableCell>
-                    <IconButton component={Link} to={`/productmanagement/product/updateproduct/${product.id}`}>
-                      <EditIcon color="primary" />
-                    </IconButton>
-                    <IconButton onClick={() => confirmDelete(product.id)}>
-                      <DeleteIcon color="error" />
-                    </IconButton>
-                    <IconButton component={Link} to={`/productmanagement/product/viewproduct/${product.id}`}>
-                      <ViewIcon color="primary" />
-                    </IconButton>
-                  </TableCell>
+        <TableContainer component={Paper} sx={{ width: '100%', overflowX: 'auto' }}>
+          <Box sx={{ overflowX: 'auto' }}>
+            <Table sx={{ minWidth: '1300px' }}>
+              <TableHead>
+                <TableRow style={styles.tableHeaderCell}>
+                  <TableCell onClick={() => handleSort("productId")}>Product ID {sortConfig.key === "productId" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell onClick={() => handleSort("productName")}>Name {sortConfig.key === "productName" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell onClick={() => handleSort("category.name")}>Category {sortConfig.key === "category.name" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell onClick={() => handleSort("distributor.name")}>Distributor {sortConfig.key === "distributor.name" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell onClick={() => handleSort("price")}>Price {sortConfig.key === "price" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell onClick={() => handleSort("enabled")}>Enabled {sortConfig.key === "enabled" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell onClick={() => handleSort("manufactureDate")}>Manufacture Date {sortConfig.key === "manufactureDate" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell onClick={() => handleSort("expireDate")}>Expiry Date {sortConfig.key === "expireDate" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell>Actions</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHead>
+              <TableBody>
+                {paginatedProduct.map((product, index) => (
+                  <TableRow key={product.id} sx={styles.zebraStripe(index)}>
+                    <TableCell style={styles.tableCell}>{product.productId}</TableCell>
+                    <TableCell >{product.productName}</TableCell>
+                    <TableCell >{product.category.name}</TableCell>
+                    <TableCell >{product.distributor.name}</TableCell>
+                    <TableCell >{formatPrice(product.price)}</TableCell>
+                    <TableCell >{renderStatusIcon(product.enabled)}</TableCell>
+                    <TableCell >{formatDate(product.manufactureDate)}</TableCell>
+                    <TableCell >{formatDate(product.expireDate)}</TableCell>
+                    <TableCell style={styles.tableCell}>
+                      <IconButton component={Link} to={`/productmanagement/product/updateproduct/${product.id}`}>
+                        <Edit color="primary" />
+                      </IconButton>
+                      <IconButton onClick={() => confirmDelete(product.id)}>
+                        <Delete color="error" />
+                      </IconButton>
+                      <IconButton component={Link} to={`/productmanagement/product/viewproduct/${product.id}`}>
+                        <Preview color="primary" />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Box>
         </TableContainer>
       )}
       <Pagination
@@ -173,7 +273,7 @@ const ProductList = () => {
         page={currentPage}
         onChange={handlePageChange}
         color="primary"
-        style={{ marginTop: "20px", display: "flex", justifyContent: "center" }}
+        style={styles.pagination}
       />
       <ConfirmationDialog
         open={dialogOpen}

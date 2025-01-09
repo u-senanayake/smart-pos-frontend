@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Container, TextField, Button, FormControlLabel, Checkbox } from '@mui/material';
+import { Box, Typography, Paper, Container, TextField, Button, FormControlLabel, Checkbox, Grid2 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-
+//Service
 import CategoryService from '../../../services/CategoryService';
+//Utils
 import { validateRequired, validateLength } from '../../../utils/Validations';
-import { Loading } from '../../../utils/FieldUtils'
+import { Loading, ReadOnlyField, ErrorMessage } from '../../../utils/FieldUtils'
 
 const UpdateCategory = () => {
     const { categoryId } = useParams();
@@ -14,7 +15,8 @@ const UpdateCategory = () => {
     const [enabled, setEnabled] = useState(true);
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
-    const [errors, setErrors] = useState({});
+    const [error, setError] = useState(null);
+    const [formError, setErrors] = useState({});
     const [serverError, setServerError] = useState('');
     const navigate = useNavigate();
 
@@ -27,9 +29,26 @@ const UpdateCategory = () => {
                 setCatPrefix(category.catPrefix);
                 setEnabled(category.enabled);
             })
-            .catch((error) => console.error('Error fetching category:', error))
-            .finally(() => setLoading(false));
+            .catch((error) => {
+                console.error('Error fetching category:', error);
+                setError("Failed to fetch category. Please try again later.");
+            }).finally(() => setLoading(false));
     }, [categoryId]);
+
+    const validateForm = (category) => {
+        const errors = {};
+        //Name
+        if (!validateRequired(category.name)) errors.name = 'Name is required';
+        if (!validateLength(category.name, 1, 20)) errors.name = 'Name must be between 1 and 20 characters';
+        //Description
+        if (!validateRequired(category.description)) errors.description = 'Description is required';
+        if (!validateLength(category.description, 1, 250)) errors.description = 'Description must be less than 250 characters';
+        //Category prefix
+        if (!validateRequired(category.catPrefix)) errors.catPrefix = 'Category prefix is required';
+        if (!validateLength(category.catPrefix, 1, 1)) errors.catPrefix = 'Category prefix must 1 character';
+
+        return errors;
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -45,7 +64,7 @@ const UpdateCategory = () => {
                 })
                 .catch((error) => {
                     if (error.response && error.response.data) {
-                        setServerError(error.response.data.message);
+                        setServerError(error.response.data);
                     } else {
                         console.error('Error updating category:', error);
                     }
@@ -53,20 +72,7 @@ const UpdateCategory = () => {
                 .finally(() => setIsSaving(false));
         }
     };
-    const validateForm = (category) => {
-        const errors = {};
-        //Name
-        if (!validateRequired(category.name)) errors.name = 'Name is required';
-        if (!validateLength(category.name, 1, 30)) errors.name = 'Name must be between 5 and 30 characters';
-        //Description
-        if (!validateRequired(category.description)) errors.description = 'Description is required';
-        if (!validateLength(category.description, 1, 255)) errors.description = 'Description must be less than 255 characters';
-        //Category prefix
-        if (!validateRequired(category.catPrefix)) errors.catPrefix = 'Category prefix is required';
-        if (!validateLength(category.catPrefix, 1, 1)) errors.catPrefix = 'Category prefix must 1 character';
 
-        return errors;
-    };
     const handleCancel = () => {
         navigate('/productmanagement/categorylist');
     };
@@ -75,6 +81,16 @@ const UpdateCategory = () => {
         return <Loading />;
     }
 
+    if (error) {
+        return (
+            <ErrorMessage
+                message={error}
+                actionText="Retry"
+                onAction={() => window.location.reload()}
+            />
+        );
+    }
+    const serverErrorMessages = Object.values(serverError);
     return (
         <Container maxWidth="sm">
             <Paper sx={{ p: 3, mt: 3 }}>
@@ -82,68 +98,74 @@ const UpdateCategory = () => {
                     Update Category
                 </Typography>
                 <form onSubmit={handleSubmit}>
-                    {serverError && (
+                    {Object.keys(serverErrorMessages).length > 0 && (
                         <Box sx={{ mb: 2 }}>
                             <Typography color="error">
-                                {serverError}
+                                {serverErrorMessages}
                             </Typography>
                         </Box>
                     )}
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="Name"
-                            name="name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!errors.name}
-                            helperText={errors.name}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="Description"
-                            name="description"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!errors.description}
-                            helperText={errors.description}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="Category Prefix"
-                            name="catPrefix"
-                            value={catPrefix}
-                            onChange={(e) => setCatPrefix(e.target.value)}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!errors.catPrefix}
-                            helperText={errors.catPrefix}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={enabled}
-                                    onChange={(e) => setEnabled(e.target.checked)}
-                                    name="enabled"
-                                    color="primary"
-                                />
-                            }
-                            label="Enabled"
-                        />
-                    </Box>
+                    <Grid2 container spacing={2}>
+                        <Grid2 size={4}>
+                            <ReadOnlyField label="Category ID" value={categoryId} />
+                        </Grid2>
+                        <Grid2 size={4}>
+                            <TextField
+                                label="Name"
+                                name="name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!formError.name}
+                                helperText={formError.name}
+                            />
+                        </Grid2>
+                        <Grid2 size={4}>
+                            <TextField
+                                label="Category Prefix"
+                                name="catPrefix"
+                                value={catPrefix}
+                                onChange={(e) => setCatPrefix(e.target.value)}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!formError.catPrefix}
+                                helperText={formError.catPrefix}
+                            />
+                        </Grid2>
+                        <Grid2 size={12}>
+                            <TextField
+                                label="Description"
+                                name="description"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!formError.description}
+                                helperText={formError.description}
+                            />
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={enabled}
+                                        onChange={(e) => setEnabled(e.target.checked)}
+                                        name="enabled"
+                                        color="primary"
+                                    />
+                                }
+                                label="Enabled"
+                            />
+                        </Grid2>
+                        <Grid2 size={6}></Grid2>
+                    </Grid2>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                         <Button type="submit" variant="contained" color="primary">
                             {isSaving ? 'Updating...' : 'Update'}

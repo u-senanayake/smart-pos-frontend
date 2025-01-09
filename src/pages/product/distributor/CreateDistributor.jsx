@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Typography, Paper, Container, TextField, Button, FormControlLabel, Checkbox } from '@mui/material';
-
+import { Box, Typography, Paper, Container, TextField, Button, FormControlLabel, Checkbox, Grid2 } from '@mui/material';
+//Service
 import DistributorService from '../../../services/DistributorService';
 import { validateRequired, validateLength, validateEmail } from '../../../utils/Validations';
 
@@ -23,19 +23,18 @@ const CreateDistributor = () => {
         const errors = {};
         //Name
         if (!validateRequired(distributor.companyName)) errors.companyName = 'Name is required';
-        if (!validateLength(distributor.companyName, 10, 100)) errors.companyName = 'Name must be between 10 and 100 characters';
+        if (!validateLength(distributor.companyName, 10, 60)) errors.companyName = 'Name must be between 10 and 60 characters';
         //Email
         if (!validateRequired(distributor.email)) errors.email = 'Email is required';
-        if (!validateLength(distributor.email, 5, 100)) errors.email = 'Email must be less than 100 characters';
         if (!validateEmail(distributor.email)) errors.email = 'Email is invalid';
         //Phone 1
         if (!validateRequired(distributor.phoneNo1)) errors.phoneNo1 = 'Phone number is required';
-        if (!validateLength(distributor.phoneNo1, 10, 10)) errors.phoneNo1 = 'Phone number should be 10 characters';
+        if (!validateLength(distributor.phoneNo1, 10, 12)) errors.phoneNo1 = 'Phone number should be 12 characters';
         //Phone 2
-        if (distributor.phoneNo2 && !validateLength(distributor.phoneNo2, 10, 10)) errors.phoneNo2 = 'Phone number should be 10 characters';
+        if (distributor.phoneNo2 && !validateLength(distributor.phoneNo2, 10, 12)) errors.phoneNo2 = 'Phone number should be 12 characters';
         //Address
         if (!validateRequired(distributor.address)) errors.address = 'Address is required';
-        if (!validateLength(distributor.address, 10, 255)) errors.address = 'Address must be less than 255 characters';
+        if (!validateLength(distributor.address, 10, 250)) errors.address = 'Address must be less than 250 characters';
         return errors;
     };
 
@@ -71,93 +70,96 @@ const CreateDistributor = () => {
                     Create Distributor
                 </Typography>
                 <form onSubmit={handleSubmit}>
-                    {Object.keys(serverErrors).length > 0 && (
+                    {Object.keys(serverErrorMessages).length > 0 && (
                         <Box sx={{ mb: 2 }}>
                             <Typography color="error">
                                 {serverErrorMessages}
                             </Typography>
                         </Box>
                     )}
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="Company Name"
-                            name="name"
-                            value={companyName}
-                            onChange={(e) => setCompanyName(e.target.value)}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!errors.companyName}
-                            helperText={errors.companyName}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="Email"
-                            name="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!errors.email}
-                            helperText={errors.email}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="Phone 1"
-                            name="phoneNo1"
-                            value={phoneNo1}
-                            onChange={(e) => setPhone1(e.target.value)}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!errors.phoneNo1}
-                            helperText={errors.phoneNo1}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="Phone 2"
-                            name="phoneNo2"
-                            value={phoneNo2}
-                            onChange={(e) => setPhone2(e.target.value)}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="Address"
-                            name="address"
-                            value={address}
-                            onChange={(e) => setAddress(e.target.value)}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!errors.address}
-                            helperText={errors.address}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={enabled}
-                                    onChange={(e) => setEnabled(e.target.checked)}
-                                    name="enabled"
-                                    color="primary"
-                                />
-                            }
-                            label="Enabled"
-                        />
-                    </Box>
+                    <Grid2 container spacing={2}>
+                        <Grid2 size={6}>
+                            <TextField
+                                label="Company Name"
+                                name="name"
+                                value={companyName}
+                                onChange={(e) => setCompanyName(e.target.value)}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!errors.companyName}
+                                helperText={errors.companyName}
+                            />
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <TextField
+                                label="Email"
+                                name="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!errors.email}
+                                helperText={errors.email}
+                            />
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <TextField
+                                label="Phone 1"
+                                name="phoneNo1"
+                                value={phoneNo1}
+                                onChange={(e) => setPhone1(e.target.value)}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!errors.phoneNo1}
+                                helperText={errors.phoneNo1}
+                            />
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <TextField
+                                label="Phone 2"
+                                name="phoneNo2"
+                                value={phoneNo2}
+                                onChange={(e) => setPhone2(e.target.value)}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                            />
+                        </Grid2>
+                        <Grid2 size={12}>
+                            <TextField
+                                label="Address"
+                                name="address"
+                                value={address}
+                                onChange={(e) => setAddress(e.target.value)}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!errors.address}
+                                helperText={errors.address}
+                            />
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={enabled}
+                                        onChange={(e) => setEnabled(e.target.checked)}
+                                        name="enabled"
+                                        color="primary"
+                                    />
+                                }
+                                label="Enabled"
+                            />
+                        </Grid2>
+                        <Grid2 size={6}></Grid2>
+                    </Grid2>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                         <Button type="submit" variant="contained" color="primary">
                             {isSaving ? 'Saving...' : 'Save'}

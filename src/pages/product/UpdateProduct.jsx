@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Container, TextField, Button, MenuItem, FormControlLabel, Checkbox, Grid2 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-
+import { Add, Update } from "@mui/icons-material";
+//Service
 import ProductService from '../../services/ProductService';
 import CategoryService from '../../services/CategoryService';
 import DistributorService from '../../services/DistributorService';
+//Utils
 import { validateRequired, validateLength } from '../../utils/Validations';
-import { formatDateToYYYYMMDD } from '../../utils/Dateutils';
-import { Loading } from "../../utils/FieldUtils";
+import { formatDateToYYYYMMDD, formatDate } from '../../utils/Dateutils';
+import { Loading, ErrorMessage, ReadOnlyField } from "../../utils/FieldUtils";
+import { formatPrice, } from "../../utils/utils";
+import AddStockDialog from '../../pages/product/inventory/AddStockDialog';
+import AdjustStockDialog from '../../pages/product/inventory/AdjustStockDialog';
+import UpdateStockAlertDialog from '../../pages/product/inventory/UpdateStockAlertDialog';
 
 const UpdateProduct = () => {
     const { id } = useParams();
@@ -24,8 +30,13 @@ const UpdateProduct = () => {
         price: '',
         costPrice: '',
         maxDiscount: '',
-        stockLevel: '',
-        stockAlertLevel: '',
+        inventory: {
+            inventoryId: '',
+            quantity: '',
+            stockAlertLevel: '',
+            stockWarningLevel: '',
+            lastUpdated: ''
+        },
         manufactureDate: '',
         expireDate: '',
         enabled: true
@@ -33,25 +44,33 @@ const UpdateProduct = () => {
 
     const [categories, setCategories] = useState([]);
     const [distributors, setDistributors] = useState([]);
-
     const [isSaving, setIsSaving] = useState(false);
-    const [errors, setErrors] = useState({});
+    const [formErrors, setFormErrors] = useState({});
+    const [error, setError] = useState(null);
     const [serverError, setServerError] = useState('');
     const [loading, setLoading] = useState(true);
+    const [openAddStockDialog, setOpenAddStockDialog] = useState(false);
+    const [openAdjustStockDialog, setOpenAdjustStockDialog] = useState(false);
+    const [openUpdateStockAlertDialog, setOpenUpdateStockAlertDialog] = useState(false);
+
     const navigate = useNavigate();
 
     useEffect(() => {
         CategoryService.getCategories()
             .then((res) => setCategories(res.data))
-            .catch((error) => console.error('Error fetching categories:', error))
-            .finally(() => setLoading(false));
+            .catch((error) => {
+                console.error('Error fetching category:', error);
+                setError("Failed to fetch category. Please try again later.");
+            }).finally(() => setLoading(false));
     }, []);
 
     useEffect(() => {
         DistributorService.getDistributors()
             .then((res) => setDistributors(res.data))
-            .catch((error) => console.error('Error fetching distributors:', error))
-            .finally(() => setLoading(false));
+            .catch((error) => {
+                console.error('Error fetching distributor:', error);
+                setError("Failed to fetch distributor. Please try again later.");
+            }).finally(() => setLoading(false));
     }, []);
 
     useEffect(() => {
@@ -60,9 +79,75 @@ const UpdateProduct = () => {
                 const product = res.data;
                 setProduct(product);
             })
-            .catch((error) => console.error('Error fetching product:', error))
-            .finally(() => setLoading(false));
+            .catch((error) => {
+                console.error('Error fetching product:', error);
+                setError("Failed to fetch product. Please try again later.");
+            }).finally(() => setLoading(false));
     }, [id]);
+
+    const validateForm = (prodcut) => {
+        const errors = {};
+        //Product Name
+        if (!validateRequired(prodcut.productName)) errors.productName = 'Name is required';
+        if (!validateLength(prodcut.productName, 1, 30)) errors.productName = 'Name must be between 5 and 30 characters';
+        //Description
+        if (!validateRequired(prodcut.description)) errors.description = 'Description is required';
+        if (!validateLength(prodcut.description, 1, 255)) errors.description = 'Description must be less than 255 characters';
+        //SKU
+        if (!validateRequired(prodcut.sku)) errors.sku = 'SKU is required';
+        if (!validateLength(prodcut.sku, 10, 100)) errors.sku = 'SKU must be between 10 and 100 character';
+        //Category
+        //if (!validateRequired(prodcut.category)) errors.category = 'Category is required';
+        //Distributor
+        //if (!validateRequired(prodcut.distributor)) errors.distributor = 'Distributor is required';
+        //Price
+        //if (!validateRequired(prodcut.price)) errors.price = 'Price is required';
+        //Cost Price
+        //if (!validateRequired(prodcut.costPrice)) errors.costPrice = 'Cost Price is required';
+        //Max Discount
+        //if (!validateRequired(prodcut.maxDiscount)) errors.maxDiscount = 'Max Discount is required';
+        //Stock Level
+        //if (!validateRequired(prodcut.stockLevel)) errors.stockLevel = 'Stock Level is required';
+        //Stock Alert Level
+        //if (!validateRequired(prodcut.stockAlertLevel)) errors.stockAlertLevel = 'Stock Alert Level is required';
+        //Manufacture Date
+        //if (!validateRequired(prodcut.manufactureDate)) errors.manufactureDate = 'Manufacture Date is required';
+        //Expiry Date
+        //if (!validateRequired(prodcut.expiryDate)) errors.expiryDate = 'Expiry Date is required';
+
+        return errors;
+    };
+    const handleStockAdded = () => {
+        ProductService.getProductById(product.id)
+            .then((res) => {
+                setProduct(res.data);
+            })
+            .catch((error) => console.error('Error fetching updated inventory:', error));
+    };
+
+    const handleOpenAdjustStockDialog = () => {
+        setOpenAdjustStockDialog(true);
+    };
+
+    const handleOpenAddStockDialog = () => {
+        setOpenAddStockDialog(true);
+    };
+
+    const handleOpenUpdateStockAlertDialog = () => {
+        setOpenUpdateStockAlertDialog(true);
+    };
+
+    const handleCloseAdjustStockDialog = () => {
+        setOpenAdjustStockDialog(false);
+    };
+
+    const handleCloseAddStockDialog = () => {
+        setOpenAddStockDialog(false);
+    };
+
+    const handleCloseUpdateStockAlertDialog = () => {
+        setOpenUpdateStockAlertDialog(false);
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -99,44 +184,11 @@ const UpdateProduct = () => {
         }));
     };
 
-    const validateForm = (prodcut) => {
-        const errors = {};
-        //Product Name
-        if (!validateRequired(prodcut.productName)) errors.productName = 'Name is required';
-        if (!validateLength(prodcut.productName, 1, 30)) errors.productName = 'Name must be between 5 and 30 characters';
-        //Description
-        if (!validateRequired(prodcut.description)) errors.description = 'Description is required';
-        if (!validateLength(prodcut.description, 1, 255)) errors.description = 'Description must be less than 255 characters';
-        //SKU
-        if (!validateRequired(prodcut.sku)) errors.sku = 'SKU is required';
-        if (!validateLength(prodcut.sku, 10, 100)) errors.sku = 'SKU must be between 10 and 100 character';
-        //Category
-        //if (!validateRequired(prodcut.category)) errors.category = 'Category is required';
-        //Distributor
-        //if (!validateRequired(prodcut.distributor)) errors.distributor = 'Distributor is required';
-        //Price
-        //if (!validateRequired(prodcut.price)) errors.price = 'Price is required';
-        //Cost Price
-        //if (!validateRequired(prodcut.costPrice)) errors.costPrice = 'Cost Price is required';
-        //Max Discount
-        //if (!validateRequired(prodcut.maxDiscount)) errors.maxDiscount = 'Max Discount is required';
-        //Stock Level
-        //if (!validateRequired(prodcut.stockLevel)) errors.stockLevel = 'Stock Level is required';
-        //Stock Alert Level
-        //if (!validateRequired(prodcut.stockAlertLevel)) errors.stockAlertLevel = 'Stock Alert Level is required';
-        //Manufacture Date
-        //if (!validateRequired(prodcut.manufactureDate)) errors.manufactureDate = 'Manufacture Date is required';
-        //Expiry Date
-        //if (!validateRequired(prodcut.expiryDate)) errors.expiryDate = 'Expiry Date is required';
-
-        return errors;
-    };
-
     const handleSubmit = (e) => {
         e.preventDefault();
         const validationErrors = validateForm(product);
         if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
+            setFormErrors(validationErrors);
         } else {
             setIsSaving(true);
             ProductService.updateProduct(id, product)
@@ -145,7 +197,7 @@ const UpdateProduct = () => {
                 })
                 .catch((error) => {
                     if (error.response && error.response.data) {
-                        setServerError(error.response.data.message);
+                        setServerError(error.response.data);
                     } else {
                         console.error('Error updating product:', error);
                     }
@@ -155,11 +207,22 @@ const UpdateProduct = () => {
     };
 
     const handleCancel = () => { navigate('/productmanagement/productlist'); };
-    const serverErrorMessages = Object.values(serverError);
-    
+
     if (loading) {
         return <Loading />;
     }
+
+    if (error) {
+        return (
+            <ErrorMessage
+                message={error}
+                actionText="Retry"
+                onAction={() => window.location.reload()}
+            />
+        );
+    }
+
+    const serverErrorMessages = Object.values(serverError);
 
     return (
         <Container maxWidth="md">
@@ -175,224 +238,245 @@ const UpdateProduct = () => {
                             </Typography>
                         </Box>
                     )}
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="Name"
-                            name="name"
-                            value={product.productName}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!errors.productName}
-                            helperText={errors.productName}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="Description"
-                            name="description"
-                            value={product.description}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!errors.description}
-                            helperText={errors.description}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="SKU"
-                            name="sku"
-                            value={product.sku}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!errors.sku}
-                            helperText={errors.sku}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            select
-                            label="Category"
-                            name="category"
-                            value={product.category.categoryId}
-                            onChange={handleCategoryChange}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!errors.category}
-                            helperText={errors.category}
-                        >
-                            {categories.map((category) => (
-                                <MenuItem key={category.categoryId} value={category.categoryId}>
-                                    {category.name}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            select
-                            label="Distributor"
-                            name="distributer"
-                            value={product.distributor.distributorId}
-                            onChange={handleDistributorChange}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!errors.distributor}
-                            helperText={errors.distributor}
-                        >
-                            {distributors.map((distributor) => (
-                                <MenuItem key={distributor.distributorId} value={distributor.distributorId}>
-                                    {distributor.companyName}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                    </Box>
                     <Grid2 container spacing={2}>
-                        <Grid2 item xs={4}>
-                            <Box sx={{ mb: 2 }}>
-                                <TextField
-                                    label="Price"
-                                    name="price"
-                                    value={product.price}
-                                    onChange={handleChange}
-                                    fullWidth
-                                    variant="outlined"
-                                    margin="normal"
-                                    required
-                                    error={!!errors.price}
-                                    helperText={errors.price}
-                                />
-                            </Box>
+                        <Grid2 size={4}>
+                            <ReadOnlyField label="ID" value={product.id} />
                         </Grid2>
-                        <Grid2 item xs={4}>
-                            <Box sx={{ mb: 2 }}>
-                                <TextField
-                                    label="Cost Price"
-                                    name="costPrice"
-                                    value={product.costPrice}
-                                    onChange={handleChange}
-                                    fullWidth
-                                    variant="outlined"
-                                    margin="normal"
-                                    required
-                                    error={!!errors.costPrice}
-                                    helperText={errors.costPrice}
-                                />
-                            </Box>
+                        <Grid2 size={4}>
+                            <ReadOnlyField label="Product ID" value={product.productId} />
                         </Grid2>
-                        <Grid2 item xs={4}>
-                            <Box sx={{ mb: 2 }}>
-                                <TextField
-                                    label="Min Price"
-                                    name="minPrice"
-                                    value={product.minPrice}
-                                    onChange={handleChange}
-                                    fullWidth
-                                    variant="outlined"
-                                    margin="normal"
-                                    required
-                                    error={!!errors.minPrice}
-                                    helperText={errors.minPrice}
-                                />
-                            </Box>
+                        <Grid2 size={4}>
+                            <TextField
+                                label="SKU"
+                                name="sku"
+                                value={product.sku}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!formErrors.sku}
+                                helperText={formErrors.sku}
+                            />
                         </Grid2>
-                        <Grid2 item xs={4}>
-                            <Box sx={{ mb: 2 }}>
-                                <TextField
-                                    label="Stock Level"
-                                    name="stockLevel"
-                                    value={product.stockLevel}
-                                    onChange={handleChange}
-                                    fullWidth
-                                    variant="outlined"
-                                    margin="normal"
-                                    required
-                                    error={!!errors.stockLevel}
-                                    helperText={errors.stockLevel}
-                                />
-                            </Box>
+                        <Grid2 size={12}>
+                            <TextField
+                                label="Name"
+                                name="name"
+                                value={product.productName}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!formErrors.productName}
+                                helperText={formErrors.productName}
+                            />
                         </Grid2>
-                        <Grid2 item xs={4}>
-                            <Box sx={{ mb: 2 }}>
-                                <TextField
-                                    label="Stock Alert Level"
-                                    name="stockAlertLevel"
-                                    value={product.stockAlertLevel}
-                                    onChange={handleChange}
-                                    fullWidth
-                                    variant="outlined"
-                                    margin="normal"
-                                    required
-                                    error={!!errors.stockAlertLevel}
-                                    helperText={errors.stockAlertLevel}
-                                />
-                            </Box>
+                        <Grid2 size={12}>
+                            <TextField
+                                label="Description"
+                                name="description"
+                                value={product.description}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!formErrors.description}
+                                helperText={formErrors.description}
+                            />
                         </Grid2>
+                        <Grid2 size={6}>
+                            <TextField
+                                select
+                                label="Category"
+                                name="category"
+                                value={product.category.categoryId}
+                                onChange={handleCategoryChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!formErrors.category}
+                                helperText={formErrors.category}
+                            >
+                                {categories.map((category) => (
+                                    <MenuItem key={category.categoryId} value={category.categoryId}>
+                                        {category.name}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <TextField
+                                select
+                                label="Distributor"
+                                name="distributer"
+                                value={product.distributor.distributorId}
+                                onChange={handleDistributorChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!formErrors.distributor}
+                                helperText={formErrors.distributor}
+                            >
+                                {distributors.map((distributor) => (
+                                    <MenuItem key={distributor.distributorId} value={distributor.distributorId}>
+                                        {distributor.companyName}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </Grid2>
+                        <Grid2 size={4}>
+                            <TextField
+                                label="Price"
+                                name="price"
+                                value={product.price}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!formErrors.price}
+                                helperText={formErrors.price}
+                            />
+                        </Grid2>
+                        <Grid2 size={4}>
+                            <TextField
+                                label="Cost Price"
+                                name="costPrice"
+                                value={product.costPrice}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!formErrors.costPrice}
+                                helperText={formErrors.costPrice}
+                            />
+                        </Grid2>
+                        <Grid2 size={4}>
+                            <TextField
+                                label="Min Price"
+                                name="minPrice"
+                                value={product.minPrice}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!formErrors.minPrice}
+                                helperText={formErrors.minPrice}
+                            />
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <TextField
+                                label="Manufacture Date"
+                                name="manufactureDate"
+                                type="date"
+                                value={formatDateToYYYYMMDD(product.manufactureDate)}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!formErrors.manufactureDate}
+                                helperText={formErrors.manufactureDate}
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                            />
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <TextField
+                                label="Expiry Date"
+                                name="expireDate"
+                                type="date"
+                                value={formatDateToYYYYMMDD(product.expireDate)}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!formErrors.expireDate}
+                                helperText={formErrors.expireDate}
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                            />
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={product.enabled}
+                                        onChange={handleCheckboxChange}
+                                        name="enabled"
+                                        color="primary"
+                                    />
+                                }
+                                label="Enabled"
+                            />
+                        </Grid2>
+                        <Grid2 size={6}></Grid2>
                     </Grid2>
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="Manufacture Date"
-                            name="manufactureDate"
-                            type="date"
-                            value={formatDateToYYYYMMDD(product.manufactureDate)}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!errors.manufactureDate}
-                            helperText={errors.manufactureDate}
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="Expiry Date"
-                            name="expireDate"
-                            type="date"
-                            value={formatDateToYYYYMMDD(product.expireDate)}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!errors.expireDate}
-                            helperText={errors.expireDate}
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={product.enabled}
-                                    onChange={handleCheckboxChange}
-                                    name="enabled"
-                                    color="primary"
+                    <Paper sx={{ p: 3, mt: 3 }}>
+                        <Typography variant="h6" gutterBottom>
+                            Inventory
+                        </Typography>
+                        <Grid2 container spacing={2}>
+                            <Grid2 size={4}>
+                                <ReadOnlyField label="Quantity" value={product.inventory.quantity} />
+                            </Grid2>
+                            <Grid2 size={4}></Grid2>
+                            <Grid2 size={4}></Grid2>
+                            <Grid2 size={4}>
+                                <ReadOnlyField label="Stock Warning Level" value={formatPrice(product.inventory.stockWarningLevel)} />
+                            </Grid2>
+                            <Grid2 size={4}>
+                                <ReadOnlyField label="Stock Alert Level" value={formatPrice(product.inventory.stockAlertLevel)} />
+                            </Grid2>
+                            <Grid2 size={4}>
+                                <Button variant="contained" startIcon={<Update />} color="info" onClick={handleOpenUpdateStockAlertDialog}></Button>
+                                <UpdateStockAlertDialog
+                                    open={openUpdateStockAlertDialog}
+                                    onClose={handleCloseUpdateStockAlertDialog}
+                                    productId={product.id}
+                                    inventory={product.inventory}
+                                    onStockAdded={handleStockAdded}
                                 />
-                            }
-                            label="Enabled"
-                        />
-                    </Box>
+                            </Grid2>
+                            <Grid2 size={6}>
+                                <ReadOnlyField label="Last Updated" value={formatDate(product.inventory.lastUpdated)} />
+                            </Grid2>
+                            <Grid2 size={6}></Grid2>
+                        </Grid2>
+                        <Box sx={{ display: 'flex', mt: 2, gap: 4 }}>
+                            <Button variant="contained" startIcon={<Add />} color="info" onClick={handleOpenAddStockDialog}>
+                                Add Stock
+                            </Button>
+                            <AddStockDialog
+                                open={openAddStockDialog}
+                                onClose={handleCloseAddStockDialog}
+                                productId={product.id}
+                                inventory={product.inventory}
+                                onStockAdded={handleStockAdded} />
+                            <Button variant="contained" startIcon={<Update />} color="secondary" onClick={handleOpenAdjustStockDialog}>
+                                Adjust Stock
+                            </Button>
+                            <AdjustStockDialog
+                                open={openAdjustStockDialog}
+                                onClose={handleCloseAdjustStockDialog}
+                                productId={product.id}
+                                inventory={product.inventory}
+                                onStockAdjusted={handleStockAdded} />
+                        </Box>
+                    </Paper>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                         <Button type="submit" variant="contained" color="primary">
-                            Update Product
+                            {isSaving ? 'Saving...' : 'Update'}
                         </Button>
                         <Button variant="outlined" color="secondary" onClick={handleCancel}>
                             Cancel

@@ -1,28 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton, Typography, Pagination, Box } from "@mui/material";
+import { Delete, Edit, Add, Preview } from "@mui/icons-material";
+//Service
 import DistributorService from "../../../services/DistributorService";
+//Utils
 import { renderStatusIcon } from "../../../utils/utils";
 import { formatDate } from '../../../utils/Dateutils';
-import { SkeletonLoading, ErrorMessage, ConfirmationDialog} from '../../../utils/FieldUtils'
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Button,
-  IconButton,
-  Typography, Pagination
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import AddIcon from "@mui/icons-material/Add";
-import ViewIcon from "@mui/icons-material/Preview"
-
+import { SkeletonLoading, ErrorMessage, ConfirmationDialog, ActiveStatusFilter } from '../../../utils/FieldUtils'
+import { getSortedData, toggleSortDirection } from "../../../utils/SortUtils";
+//Style
+import { styles } from "../../../style/TableStyle";
 
 const DistributorList = () => {
 
@@ -33,7 +21,10 @@ const DistributorList = () => {
   const [selectedId, setSelectedId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [paginationLoading, setPaginationLoading] = useState(false);
-  const itemsPerPage = 2;
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" }); // Sorting state
+  const [statusFilter, setStatusFilter] = useState(""); // Account status filter state
+
+  const itemsPerPage = 10;
 
   useEffect(() => {
     DistributorService.getDistributors()
@@ -75,6 +66,18 @@ const DistributorList = () => {
     setSelectedId(null);
   };
 
+  const handleSort = (key) => {
+    setSortConfig((currentConfig) => toggleSortDirection(currentConfig, key));
+  };
+
+  const applyFilters = () => {
+    return distributors.filter((distributor) => {
+      const matchesStatus = statusFilter ? String(distributor.enabled) === statusFilter : true;
+
+      return matchesStatus;
+    });
+  };
+
   const handlePageChange = (event, value) => {
     setPaginationLoading(true);
     setTimeout(() => {
@@ -83,10 +86,19 @@ const DistributorList = () => {
     }, 500); // Simulate a delay (replace this with actual fetching logic if needed)
   };
 
-  const paginatedDistributor = distributors.slice(
+  const filteredDistributor = applyFilters();
+
+  const sortedDistributor = getSortedData(filteredDistributor, sortConfig);
+
+  const paginatedDistributor = sortedDistributor.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+
+  if (loading || paginationLoading) {
+    return <SkeletonLoading />;
+  }
 
   if (error) {
     return (
@@ -98,10 +110,6 @@ const DistributorList = () => {
     );
   }
 
-  if (loading || paginationLoading) {
-    return <SkeletonLoading />;
-  }
-
   if (distributors.length === 0) {
     return (
       <div style={{ textAlign: "center", marginTop: "20px" }}>
@@ -111,7 +119,7 @@ const DistributorList = () => {
           to="/productmanagement/distributor/createdistributor"
           variant="contained"
           color="primary"
-          startIcon={<AddIcon />}
+          startIcon={<Add />}
           style={{ marginTop: "10px" }}
         >
           Add Distributor
@@ -119,68 +127,76 @@ const DistributorList = () => {
       </div>
     );
   };
-  return (
 
-    <div style={{ padding: "20px" }}>
-      <Typography variant="h4" style={{ textAlign: "center", marginBottom: "20px" }}>
+
+  return (
+    <div style={styles.mainContainer}>
+      <Typography variant="h4" style={styles.title}>
         Distributor List
       </Typography>
-      <Button
-        component={Link}
-        to="/productmanagement/distributor/createdistributor"
-        variant="contained"
-        color="primary"
-        startIcon={<AddIcon />}
-        style={{ marginBottom: "20px" }}
-      >
-        Add Category
-      </Button>
+      <div style={styles.filterContainer}>
+        <Button
+          component={Link}
+          to="/productmanagement/distributor/createdistributor"
+          variant="contained"
+          color="primary"
+          startIcon={<Add />}
+          style={{ marginBottom: "20px" }}
+        >
+          Add Category
+        </Button>
+        <Paper sx={{ p: 1, mt: 1, mb: 1 }}>
+          <Typography variant="h6" style={styles.filterTitle}>
+            Filter data
+          </Typography>
+          <ActiveStatusFilter
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            style={styles.filterFormController}
+          />
+        </Paper>
+      </div>
+
       {paginationLoading ? (
         <SkeletonLoading />
       ) : (
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Company Name</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Phone Number</TableCell>
-                <TableCell>Address</TableCell>
-                <TableCell>Enabled</TableCell>
-                <TableCell>Created User</TableCell>
-                <TableCell>Created At</TableCell>
-                <TableCell>Updated User</TableCell>
-                <TableCell>Updated At</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {paginatedDistributor.map((distributor) => (
-                <TableRow key={distributor.distributorId}>
-                  <TableCell>{distributor.companyName}</TableCell>
-                  <TableCell>{distributor.email}</TableCell>
-                  <TableCell>{`${distributor.phoneNo1} / ${distributor.phoneNo2} `}</TableCell>
-                  <TableCell>{distributor.address}</TableCell>
-                  <TableCell>{renderStatusIcon(distributor.enabled)}</TableCell>
-                  <TableCell>{distributor.createdUser.username}</TableCell>
-                  <TableCell>{formatDate(distributor.createdAt)}</TableCell>
-                  <TableCell>{distributor.updatedUser.username}</TableCell>
-                  <TableCell>{formatDate(distributor.updatedAt)}</TableCell>
-                  <TableCell>
-                    <IconButton component={Link} to={`/productmanagement/distributor/updatedistributor/${distributor.distributorId}`}>
-                      <EditIcon color="primary" />
-                    </IconButton>
-                    <IconButton onClick={() => confirmDelete(distributor.distributorId)}>
-                      <DeleteIcon color="error" />
-                    </IconButton>
-                    <IconButton component={Link} to={`/productmanagement/distributor/viewdistributor/${distributor.distributorId}`}>
-                      <ViewIcon color="primary" />
-                    </IconButton>
-                  </TableCell>
+        <TableContainer component={Paper} sx={{ width: '100%', overflowX: 'auto' }}>
+          <Box sx={{ overflowX: 'auto' }}>
+            <Table sx={{ minWidth: '1300px' }}>
+              <TableHead>
+                <TableRow style={styles.tableHeaderCell}>
+                  <TableCell onClick={() => handleSort("companyName")}>Company Name {sortConfig.key === "companyName" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell onClick={() => handleSort("email")}>Email {sortConfig.key === "email" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell>Phone Number</TableCell>
+                  <TableCell onClick={() => handleSort("address")}>Address {sortConfig.key === "address" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell onClick={() => handleSort("enabled")}>Enabled {sortConfig.key === "enabled" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell>Actions</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHead>
+              <TableBody>
+                {paginatedDistributor.map((distributor, index) => (
+                  <TableRow key={distributor.distributorId} sx={styles.zebraStripe(index)}>
+                    <TableCell style={styles.tableCell}>{distributor.companyName}</TableCell>
+                    <TableCell style={styles.tableCell}>{distributor.email}</TableCell>
+                    <TableCell style={styles.tableCell}>{`${distributor.phoneNo1} / ${distributor.phoneNo2} `}</TableCell>
+                    <TableCell style={styles.tableCell}>{distributor.address}</TableCell>
+                    <TableCell style={styles.tableCell}>{renderStatusIcon(distributor.enabled)}</TableCell>
+                    <TableCell style={styles.tableCell}>
+                      <IconButton component={Link} to={`/productmanagement/distributor/updatedistributor/${distributor.distributorId}`}>
+                        <Edit color="primary" />
+                      </IconButton>
+                      <IconButton onClick={() => confirmDelete(distributor.distributorId)}>
+                        <Delete color="error" />
+                      </IconButton>
+                      <IconButton component={Link} to={`/productmanagement/distributor/viewdistributor/${distributor.distributorId}`}>
+                        <Preview color="primary" />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Box>
         </TableContainer>
       )}
       <Pagination
@@ -188,7 +204,7 @@ const DistributorList = () => {
         page={currentPage}
         onChange={handlePageChange}
         color="primary"
-        style={{ marginTop: "20px", display: "flex", justifyContent: "center" }}
+        style={styles.pagination}
       />
       <ConfirmationDialog
         open={dialogOpen}

@@ -195,15 +195,15 @@ const UserList = () => {
           <Box sx={{ overflowX: 'auto' }}>
             <Table sx={{ minWidth: '1300px' }}>
               <TableHead>
-                <TableRow>
-                  <TableCell style={styles.tableHeaderCell} onClick={() => handleSort("username")}>Username {sortConfig.key === "username" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell style={styles.tableHeaderCell} onClick={() => handleSort("firstName")}>Full Name {sortConfig.key === "firstName" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell style={styles.tableHeaderCell} onClick={() => handleSort("email")}> Email {sortConfig.key === "email" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell style={styles.tableHeaderCell} onClick={() => handleSort("phoneNo1")}>Phone {sortConfig.key === "phoneNo1" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell style={styles.tableHeaderCell}>Role</TableCell>
-                  <TableCell style={styles.tableHeaderCell}>Active Status</TableCell>
-                  <TableCell style={styles.tableHeaderCell}>Account Lock</TableCell>
-                  <TableCell style={styles.tableHeaderCell}>Action</TableCell>
+                <TableRow style={styles.tableHeaderCell}>
+                  <TableCell onClick={() => handleSort("username")}>Username {sortConfig.key === "username" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell onClick={() => handleSort("firstName")}>Full Name {sortConfig.key === "firstName" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell onClick={() => handleSort("email")}> Email {sortConfig.key === "email" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell onClick={() => handleSort("phoneNo1")}>Phone {sortConfig.key === "phoneNo1" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell>Role</TableCell>
+                  <TableCell>Active Status</TableCell>
+                  <TableCell>Account Lock</TableCell>
+                  <TableCell>Action</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>

@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import UserService from '../../services/UserService';
 import RoleService from '../../services/RoleService';
-import { validateEmail, validatePassword, validateRequired, validateLength } from '../../utils/Validations';
+import { validateEmail, validateRequired, validateLength } from '../../utils/Validations';
 import { Loading, ErrorMessage, ReadOnlyField } from "../../utils/FieldUtils";
 
 const UpdateUser = () => {
@@ -27,7 +27,6 @@ const UpdateUser = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState(null);
   const [serverError, setServerError] = useState('');
-
   const [formError, setFormError] = useState({});
   const navigate = useNavigate();
 
@@ -122,7 +121,6 @@ const UpdateUser = () => {
     }
   };
 
-
   const handleCancel = () => { navigate('/usermanagement/userlist'); };
 
   if (loading) {
@@ -138,6 +136,7 @@ const UpdateUser = () => {
       />
     );
   }
+  
   const serverErrorMessages = Object.values(serverError);
   return (
     <Container maxWidth="md">

@@ -1,27 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton, Typography, Pagination, Box} from "@mui/material";
+import { Delete, Edit, Add, Preview } from "@mui/icons-material";
 
+//Service
 import CategoryService from "../../../services/CategoryService";
+//Utils
 import { renderStatusIcon } from "../../../utils/utils";
-import { formatDate } from '../../../utils/Dateutils';
-import { SkeletonLoading, ErrorMessage, ConfirmationDialog} from '../../../utils/FieldUtils'
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Button,
-  IconButton,
-  Typography, Pagination,
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import AddIcon from "@mui/icons-material/Add";
-import ViewIcon from "@mui/icons-material/Preview"
+import { SkeletonLoading, ErrorMessage, ConfirmationDialog, ActiveStatusFilter } from '../../../utils/FieldUtils'
+import { getSortedData, toggleSortDirection } from "../../../utils/SortUtils";
+//Style
+import { styles } from "../../../style/TableStyle";
 
 const CategoryList = () => {
 
@@ -32,8 +21,9 @@ const CategoryList = () => {
   const [selectedId, setSelectedId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [paginationLoading, setPaginationLoading] = useState(false);
-
-  const itemsPerPage = 2;
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" }); // Sorting state
+  const [statusFilter, setStatusFilter] = useState(""); // Account status filter state
+  const itemsPerPage = 10;
 
   useEffect(() => {
     CategoryService.getCategories()
@@ -83,10 +73,28 @@ const CategoryList = () => {
     }, 500); // Simulate a delay (replace this with actual fetching logic if needed)
   };
 
-  const paginatedCategory = categories.slice(
+  const handleSort = (key) => {
+    setSortConfig((currentConfig) => toggleSortDirection(currentConfig, key));
+  };
+
+  const applyFilters = () => {
+    return categories.filter((category) => {
+      const matchesStatus = statusFilter ? String(category.enabled) === statusFilter : true;
+      return matchesStatus;
+    });
+  };
+
+  const filteredCategories = applyFilters();
+  const sortedCategories = getSortedData(filteredCategories, sortConfig);
+
+  const paginatedCategory = sortedCategories.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  if (loading || paginationLoading) {
+    return <SkeletonLoading />;
+  }
 
   if (error) {
     return (
@@ -98,10 +106,6 @@ const CategoryList = () => {
     );
   }
 
-  if (loading || paginationLoading) {
-    return <SkeletonLoading />;
-  }
-
   if (categories.length === 0) {
     return (
       <div style={{ textAlign: "center", marginTop: "20px" }}>
@@ -111,7 +115,7 @@ const CategoryList = () => {
           to="/productmanagement/category/createcategory"
           variant="contained"
           color="primary"
-          startIcon={<AddIcon />}
+          startIcon={<Add />}
           style={{ marginTop: "10px" }}
         >
           Add Category
@@ -121,67 +125,74 @@ const CategoryList = () => {
   }
 
   return (
-    <div style={{ padding: "20px" }}>
-      <Typography variant="h4" style={{ textAlign: "center", marginBottom: "20px" }}>
+    <div style={styles.mainContainer}>
+      <Typography variant="h4" style={styles.title}>
         Category List
       </Typography>
-      <Button
-        component={Link}
-        to="/productmanagement/category/createcategory"
-        variant="contained"
-        color="primary"
-        startIcon={<AddIcon />}
-        style={{ marginBottom: "20px" }}
-      >
-        Add Category
-      </Button>
+
+      <div style={styles.filterContainer}>
+        <Button
+          component={Link}
+          to="/productmanagement/category/createcategory"
+          variant="contained"
+          color="primary"
+          startIcon={<Add />}
+          style={{ marginBottom: "20px" }}
+        >
+          Add Category
+        </Button>
+        <Paper sx={{ p: 1, mt: 1, mb: 1 }}>
+          <Typography variant="h6" style={styles.filterTitle}>
+            Filter data
+          </Typography>
+          <ActiveStatusFilter
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            style={styles.filterFormController}
+          />
+        </Paper>
+      </div>
       {paginationLoading ? (
         <SkeletonLoading />
       ) : (
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Description</TableCell>
-                <TableCell>Category Prefix</TableCell>
-                <TableCell>Enabled</TableCell>
-                <TableCell>Created User</TableCell>
-                <TableCell>Created At</TableCell>
-                <TableCell>Updated User</TableCell>
-                <TableCell>Updated At</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {paginatedCategory.map((category) => (
-                <TableRow key={category.categoryId}>
-                  <TableCell>{category.name}</TableCell>
-                  <TableCell>{category.description}</TableCell>
-                  <TableCell>{category.catPrefix}</TableCell>
-                  <TableCell>{renderStatusIcon(category.enabled)}</TableCell>
-                  <TableCell>{category.createdUser.username}</TableCell>
-                  <TableCell>{formatDate(category.createdAt)}</TableCell>
-                  <TableCell>{category.updatedUser.username}</TableCell>
-                  <TableCell>{formatDate(category.updatedAt)}</TableCell>
-                  <TableCell>
-                    <IconButton component={Link} to={`/productmanagement/category/updatecategory/${category.categoryId}`}
-                      aria-label="Edit">
-                      <EditIcon color="primary" />
-                    </IconButton>
-                    <IconButton onClick={() => confirmDelete(category.categoryId)}
-                      aria-label="Delete">
-                      <DeleteIcon color="error" />
-                    </IconButton>
-                    <IconButton component={Link} to={`/productmanagement/category/viewcategory/${category.categoryId}`}
-                      aria-label="Update">
-                      <ViewIcon color="primary" />
-                    </IconButton>
-                  </TableCell>
+        <TableContainer component={Paper} sx={{ width: '100%', overflowX: 'auto' }}>
+          <Box sx={{ overflowX: 'auto' }}>
+            <Table sx={{ minWidth: '1000px' }}>
+              <TableHead>
+                <TableRow style={styles.tableHeaderCell}>
+                  <TableCell onClick={() => handleSort("name")}>Name {sortConfig.key === "name" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell>Description</TableCell>
+                  <TableCell onClick={() => handleSort("catPrefix")}>Category Prefix {sortConfig.key === "catPrefix" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell onClick={() => handleSort("enabled")}>Enabled {sortConfig.key === "enabled" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell>Actions</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHead>
+              <TableBody>
+                {paginatedCategory.map((category, index) => (
+                  <TableRow key={category.categoryId} sx={styles.zebraStripe(index)}>
+                    <TableCell style={styles.tableCell}>{category.name}</TableCell>
+                    <TableCell style={styles.tableCell}>{category.description}</TableCell>
+                    <TableCell style={styles.tableCell}>{category.catPrefix}</TableCell>
+                    <TableCell style={styles.tableCell}>{renderStatusIcon(category.enabled)}</TableCell>
+                    <TableCell style={styles.tableCell}>
+                      <IconButton component={Link} to={`/productmanagement/category/updatecategory/${category.categoryId}`}
+                        aria-label="Edit">
+                        <Edit color="primary" />
+                      </IconButton>
+                      <IconButton onClick={() => confirmDelete(category.categoryId)}
+                        aria-label="Delete">
+                        <Delete color="error" />
+                      </IconButton>
+                      <IconButton component={Link} to={`/productmanagement/category/viewcategory/${category.categoryId}`}
+                        aria-label="Update">
+                        <Preview color="primary" />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Box>
         </TableContainer>
       )}
       <Pagination
@@ -189,7 +200,7 @@ const CategoryList = () => {
         page={currentPage}
         onChange={handlePageChange}
         color="primary"
-        style={{ marginTop: "20px", display: "flex", justifyContent: "center" }}
+        style={styles.pagination}
       />
       <ConfirmationDialog
         open={dialogOpen}

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Container, TextField, Button, FormControlLabel, Checkbox } from '@mui/material';
+import { Box, Typography, Paper, Container, TextField, Button, FormControlLabel, Checkbox, Grid2 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
+//Service
 import BrandService from '../../../services/BrandService';
-
+//Utils
 import { validateRequired, validateLength } from '../../../utils/Validations';
-import { Loading } from '../../../utils/FieldUtils'
+import { Loading, ErrorMessage, ReadOnlyField } from '../../../utils/FieldUtils'
 
 const UpdateBrand = () => {
 
@@ -15,21 +16,10 @@ const UpdateBrand = () => {
 
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
-    const [errors, setErrors] = useState({});
+    const [error, setError] = useState(null);
+    const [formError, setErrors] = useState({});
     const [serverError, setServerError] = useState('');
     const navigate = useNavigate();
-
-    const validateForm = (brand) => {
-        const errors = {};
-        //Name
-        if (!validateRequired(brand.name)) errors.name = 'Name is required';
-        if (!validateLength(brand.name, 1, 30)) errors.name = 'Name must be between 5 and 30 characters';
-        //Description
-        if (!validateRequired(brand.description)) errors.description = 'Description is required';
-        if (!validateLength(brand.description, 1, 255)) errors.description = 'Description must be less than 255 characters';
-
-        return errors;
-    };
 
     useEffect(() => {
         BrandService.getBrandById(brandId)
@@ -39,9 +29,23 @@ const UpdateBrand = () => {
                 setDescription(brand.description);
                 setEnabled(brand.enabled);
             })
-            .catch((error) => console.error('Error fetching brand:', error))
-            .finally(() => setLoading(false));;
+            .catch((error) => {
+                console.error('Error fetching brand:', error);
+                setError("Failed to fetch brand. Please try again later.");
+            }).finally(() => setLoading(false));
     }, [brandId]);
+
+    const validateForm = (brand) => {
+        const errors = {};
+        //Name
+        if (!validateRequired(brand.name)) errors.name = 'Name is required';
+        if (!validateLength(brand.name, 5, 20)) errors.name = 'Name must be between 5 and 20 characters';
+        //Description
+        if (!validateRequired(brand.description)) errors.description = 'Description is required';
+        if (!validateLength(brand.description, 10, 250)) errors.description = 'Description must be between 10 and 250 characters';
+
+        return errors;
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -57,7 +61,7 @@ const UpdateBrand = () => {
                 })
                 .catch((error) => {
                     if (error.response && error.response.data) {
-                        setServerError(error.response.data.message);
+                        setServerError(error.response.data);
                     } else {
                         console.error('Error updating brand:', error);
                     }
@@ -68,12 +72,20 @@ const UpdateBrand = () => {
 
     const handleCancel = () => { navigate('/productmanagement/brandlist'); };
 
-    const serverErrorMessages = Object.values(serverError);
-
     if (loading) {
         return <Loading />;
     }
 
+    if (error) {
+        return (
+            <ErrorMessage
+                message={error}
+                actionText="Retry"
+                onAction={() => window.location.reload()}
+            />
+        );
+    }
+    const serverErrorMessages = Object.values(serverError);
     return (
         <Container maxWidth="md">
             <Paper sx={{ p: 3, mt: 3 }}>
@@ -81,54 +93,60 @@ const UpdateBrand = () => {
                     Update Category
                 </Typography>
                 <form onSubmit={handleSubmit}>
-                    {Object.keys(serverError).length > 0 && (
+                    {Object.keys(serverErrorMessages).length > 0 && (
                         <Box sx={{ mb: 2 }}>
                             <Typography color="error">
                                 {serverErrorMessages}
                             </Typography>
                         </Box>
                     )}
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="Name"
-                            name="name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!errors.name}
-                            helperText={errors.name}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="Description"
-                            name="description"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!errors.description}
-                            helperText={errors.description}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={enabled}
-                                    onChange={(e) => setEnabled(e.target.checked)}
-                                    name="enabled"
-                                    color="primary"
-                                />
-                            }
-                            label="Enabled"
-                        />
-                    </Box>
+                    <Grid2 container spacing={2}>
+                        <Grid2 size={4}>
+                            <ReadOnlyField label="Brand ID" value={brandId} />
+                        </Grid2>
+                        <Grid2 size={8}>
+                            <TextField
+                                label="Name"
+                                name="name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!formError.name}
+                                helperText={formError.name}
+                            />
+                        </Grid2>
+                        <Grid2 size={12}>
+                            <TextField
+                                label="Description"
+                                name="description"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!formError.description}
+                                helperText={formError.description}
+                            />
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={enabled}
+                                        onChange={(e) => setEnabled(e.target.checked)}
+                                        name="enabled"
+                                        color="primary"
+                                    />
+                                }
+                                label="Enabled"
+                            />
+                        </Grid2>
+                        <Grid2 size={6}></Grid2>
+                    </Grid2>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                         <Button type="submit" variant="contained" color="primary">
                             {isSaving ? 'Updating...' : 'Update'}

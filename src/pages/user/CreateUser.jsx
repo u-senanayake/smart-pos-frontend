@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Container, TextField, Button, MenuItem, FormControlLabel, Checkbox, Grid2 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-
+//Service
 import UserService from '../../services/UserService';
 import RoleService from '../../services/RoleService';
+//Utils
 import { validateEmail, validatePassword, validateRequired, validateLength } from '../../utils/Validations';
 import { Loading } from "../../utils/FieldUtils";
 
@@ -109,7 +110,7 @@ const CreateUser = () => {
         })
         .catch((error) => {
           if (error.response && error.response.data) {
-            setServerError(error.response.data.message);
+            setServerError(error.response.data);
           } else {
             console.error('Error updating user:', error);
           }

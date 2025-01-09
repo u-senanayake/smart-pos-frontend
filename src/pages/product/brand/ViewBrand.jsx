@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Container, Typography, Box, Paper, Button, TextField, Grid2, } from "@mui/material";
-
+import { Container, Typography, Box, Paper, Button, Grid2, } from "@mui/material";
+//Service
 import BrandService from '../../../services/BrandService';
+//Utils
 import { renderStatusIcon, } from "../../../utils/utils";
 import { formatDate } from "../../../utils/Dateutils";
-import { Loading, ReadOnlyField } from '../../../utils/FieldUtils'
+import { Loading, ReadOnlyField, ErrorMessage } from '../../../utils/FieldUtils'
 
 const ViewBrand = () => {
 
   const { brandId } = useParams();
   const [brand, setBrand] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,29 +21,31 @@ const ViewBrand = () => {
       .then((res) => {
         setBrand(res.data);
       })
-      .catch((error) => console.error('Error fetching brand:', error))
-      .finally(() => setLoading(false));
+      .catch((error) => {
+        console.error('Error fetching brand:', error);
+        setError("Failed to fetch brand. Please try again later.");
+      }).finally(() => setLoading(false));
   }, [brandId]);
 
   const cancel = () => navigate('/productmanagement/brandlist');
+
+  const handleUpdate = () => {
+    navigate(`/productmanagement/brand/updatebrand/${brandId}`);
+  };
 
   if (loading) {
     return <Loading />;
   }
 
-  if (!brand) {
+  if (error) {
     return (
-      <Container maxWidth="sm">
-        <Typography variant="h6" color="error">
-          Brand not found.
-        </Typography>
-      </Container>
+      <ErrorMessage
+        message={error}
+        actionText="Retry"
+        onAction={() => window.location.reload()}
+      />
     );
   }
-
-  const handleUpdate = () => {
-    navigate(`/productmanagement/brand/updatebrand/${brandId}`);
-  };
 
   return (
     <Container maxWidth="md">
@@ -50,33 +54,42 @@ const ViewBrand = () => {
           View Brand
         </Typography>
         <Grid2 container spacing={2}>
-          <Grid2 item xs={6}>
-            <Box sx={{ mb: 2 }}>
-              <ReadOnlyField label="Brand ID" value={brand.brandId} />
-            </Box>
+          <Grid2 size={4}>
+            <ReadOnlyField label="Brand ID" value={brand.brandId} />
           </Grid2>
-          <Grid2 item xs={6}>
-            <Box sx={{ mb: 2 }}>
-              <ReadOnlyField label="Name" value={brand.name} />
-            </Box>
+          <Grid2 size={8}>
+            <ReadOnlyField label="Name" value={brand.name} />
           </Grid2>
+          <Grid2 size={12}>
+            <ReadOnlyField label="Description" value={brand.description} />
+          </Grid2>
+          <Grid2 size={6}>
+            <Typography variant="h5">Enabled: {renderStatusIcon(brand.enabled)}</Typography>
+          </Grid2>
+          <Grid2 size={6}></Grid2>
+          <Grid2 size={6}>
+            <ReadOnlyField label="Created At" value={formatDate(brand.createdAt)} />
+          </Grid2>
+          <Grid2 size={6}>
+            <ReadOnlyField label="Created By" value={`${brand.createdUser.firstName} ${brand.createdUser.lastName} (${brand.createdUser.username})`} />
+          </Grid2>
+          <Grid2 size={6}>
+            <ReadOnlyField label="Updated At" value={formatDate(brand.updatedAt)} />
+          </Grid2>
+          <Grid2 size={6}>
+            <ReadOnlyField label="Updated By" value={`${brand.updatedUser.firstName} ${brand.updatedUser.lastName} (${brand.updatedUser.username})`} />
+          </Grid2>
+          {brand.deleted && (
+            <>
+              <Grid2 size={6}>
+                <ReadOnlyField label="Deleted At" value={formatDate(brand.deletedAt)} />
+              </Grid2>
+              <Grid2 size={6}>
+                <ReadOnlyField label="Deleted By" value={`${brand.deletedUser?.firstName} ${brand.deletedUser?.lastName} (${brand.deletedUser?.username})`} />
+              </Grid2>
+            </>
+          )}
         </Grid2>
-        <Box sx={{ mb: 2 }}>
-          <ReadOnlyField label="Description" value={brand.description} />
-        </Box>
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="h5">Enabled: {renderStatusIcon(brand.enabled)}</Typography>
-        </Box>
-        <ReadOnlyField label="Created At" value={formatDate(brand.createdAt)} />
-        <ReadOnlyField label="Created By" value={`${brand.createdUser.firstName} ${brand.createdUser.lastName} (${brand.createdUser.username})`} />
-        <ReadOnlyField label="Updated At" value={formatDate(brand.updatedAt)} />
-        <ReadOnlyField label="Updated By" value={`${brand.updatedUser.firstName} ${brand.updatedUser.lastName} (${brand.updatedUser.username})`} />
-        {brand.deleted && (
-          <>
-            <ReadOnlyField label="Deleted At" value={formatDate(brand.deletedAt)} />
-            <ReadOnlyField label="Deleted By" value={`${brand.deletedUser?.firstName} ${brand.deletedUser?.lastName} (${brand.deletedUser?.username})`} />
-          </>
-        )}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
           <Button variant="contained" color="primary" onClick={handleUpdate}>
             Update

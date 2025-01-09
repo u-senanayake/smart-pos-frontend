@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Box, Typography, Paper, Container, TextField, Button, FormControlLabel, Checkbox, Grid2 } from '@mui/material';
+//Service
 import BrandService from '../../../services/BrandService';
-import { Box, Typography, Paper, Container, TextField, Button, MenuItem, CircularProgress, FormControlLabel, Checkbox } from '@mui/material';
+//Utils
 import { validateRequired, validateLength } from '../../../utils/Validations';
 
 const CreateBrand = () => {
@@ -32,17 +34,18 @@ const CreateBrand = () => {
         if (Object.keys(validationErrors).length > 0) {
             setFormError(validationErrors);
         } else {
+            setIsSaving(true);
             BrandService.createBrand(brand)
                 .then(() => {
                     navigate('/productmanagement/brandlist');
                 })
                 .catch((error) => {
                     if (error.response && error.response.data) {
-                        setServerErrors(error.response.data);
+                        setServerErrors(error.response);
                     } else {
                         console.error('Error creating brand:', error);
                     }
-                });
+                }).finally(() => setIsSaving(false));
         }
     };
 
@@ -64,47 +67,51 @@ const CreateBrand = () => {
                             </Typography>
                         </Box>
                     )}
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="Name"
-                            name="name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!formError.name}
-                            helperText={formError.name}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="Description"
-                            name="description"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!formError.description}
-                            helperText={formError.description}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={enabled}
-                                    onChange={(e) => setEnabled(e.target.checked)}
-                                    name="enabled"
-                                    color="primary"
-                                />
-                            }
-                            label="Enabled"
-                        />
-                    </Box>
+                    <Grid2 container spacing={2}>
+                        <Grid2 size={6}>
+                            <TextField
+                                label="Name"
+                                name="name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!formError.name}
+                                helperText={formError.name}
+                            />
+                        </Grid2>
+                        <Grid2 size={6}></Grid2>
+                        <Grid2 size={12}>
+                            <TextField
+                                label="Description"
+                                name="description"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!formError.description}
+                                helperText={formError.description}
+                            />
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={enabled}
+                                        onChange={(e) => setEnabled(e.target.checked)}
+                                        name="enabled"
+                                        color="primary"
+                                    />
+                                }
+                                label="Enabled"
+                            />
+                        </Grid2>
+                        <Grid2 size={6}></Grid2>
+                    </Grid2>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                         <Button type="submit" variant="contained" color="primary">
                             Create Brand

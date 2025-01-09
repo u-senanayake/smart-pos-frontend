@@ -1,26 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton, Typography, Pagination, Box } from "@mui/material";
+import { Delete, Edit, Add, Preview } from "@mui/icons-material";
+
+//Service
 import BrandService from "../../../services/BrandService";
+//Utils
 import { renderStatusIcon } from "../../../utils/utils";
 import { formatDate } from '../../../utils/Dateutils';
-import { SkeletonLoading, ConfirmationDialog, ErrorMessage } from '../../../utils/FieldUtils'
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Button,
-  IconButton,
-  Typography, Pagination
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import AddIcon from "@mui/icons-material/Add";
-import ViewIcon from "@mui/icons-material/Preview"
+import { SkeletonLoading, ConfirmationDialog, ErrorMessage, ActiveStatusFilter } from '../../../utils/FieldUtils'
+import { getSortedData, toggleSortDirection } from "../../../utils/SortUtils";
+//Style
+import { styles } from "../../../style/TableStyle";
 
 const BrandList = () => {
 
@@ -31,7 +22,10 @@ const BrandList = () => {
   const [selectedId, setSelectedId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [paginationLoading, setPaginationLoading] = useState(false);
-  const itemsPerPage = 2;
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" }); // Sorting state
+  const [statusFilter, setStatusFilter] = useState(""); // Account status filter state
+
+  const itemsPerPage = 10;
 
   useEffect(() => {
     BrandService.getBrands()
@@ -81,10 +75,30 @@ const BrandList = () => {
     }, 500); // Simulate a delay (replace this with actual fetching logic if needed)
   };
 
-  const paginatedBrand = brands.slice(
+  const handleSort = (key) => {
+    setSortConfig((currentConfig) => toggleSortDirection(currentConfig, key));
+  };
+
+
+  const applyFilters = () => {
+    return brands.filter((user) => {
+      const matchesStatus = statusFilter ? String(user.enabled) === statusFilter : true;
+
+      return matchesStatus;
+    });
+  };
+
+  const filteredBrands = applyFilters();
+  const sortedBrands = getSortedData(filteredBrands, sortConfig);
+
+  const paginatedBrand = sortedBrands.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  if (loading || paginationLoading) {
+    return <SkeletonLoading />;
+  }
 
   if (error) {
     return (
@@ -96,10 +110,6 @@ const BrandList = () => {
     );
   }
 
-  if (loading || paginationLoading) {
-    return <SkeletonLoading />;
-  }
-
   if (brands.length === 0) {
     return (
       <div style={{ textAlign: "center", marginTop: "20px" }}>
@@ -109,7 +119,7 @@ const BrandList = () => {
           to="/productmanagement/brand/createbrand"
           variant="contained"
           color="primary"
-          startIcon={<AddIcon />}
+          startIcon={<Add />}
           style={{ marginTop: "10px" }}
         >
           Add Brand
@@ -117,71 +127,78 @@ const BrandList = () => {
       </div>
     );
   }
+
   return (
-    <div style={{ padding: "20px" }}>
-      <Typography variant="h4" style={{ textAlign: "center", marginBottom: "20px" }}>
+    <div style={styles.mainContainer}>
+      <Typography variant="h4" style={styles.title}>
         Brand List
       </Typography>
-      <Button
-        component={Link}
-        to="/productmanagement/brand/createbrand"
-        variant="contained"
-        color="primary"
-        startIcon={<AddIcon />}
-        style={{ marginBottom: "20px" }}
-      >
-        Add Brand
-      </Button>
+      <div style={styles.filterContainer}>
+        <Button
+          component={Link}
+          to="/productmanagement/brand/createbrand"
+          variant="contained"
+          color="primary"
+          startIcon={<Add />}
+          style={{ marginBottom: "20px" }}
+        >
+          Add Brand
+        </Button>
+        <Paper sx={{ p: 1, mt: 1, mb: 1 }}>
+          <Typography variant="h6" style={styles.filterTitle}>
+            Filter data
+          </Typography>
+          <ActiveStatusFilter
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            style={styles.filterFormController}
+          />
+        </Paper>
+      </div>
       {paginationLoading ? (
         <SkeletonLoading />
       ) : (
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Brand Name</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>Enabled</TableCell>
-              <TableCell>Created User</TableCell>
-              <TableCell>Created At</TableCell>
-              <TableCell>Updated User</TableCell>
-              <TableCell>Updated At</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-          {paginatedBrand.map((brand) => (
-              <TableRow key={brand.brandId}>
-                <TableCell>{brand.name}</TableCell>
-                <TableCell>{brand.description}</TableCell>
-                <TableCell>{renderStatusIcon(brand.enabled)}</TableCell>
-                <TableCell>{brand.createdUser.username}</TableCell>
-                <TableCell>{formatDate(brand.createdAt)}</TableCell>
-                <TableCell>{brand.updatedUser.username}</TableCell>
-                <TableCell>{formatDate(brand.updatedAt)}</TableCell>
-                <TableCell>
-                  <IconButton component={Link} to={`/productmanagement/brand/updatebrand/${brand.brandId}`}>
-                    <EditIcon color="primary" />
-                  </IconButton>
-                  <IconButton onClick={() => confirmDelete(brand.brandId)}>
-                    <DeleteIcon color="error" />
-                  </IconButton>
-                  <IconButton component={Link} to={`/productmanagement/brand/viewbrand/${brand.brandId}`}>
-                    <ViewIcon color="primary" />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+        <TableContainer component={Paper} sx={{ width: '100%', overflowX: 'auto' }}>
+          <Box sx={{ overflowX: 'auto' }}>
+            <Table sx={{ minWidth: '1000px' }}>
+              <TableHead>
+                <TableRow style={styles.tableHeaderCell}>
+                  <TableCell onClick={() => handleSort("name")}>Brand Name {sortConfig.key === "name" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell>Description</TableCell>
+                  <TableCell onClick={() => handleSort("enabled")}>Enabled {sortConfig.key === "enabled" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {paginatedBrand.map((brand, index) => (
+                  <TableRow key={brand.brandId} sx={styles.zebraStripe(index)}>
+                    <TableCell style={styles.tableCell}>{brand.name}</TableCell>
+                    <TableCell style={styles.tableCell}>{brand.description}</TableCell>
+                    <TableCell style={styles.tableCell}>{renderStatusIcon(brand.enabled)}</TableCell>
+                    <TableCell style={styles.tableCell}>
+                      <IconButton component={Link} to={`/productmanagement/brand/updatebrand/${brand.brandId}`}>
+                        <Edit color="primary" />
+                      </IconButton>
+                      <IconButton onClick={() => confirmDelete(brand.brandId)}>
+                        <Delete color="error" />
+                      </IconButton>
+                      <IconButton component={Link} to={`/productmanagement/brand/viewbrand/${brand.brandId}`}>
+                        <Preview color="primary" />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Box>
+        </TableContainer>
       )}
       <Pagination
         count={Math.ceil(brands.length / itemsPerPage)} // Total pages
         page={currentPage}
         onChange={handlePageChange}
         color="primary"
-        style={{ marginTop: "20px", display: "flex", justifyContent: "center" }}
+        style={styles.pagination}
       />
       <ConfirmationDialog
         open={dialogOpen}
