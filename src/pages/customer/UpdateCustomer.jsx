@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Container, TextField, Button, MenuItem, FormControlLabel, Checkbox } from '@mui/material';
+import { Box, Typography, Paper, Container, TextField, Button, MenuItem, FormControlLabel, Checkbox, Grid2 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-
+//Service
 import CustomerService from '../../services/CustomerService';
 import CustomerGroupService from '../../services/CustomerGroupService';
+//Utils
 import { validateEmail, validatePassword, validateRequired, validateLength } from '../../utils/Validations';
-import { Loading, ErrorMessage } from "../../utils/FieldUtils";
+import { Loading, ErrorMessage, ReadOnlyField } from "../../utils/FieldUtils";
 
 const UpdateCustomer = () => {
 
@@ -119,7 +120,7 @@ const UpdateCustomer = () => {
                 })
                 .catch((error) => {
                     if (error.response && error.response.data) {
-                        setServerError(error.response.data.message);
+                        setServerError(error.response.data);
                     } else {
                         console.error('Error updating user:', error);
                     }
@@ -144,133 +145,135 @@ const UpdateCustomer = () => {
         );
     }
 
+    const serverErrorMessages = Object.values(serverError);
+
     return (
-        <Container maxWidth="sm">
+        <Container maxWidth="md">
             <Paper sx={{ p: 3, mt: 3 }}>
                 <Typography variant="h4" gutterBottom>
                     Update Customer
                 </Typography>
                 <form onSubmit={handleSubmit}>
-                    {serverError && (
+                    {Object.keys(serverErrorMessages).length > 0 && (
                         <Box sx={{ mb: 2 }}>
                             <Typography color="error">
-                                {serverError}
+                                {serverErrorMessages}
                             </Typography>
                         </Box>
                     )}
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="Username"
-                            name="username"
-                            value={customer.username}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!formError.username}
-                            helperText={formError.username}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="First Name"
-                            name="firstName"
-                            value={customer.firstName}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!formError.firstName}
-                            helperText={formError.firstName}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="Last Name"
-                            name="lastName"
-                            value={customer.lastName}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!formError.lastName}
-                            helperText={formError.lastName}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="Email"
-                            name="email"
-                            value={customer.email}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!formError.email}
-                            helperText={formError.email}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="Phone Number"
-                            name="phoneNo1"
-                            value={customer.phoneNo1}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!formError.phoneNo1}
-                            helperText={formError.phoneNo1}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            select
-                            label="Customer Group"
-                            name="customergroup"
-                            value={customer.customerGroup.customerGroupId}
-                            onChange={handleRoleChange}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!formError.role}
-                            helperText={formError.role}
-                        >
-                            {customerGroups.map((customerGroup) => (
-                                <MenuItem key={customerGroup.customerGroupId} value={customerGroup.customerGroupId}>
-                                    {customerGroup.name}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                    </Box>
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={customer.enabled}
-                                onChange={handleCheckboxChange}
-                                name="enabled"
-                                color="primary"
+                    <Grid2 container spacing={2}>
+                        <Grid2 size={4}>
+                            <ReadOnlyField label="Customer ID" value={customer.customerId} />
+                        </Grid2>
+                        <Grid2 size={8}>
+                            <ReadOnlyField label="Username" value={customer.username} />
+                        </Grid2>
+                        <Grid2 size={8}>
+                            <TextField
+                                select
+                                label="Customer Group"
+                                name="customergroup"
+                                value={customer.customerGroup.customerGroupId}
+                                onChange={handleRoleChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!formError.role}
+                                helperText={formError.role}
+                            >
+                                {customerGroups.map((customerGroup) => (
+                                    <MenuItem key={customerGroup.customerGroupId} value={customerGroup.customerGroupId}>
+                                        {customerGroup.name}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </Grid2>
+                        <Grid2 size={4}></Grid2>
+                        <Grid2 size={6}>
+                            <TextField
+                                label="First Name"
+                                name="firstName"
+                                value={customer.firstName}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!formError.firstName}
+                                helperText={formError.firstName}
                             />
-                        }
-                        label="Enabled"
-                    />
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={customer.locked}
-                                onChange={handleCheckboxChange}
-                                name="locked"
-                                color="primary"
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <TextField
+                                label="Last Name"
+                                name="lastName"
+                                value={customer.lastName}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!formError.lastName}
+                                helperText={formError.lastName}
                             />
-                        }
-                        label="Locked"
-                    />
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <TextField
+                                label="Email"
+                                name="email"
+                                value={customer.email}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!formError.email}
+                                helperText={formError.email}
+                            />
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <TextField
+                                label="Phone Number"
+                                name="phoneNo1"
+                                value={customer.phoneNo1}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!formError.phoneNo1}
+                                helperText={formError.phoneNo1}
+                            />
+                        </Grid2>
+
+                        <Grid2 size={6}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={customer.enabled}
+                                        onChange={handleCheckboxChange}
+                                        name="enabled"
+                                        color="primary"
+                                    />
+                                }
+                                label="Enabled"
+                            />
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={customer.locked}
+                                        onChange={handleCheckboxChange}
+                                        name="locked"
+                                        color="primary"
+                                    />
+                                }
+                                label="Locked"
+                            />
+                        </Grid2>
+                    </Grid2>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                         <Button type="submit" variant="contained" color="primary">
                             {isSaving ? 'Saving...' : 'Update'}

@@ -1,22 +1,38 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import CustomerService from "../../services/CustomerService";
-import { renderStatusIcon } from "../../utils/utils";
-import { formatDate } from '../../utils/Dateutils';
-import { SkeletonLoading, ConfirmationDialog, ErrorMessage } from '../../utils/FieldUtils'
-
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton, Typography, Pagination } from "@mui/material";
+import {
+    Table, TableBody, TableCell, TableContainer, TableHead,
+    TableRow, Paper, Button, IconButton, Typography, Pagination
+    , FormControl, InputLabel, Select, MenuItem, Box
+} from "@mui/material";
 import { Delete, Edit, Add, Preview } from "@mui/icons-material";
+
+//Service
+import CustomerService from "../../services/CustomerService";
+import CustomerGroupService from "../../services/CustomerGroupService";
+//Utils
+import { renderStatusIcon, renderLockIcon } from "../../utils/utils";
+import { formatDate } from '../../utils/Dateutils';
+import { SkeletonLoading, ConfirmationDialog, ErrorMessage, ActiveStatusFilter, LockStatusFilter } from '../../utils/FieldUtils'
+import { getSortedData, toggleSortDirection } from "../../utils/SortUtils";
+//Style
+import { styles } from "../../style/TableStyle";
 
 const CustomerList = () => {
     const [customers, setCustomers] = useState([]);
+    const [customerGroups, setCustomerGroups] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [selectedId, setSelectedId] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [paginationLoading, setPaginationLoading] = useState(false);
-    const itemsPerPage = 2;
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" }); // Sorting state
+    const [customerGroupFilter, setCustomerGroupFilter] = useState(""); // Role filter state
+    const [statusFilter, setStatusFilter] = useState(""); // Account status filter state
+    const [lockFilter, setLockFilter] = useState(""); // Account lock filter state
+
+    const itemsPerPage = 10;
 
     useEffect(() => {
         CustomerService.getCustomers()
@@ -27,6 +43,19 @@ const CustomerList = () => {
             .catch((error) => {
                 console.error("Error fetching customers:", error);
                 setError("Failed to fetch customers. Please try again later.");
+                setLoading(false);
+            });
+    }, []);
+
+    useEffect(() => {
+        CustomerGroupService.getCustomerGroups()
+            .then((res) => {
+                setCustomerGroups(res.data);
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.error("Error fetching brands:", error);
+                setError("Failed to fetch brands. Please try again later.");
                 setLoading(false);
             });
     }, []);
@@ -66,10 +95,32 @@ const CustomerList = () => {
         }, 500); // Simulate a delay (replace this with actual fetching logic if needed)
     };
 
-    const paginatedCustomer = customers.slice(
+    const applyFilters = () => {
+        return customers.filter((customer) => {
+            const matchesCustomerGroup = customerGroupFilter ? customer.customerGroup.name === customerGroupFilter : true;
+            const matchesStatus = statusFilter ? String(customer.enabled) === statusFilter : true;
+            const matchesLock = lockFilter ? String(customer.locked) === lockFilter : true;
+
+            return matchesCustomerGroup && matchesStatus && matchesLock;
+        });
+    };
+
+    const handleSort = (key) => {
+        setSortConfig((currentConfig) => toggleSortDirection(currentConfig, key));
+    };
+
+    const filteredCustomers = applyFilters();
+
+    const sortedcustomers = getSortedData(filteredCustomers, sortConfig);
+
+    const paginatedCustomer = sortedcustomers.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
+
+    if (loading || paginationLoading) {
+        return <SkeletonLoading />;
+    }
 
     if (error) {
         return (
@@ -79,10 +130,6 @@ const CustomerList = () => {
                 onAction={() => window.location.reload()}
             />
         );
-    }
-
-    if (loading || paginationLoading) {
-        return <SkeletonLoading />;
     }
 
     if (customers.length === 0) {
@@ -105,68 +152,93 @@ const CustomerList = () => {
     }
 
     return (
-        <div style={{ padding: "20px" }}>
-            <Typography variant="h4" style={{ textAlign: "center", marginBottom: "20px" }}>
+        <div style={styles.mainContainer}>
+            <Typography variant="h4" style={styles.title}>
                 Customer List
             </Typography>
-            <Button
-                component={Link}
-                to="/customermanagement/customer/createcustomer"
-                variant="contained"
-                color="primary"
-                startIcon={<Add />}
-                style={{ marginBottom: "20px" }}
-            >
-                Add Customer
-            </Button>
+            <div style={styles.filterContainer}>
+                <Button
+                    component={Link}
+                    to="/customermanagement/customer/createcustomer"
+                    variant="contained"
+                    color="primary"
+                    startIcon={<Add />}
+                    style={{ marginBottom: "20px" }}
+                >
+                    Add Customer
+                </Button>
+                <Paper sx={{ p: 1, mt: 1, mb: 1 }}>
+                    <Typography variant="h6" style={styles.filterTitle}>
+                        Filter data
+                    </Typography>
+                    <FormControl style={styles.filterFormController}>
+                        <InputLabel>Groups</InputLabel>
+                        <Select
+                            value={customerGroupFilter}
+                            onChange={(e) => setCustomerGroupFilter(e.target.value)}
+                        >
+                            <MenuItem value="">All</MenuItem>
+                            {customerGroups.map((customerGroup) => (
+                                <MenuItem key={customerGroup.customerGroupId} value={customerGroup.name}>
+                                    {customerGroup.name}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    <ActiveStatusFilter
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                        style={styles.filterFormController}
+                    />
+                    <LockStatusFilter
+                        value={lockFilter}
+                        onChange={(e) => setLockFilter(e.target.value)}
+                        style={styles.filterFormController}
+                    />
+                </Paper>
+            </div>
             {paginationLoading ? (
                 <SkeletonLoading />
             ) : (
-                <TableContainer component={Paper}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Name</TableCell>
-                                <TableCell>Email</TableCell>
-                                <TableCell>Phone</TableCell>
-                                <TableCell>Address</TableCell>
-                                <TableCell>Enabled</TableCell>
-                                <TableCell>Locked</TableCell>
-                                <TableCell>Created User</TableCell>
-                                <TableCell>Created At</TableCell>
-                                <TableCell>Updated User</TableCell>
-                                <TableCell>Updated At</TableCell>
-                                <TableCell>Actions</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {paginatedCustomer.map((customer) => (
-                                <TableRow key={customer.customerId}>
-                                    <TableCell>{`${customer.firstName} ${customer.lastName}`}</TableCell>
-                                    <TableCell>{customer.email}</TableCell>
-                                    <TableCell>{customer.phoneNo1}</TableCell>
-                                    <TableCell>{customer.address}</TableCell>
-                                    <TableCell>{renderStatusIcon(customer.enabled)}</TableCell>
-                                    <TableCell>{renderStatusIcon(customer.locked)}</TableCell>
-                                    <TableCell>{customer.createdUser.username}</TableCell>
-                                    <TableCell>{formatDate(customer.createdAt)}</TableCell>
-                                    <TableCell>{customer.updatedUser.username}</TableCell>
-                                    <TableCell>{formatDate(customer.updatedAt)}</TableCell>
-                                    <TableCell>
-                                        <IconButton component={Link} to={`/customermanagement/customer/updatecustomer/${customer.customerId}`}>
-                                            <Edit color="primary" />
-                                        </IconButton>
-                                        <IconButton onClick={() => confirmDelete(customer.customerId)}>
-                                            <Delete color="error" />
-                                        </IconButton>
-                                        <IconButton component={Link} to={`/customermanagement/customer/viewcustomer/${customer.customerId}`}>
-                                            <Preview color="primary" />
-                                        </IconButton>
-                                    </TableCell>
+                <TableContainer component={Paper} sx={{ width: '100%', overflowX: 'auto' }}>
+                    <Box sx={{ overflowX: 'auto' }}>
+                        <Table sx={{ minWidth: '1300px' }}>
+                            <TableHead style={styles.tableHeaderCell}>
+                                <TableRow>
+                                    <TableCell onClick={() => handleSort("firstName")}>Name {sortConfig.key === "firstName" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                                    <TableCell>Email</TableCell>
+                                    <TableCell>Phone</TableCell>
+                                    <TableCell onClick={() => handleSort("address")}>Address {sortConfig.key === "address" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                                    <TableCell onClick={() => handleSort("enabled")}>Enabled {sortConfig.key === "enabled" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                                    <TableCell onClick={() => handleSort("locked")}>Locked {sortConfig.key === "locked" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                                    <TableCell>Actions</TableCell>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                            </TableHead>
+                            <TableBody>
+                                {paginatedCustomer.map((customer, index) => (
+                                    <TableRow key={customer.customerId} sx={styles.zebraStripe(index)}>
+                                        <TableCell style={styles.tableCell}>{`${customer.firstName} ${customer.lastName}`}</TableCell>
+                                        <TableCell style={styles.tableCell}>{customer.email}</TableCell>
+                                        <TableCell style={styles.tableCell}>{customer.phoneNo1}</TableCell>
+                                        <TableCell style={styles.tableCell}>{customer.address}</TableCell>
+                                        <TableCell style={styles.tableCell}>{renderStatusIcon(customer.enabled)}</TableCell>
+                                        <TableCell style={styles.tableCell}>{renderLockIcon(customer.locked)}</TableCell>
+                                        <TableCell style={styles.tableCell}>
+                                            <IconButton component={Link} to={`/customermanagement/customer/updatecustomer/${customer.customerId}`}>
+                                                <Edit color="primary" />
+                                            </IconButton>
+                                            <IconButton onClick={() => confirmDelete(customer.customerId)}>
+                                                <Delete color="error" />
+                                            </IconButton>
+                                            <IconButton component={Link} to={`/customermanagement/customer/viewcustomer/${customer.customerId}`}>
+                                                <Preview color="primary" />
+                                            </IconButton>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </Box>
                 </TableContainer>
             )}
             <Pagination
@@ -174,7 +246,7 @@ const CustomerList = () => {
                 page={currentPage}
                 onChange={handlePageChange}
                 color="primary"
-                style={{ marginTop: "20px", display: "flex", justifyContent: "center" }}
+                style={styles.pagination}
             />
             <ConfirmationDialog
                 open={dialogOpen}

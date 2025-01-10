@@ -24,8 +24,8 @@ class InventoryService {
         return response;
     }
 
-    async updateStockLevel(inventory) {
-        const response = await axios.put(`${API_BASE_URL}/updateStockLevel`, inventory);
+    async updateStockLevel(productId, inventory) {
+        const response = await axios.put(`${API_BASE_URL}/updateStockLevel${productId}`, inventory);
         return response;
     }
 

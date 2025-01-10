@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Table, TableBody, TableCell, TableContainer, TableHead, 
+    TableRow, Paper, Button, IconButton, Typography, Pagination, Box } from "@mui/material";
+import { Delete, Edit, Add, Preview } from "@mui/icons-material";
+
+//Service
 import CustomerGroupService from "../../../services/CustomerGroupService";
+//Utils
 import { renderStatusIcon } from "../../../utils/utils";
 import { formatDate } from '../../../utils/Dateutils';
-import { SkeletonLoading, ConfirmationDialog, ErrorMessage } from '../../../utils/FieldUtils'
-
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton, Typography, Pagination } from "@mui/material";
-import { Delete, Edit, Add, Preview } from "@mui/icons-material";
+import { SkeletonLoading, ConfirmationDialog, ErrorMessage, ActiveStatusFilter } from '../../../utils/FieldUtils'
+import { getSortedData, toggleSortDirection } from "../../../utils/SortUtils";
+//Style
+import { styles } from "../../../style/TableStyle";
 
 const CustomerGroupList = () => {
 
@@ -17,7 +23,10 @@ const CustomerGroupList = () => {
     const [selectedId, setSelectedId] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [paginationLoading, setPaginationLoading] = useState(false);
-    const itemsPerPage = 2;
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" }); // Sorting state
+    const [statusFilter, setStatusFilter] = useState(""); // Account status filter state
+
+    const itemsPerPage = 10;
 
     useEffect(() => {
         CustomerGroupService.getCustomerGroups()
@@ -68,11 +77,31 @@ const CustomerGroupList = () => {
         }, 500); // Simulate a delay (replace this with actual fetching logic if needed)
     };
 
+    const handleSort = (key) => {
+        setSortConfig((currentConfig) => toggleSortDirection(currentConfig, key));
+    };
 
-    const paginatedCustomerGroup = customerGroups.slice(
+    const applyFilters = () => {
+        return customerGroups.filter((customerGroup) => {
+            const matchesStatus = statusFilter ? String(customerGroup.enabled) === statusFilter : true;
+
+            return matchesStatus;
+        });
+    };
+
+    const filteredCustomerGroups = applyFilters();
+
+    const sortedCustomerGroups = getSortedData(filteredCustomerGroups, sortConfig);
+
+    const paginatedCustomerGroup = sortedCustomerGroups.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
+
+    if (loading || paginationLoading) {
+        return <SkeletonLoading />;
+    }
+
 
     if (error) {
         return (
@@ -82,10 +111,6 @@ const CustomerGroupList = () => {
                 onAction={() => window.location.reload()}
             />
         );
-    }
-
-    if (loading || paginationLoading) {
-        return <SkeletonLoading />;
     }
 
     if (customerGroups.length === 0) {
@@ -107,62 +132,68 @@ const CustomerGroupList = () => {
     }
 
     return (
-        <div style={{ padding: "20px" }}>
-            <Typography variant="h4" style={{ textAlign: "center", marginBottom: "20px" }}>
+        <div style={styles.mainContainer}>
+            <Typography variant="h4" style={styles.title}>
                 Customer Group List
             </Typography>
-            <Button
-                component={Link}
-                to="/customermanagement/customergroup/createcustomergroup"
-                variant="contained"
-                color="primary"
-                startIcon={<Add />}
-                style={{ marginBottom: "20px" }}
-            >
-                Add Customer Group
-            </Button>
+            <div style={styles.filterContainer}>
+                <Button
+                    component={Link}
+                    to="/customermanagement/customergroup/createcustomergroup"
+                    variant="contained"
+                    color="primary"
+                    startIcon={<Add />}
+                    style={{ marginBottom: "20px" }}
+                >
+                    Add Customer Group
+                </Button>
+                <Paper sx={{ p: 1, mt: 1, mb: 1 }}>
+                    <Typography variant="h6" style={styles.filterTitle}>
+                        Filter data
+                    </Typography>
+                    <ActiveStatusFilter
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                        style={styles.filterFormController}
+                    />
+                </Paper>
+            </div>
             {paginationLoading ? (
                 <SkeletonLoading />
             ) : (
-                <TableContainer component={Paper}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Name</TableCell>
-                                <TableCell>Description</TableCell>
-                                <TableCell>Enabled</TableCell>
-                                <TableCell>Created User</TableCell>
-                                <TableCell>Created At</TableCell>
-                                <TableCell>Updated User</TableCell>
-                                <TableCell>Updated At</TableCell>
-                                <TableCell>Actions</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {paginatedCustomerGroup.map((customerGroup) => (
-                                <TableRow key={customerGroup.customerGroupId}>
-                                    <TableCell>{customerGroup.name}</TableCell>
-                                    <TableCell>{customerGroup.description}</TableCell>
-                                    <TableCell>{renderStatusIcon(customerGroup.enabled)}</TableCell>
-                                    <TableCell>{customerGroup.createdUser.username}</TableCell>
-                                    <TableCell>{formatDate(customerGroup.createdAt)}</TableCell>
-                                    <TableCell>{customerGroup.updatedUser.username}</TableCell>
-                                    <TableCell>{formatDate(customerGroup.updatedAt)}</TableCell>
-                                    <TableCell>
-                                        <IconButton component={Link} to={`/customermanagement/customergroup/updatecustomergroup/${customerGroup.customerGroupId}`}>
-                                            <Edit color="primary" />
-                                        </IconButton>
-                                        <IconButton onClick={() => confirmDelete(customerGroup.customerGroupId)}>
-                                            <Delete color="error" />
-                                        </IconButton>
-                                        <IconButton component={Link} to={`/customermanagement/customergroup/viewcustomergroup/${customerGroup.customerGroupId}`}>
-                                            <Preview color="primary" />
-                                        </IconButton>
-                                    </TableCell>
+                <TableContainer component={Paper} sx={{ width: '100%', overflowX: 'auto' }}>
+                    <Box sx={{ overflowX: 'auto' }}>
+                        <Table sx={{ minWidth: '1000px' }}>
+                            <TableHead>
+                                <TableRow style={styles.tableHeaderCell}>
+                                    <TableCell onClick={() => handleSort("name")}>Name</TableCell>
+                                    <TableCell>Description</TableCell>
+                                    <TableCell onClick={() => handleSort("enabled")}>Enabled</TableCell>
+                                    <TableCell>Actions</TableCell>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                            </TableHead>
+                            <TableBody>
+                                {paginatedCustomerGroup.map((customerGroup, index) => (
+                                    <TableRow key={customerGroup.customerGroupId} sx={styles.zebraStripe(index)}>
+                                        <TableCell style={styles.tableCell}>{customerGroup.name}</TableCell>
+                                        <TableCell style={styles.tableCell}>{customerGroup.description}</TableCell>
+                                        <TableCell style={styles.tableCell}>{renderStatusIcon(customerGroup.enabled)}</TableCell>
+                                        <TableCell style={styles.tableCell}>
+                                            <IconButton component={Link} to={`/customermanagement/customergroup/updatecustomergroup/${customerGroup.customerGroupId}`}>
+                                                <Edit color="primary" />
+                                            </IconButton>
+                                            <IconButton onClick={() => confirmDelete(customerGroup.customerGroupId)}>
+                                                <Delete color="error" />
+                                            </IconButton>
+                                            <IconButton component={Link} to={`/customermanagement/customergroup/viewcustomergroup/${customerGroup.customerGroupId}`}>
+                                                <Preview color="primary" />
+                                            </IconButton>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </Box>
                 </TableContainer>
             )}
             <Pagination
@@ -170,7 +201,7 @@ const CustomerGroupList = () => {
                 page={currentPage}
                 onChange={handlePageChange}
                 color="primary"
-                style={{ marginTop: "20px", display: "flex", justifyContent: "center" }}
+                style={styles.pagination}
             />
             <ConfirmationDialog
                 open={dialogOpen}
