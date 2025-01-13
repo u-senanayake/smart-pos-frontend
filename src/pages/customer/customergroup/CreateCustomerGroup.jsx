@@ -55,7 +55,7 @@ const CreateCustomerGroup = () => {
         <Container maxWidth="md">
             <Paper sx={{ p: 3, mt: 3 }}>
                 <Typography variant="h4" gutterBottom>
-                    Create Brand
+                    Create Customer Group
                 </Typography>
                 <form onSubmit={handleSubmit}>
                     {Object.keys(serverErrorMessages).length > 0 && (

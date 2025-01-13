@@ -7,6 +7,8 @@ import ProductService from '../../services/ProductService';
 import { ReadOnlyField, Loading, ErrorMessage } from '../../utils/FieldUtils'
 import { formatDate } from "../../utils/Dateutils";
 import { renderStatusIcon, formatPrice, formatPhoneNumber, } from "../../utils/utils";
+//Style
+import { styles } from "../../style/TableStyle";
 
 const ViewProduct = () => {
   const { id } = useParams();
@@ -49,7 +51,7 @@ const ViewProduct = () => {
   return (
     <Container maxWidth="md">
       <Paper sx={{ p: 3, mt: 3 }}>
-        <Typography variant="h4" gutterBottom>
+        <Typography variant="h4" gutterBottom style={styles.title}>
           View Product
         </Typography>
         <Grid2 container spacing={2}>

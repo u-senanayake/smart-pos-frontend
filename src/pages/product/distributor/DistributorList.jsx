@@ -143,7 +143,7 @@ const DistributorList = () => {
           startIcon={<Add />}
           style={{ marginBottom: "20px" }}
         >
-          Add Category
+          Add Distributor
         </Button>
         <Paper sx={{ p: 1, mt: 1, mb: 1 }}>
           <Typography variant="h6" style={styles.filterTitle}>

@@ -1,6 +1,7 @@
 export const styles = {
     mainContainer: {
         padding: "20px",
+        marginTop: "80px",
     },
     title: {
         textAlign: "center",
@@ -25,24 +26,29 @@ export const styles = {
     },
     pagination: {
         marginTop: "20px",
+        marginBottom: "20px",
         display: "flex",
         justifyContent: "center",
     },
     filterDropdown: {
 
     },
+    titleContainer: {
+        //position: "fixed"
+    },
     filterContainer: {
         display: "flex",
         gap: "20px",
         marginBottom: "20px",
         alignItems: "center",
+        //position: "fixed"
     },
     filterFormController: {
         minWidth: 220,
         margin: "10px",
         height: "56px",
     },
-    filterButton:{
+    filterButton: {
         margin: "10px",
         height: "56px",
     },

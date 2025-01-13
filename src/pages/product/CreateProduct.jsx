@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import ProductService from '../../services/ProductService';
 import CategoryService from '../../services/CategoryService';
 import DistributorService from '../../services/DistributorService';
-import {validateRequired, validateLength } from '../../utils/Validations';
+import { validateRequired, validateLength } from '../../utils/Validations';
 import { formatDateToYYYYMMDD } from '../../utils/Dateutils';
 import { Loading } from "../../utils/FieldUtils";
 
@@ -25,7 +25,7 @@ const CreateProduct = () => {
         maxDiscount: '',
         stockWarningLevel: '',
         stockAlertLevel: '',
-        initialStock:'',
+        initialStock: '',
         manufactureDate: '',
         expireDate: '',
         enabled: true
@@ -168,244 +168,234 @@ const CreateProduct = () => {
                             </Typography>
                         </Box>
                     )}
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="Name"
-                            name="productName"
-                            value={product.productName}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!errors.productName}
-                            helperText={errors.productName}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="Description"
-                            name="description"
-                            value={product.description}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!errors.description}
-                            helperText={errors.description}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="SKU"
-                            name="sku"
-                            value={product.sku}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!errors.sku}
-                            helperText={errors.sku}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            select
-                            label="Category"
-                            name="category"
-                            value={product.category.categoryId}
-                            onChange={handleCategoryChange}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!errors.category}
-                            helperText={errors.category}
-                        >
-                            {categories.map((category) => (
-                                <MenuItem key={category.categoryId} value={category.categoryId}>
-                                    {category.name}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            select
-                            label="Distributor"
-                            name="distributer"
-                            value={product.distributor.distributorId}
-                            onChange={handleDistributorChange}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!errors.distributor}
-                            helperText={errors.distributor}
-                        >
-                            {distributors.map((distributor) => (
-                                <MenuItem key={distributor.distributorId} value={distributor.distributorId}>
-                                    {distributor.companyName}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                    </Box>
+
                     <Grid2 container spacing={2}>
-                        <Grid2 item xs={4}>
-                            <Box sx={{ mb: 2 }}>
-                                <TextField
-                                    label="Price"
-                                    name="price"
-                                    value={product.price}
-                                    onChange={handleChange}
-                                    fullWidth
-                                    variant="outlined"
-                                    margin="normal"
-                                    required
-                                    error={!!errors.price}
-                                    helperText={errors.price}
-                                />
-                            </Box>
+                        <Grid2 size={12}>
+                            <TextField
+                                label="Name"
+                                name="productName"
+                                value={product.productName}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!errors.productName}
+                                helperText={errors.productName}
+                            />
                         </Grid2>
-                        <Grid2 item xs={4}>
-                            <Box sx={{ mb: 2 }}>
-                                <TextField
-                                    label="Cost Price"
-                                    name="costPrice"
-                                    value={product.costPrice}
-                                    onChange={handleChange}
-                                    fullWidth
-                                    variant="outlined"
-                                    margin="normal"
-                                    required
-                                    error={!!errors.costPrice}
-                                    helperText={errors.costPrice}
-                                />
-                            </Box>
+                        <Grid2 size={12}>
+                            <TextField
+                                label="Description"
+                                name="description"
+                                value={product.description}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!errors.description}
+                                helperText={errors.description}
+                            />
                         </Grid2>
-                        <Grid2 item xs={4}>
-                            <Box sx={{ mb: 2 }}>
-                                <TextField
-                                    label="Min Price"
-                                    name="minPrice"
-                                    value={product.minPrice}
-                                    onChange={handleChange}
-                                    fullWidth
-                                    variant="outlined"
-                                    margin="normal"
-                                    required
-                                    error={!!errors.minPrice}
-                                    helperText={errors.minPrice}
-                                />
-                            </Box>
+                        <Grid2 size={6}>
+                            <TextField
+                                label="SKU"
+                                name="sku"
+                                value={product.sku}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!errors.sku}
+                                helperText={errors.sku}
+                            />
                         </Grid2>
-                        <Grid2 item xs={4}>
-                            <Box sx={{ mb: 2 }}>
-                                <TextField
-                                    label="Stock Warning Level"
-                                    name="stockWarningLevel"
-                                    value={product.stockWarningLevel}
-                                    onChange={handleChange}
-                                    fullWidth
-                                    variant="outlined"
-                                    margin="normal"
-                                    required
-                                    error={!!errors.stockWarningLevel}
-                                    helperText={errors.stockWarningLevel}
-                                />
-                            </Box>
+                        <Grid2 size={6}>
+                            <TextField
+                                select
+                                label="Category"
+                                name="category"
+                                value={product.category.categoryId}
+                                onChange={handleCategoryChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!errors.category}
+                                helperText={errors.category}
+                            >
+                                {categories.map((category) => (
+                                    <MenuItem key={category.categoryId} value={category.categoryId}>
+                                        {category.name}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
                         </Grid2>
-                        <Grid2 item xs={4}>
-                            <Box sx={{ mb: 2 }}>
-                                <TextField
-                                    label="Stock Alert Level"
-                                    name="stockAlertLevel"
-                                    value={product.stockAlertLevel}
-                                    onChange={handleChange}
-                                    fullWidth
-                                    variant="outlined"
-                                    margin="normal"
-                                    required
-                                    error={!!errors.stockAlertLevel}
-                                    helperText={errors.stockAlertLevel}
-                                />
-                            </Box>
+                        <Grid2 size={6}>
+                            <TextField
+                                select
+                                label="Distributor"
+                                name="distributer"
+                                value={product.distributor.distributorId}
+                                onChange={handleDistributorChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!errors.distributor}
+                                helperText={errors.distributor}
+                            >
+                                {distributors.map((distributor) => (
+                                    <MenuItem key={distributor.distributorId} value={distributor.distributorId}>
+                                        {distributor.companyName}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
                         </Grid2>
-                        <Grid2 item xs={4}>
-                            <Box sx={{ mb: 2 }}>
-                                <TextField
-                                    label="Initial Stock"
-                                    name="initialStock"
-                                    value={product.initialStock}
-                                    onChange={handleChange}
-                                    fullWidth
-                                    variant="outlined"
-                                    margin="normal"
-                                    required
-                                    error={!!errors.initialStock}
-                                    helperText={errors.initialStock}
-                                />
-                            </Box>
+                        <Grid2 size={6}></Grid2>
+                        <Grid2 size={4}>
+                            <TextField
+                                label="Price"
+                                name="price"
+                                value={product.price}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!errors.price}
+                                helperText={errors.price}
+                            />
+                        </Grid2>
+                        <Grid2 size={4}>
+                            <TextField
+                                label="Cost Price"
+                                name="costPrice"
+                                value={product.costPrice}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!errors.costPrice}
+                                helperText={errors.costPrice}
+                            />
+                        </Grid2>
+                        <Grid2 size={4}>
+                            <TextField
+                                label="Min Price"
+                                name="minPrice"
+                                value={product.minPrice}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!errors.minPrice}
+                                helperText={errors.minPrice}
+                            />
+                        </Grid2>
+                        <Grid2 size={4}>
+                            <TextField
+                                label="Stock Warning Level"
+                                name="stockWarningLevel"
+                                value={product.stockWarningLevel}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!errors.stockWarningLevel}
+                                helperText={errors.stockWarningLevel}
+                            />
+                        </Grid2>
+                        <Grid2 size={4}>
+                            <TextField
+                                label="Stock Alert Level"
+                                name="stockAlertLevel"
+                                value={product.stockAlertLevel}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!errors.stockAlertLevel}
+                                helperText={errors.stockAlertLevel}
+                            />
+                        </Grid2>
+                        <Grid2 size={4}>
+                            <TextField
+                                label="Initial Stock"
+                                name="initialStock"
+                                value={product.initialStock}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!errors.initialStock}
+                                helperText={errors.initialStock}
+                            />
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <TextField
+                                label="Manufacture Date"
+                                name="manufactureDate"
+                                type="date"
+                                value={formatDateToYYYYMMDD(product.manufactureDate)}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!errors.manufactureDate}
+                                helperText={errors.manufactureDate}
+                                slotProps={{
+                                    inputLabel: {
+                                        shrink: true,
+                                    },
+                                }}
+                            />
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <TextField
+                                label="Expiry Date"
+                                name="expireDate"
+                                type="date"
+                                value={formatDateToYYYYMMDD(product.expireDate)}
+                                onChange={handleChange}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!errors.expireDate}
+                                helperText={errors.expireDate}
+                                slotProps={{
+                                    inputLabel: {
+                                        shrink: true,
+                                    },
+                                }}
+                            />
+                        </Grid2>
+                        <Grid2 size={4}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={product.enabled}
+                                        onChange={handleCheckboxChange}
+                                        name="enabled"
+                                        color="primary"
+                                    />
+                                }
+                                label="Enabled"
+                            />
                         </Grid2>
                     </Grid2>
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="Manufacture Date"
-                            name="manufactureDate"
-                            type="date"
-                            value={formatDateToYYYYMMDD(product.manufactureDate)}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!errors.manufactureDate}
-                            helperText={errors.manufactureDate}
-                            slotProps={{
-                                inputLabel: {
-                                    shrink: true,
-                                },
-                            }}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <TextField
-                            label="Expiry Date"
-                            name="expireDate"
-                            type="date"
-                            value={formatDateToYYYYMMDD(product.expireDate)}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            error={!!errors.expireDate}
-                            helperText={errors.expireDate}
-                            slotProps={{
-                                inputLabel: {
-                                    shrink: true,
-                                },
-                            }}
-                        />
-                    </Box>
-                    <Box sx={{ mb: 2 }}>
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={product.enabled}
-                                    onChange={handleCheckboxChange}
-                                    name="enabled"
-                                    color="primary"
-                                />
-                            }
-                            label="Enabled"
-                        />
-                    </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                         <Button type="submit" variant="contained" color="primary">
-                        {isSaving ? 'Saving...' : 'Save'}
+                            {isSaving ? 'Saving...' : 'Save'}
                         </Button>
                         <Button variant="outlined" color="secondary" onClick={handleCancel}>
                             Cancel

@@ -34,7 +34,7 @@ const CreateDistributor = () => {
         if (distributor.phoneNo2 && !validateLength(distributor.phoneNo2, 10, 12)) errors.phoneNo2 = 'Phone number should be 12 characters';
         //Address
         if (!validateRequired(distributor.address)) errors.address = 'Address is required';
-        if (!validateLength(distributor.address, 10, 250)) errors.address = 'Address must be less than 250 characters';
+        if (!validateLength(distributor.address, 10, 250)) errors.address = 'Address must be between 10 and 250 characters';
         return errors;
     };
 

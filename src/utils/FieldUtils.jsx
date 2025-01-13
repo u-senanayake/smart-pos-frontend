@@ -65,7 +65,7 @@ export const ConfirmationDialog = ({ open, title, message, onConfirm, onCancel }
 
 export const ErrorMessage = ({ message }) => {
   return (
-    <div style={{ textAlign: "center", marginTop: "20px" }}>
+    <div style={{ textAlign: "center", marginTop: "80px" }}>
       <Typography variant="h6" color="error">
         {message}
       </Typography>

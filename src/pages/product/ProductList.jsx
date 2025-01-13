@@ -167,9 +167,11 @@ const ProductList = () => {
 
   return (
     <div style={styles.mainContainer}>
-      <Typography variant="h4" style={styles.title}>
-        Product List
-      </Typography>
+      <div style={styles.titleContainer}>
+        <Typography variant="h4" style={styles.title}>
+          Product List
+        </Typography>
+      </div>
       <div style={styles.filterContainer}>
         <Button
           component={Link}
@@ -223,58 +225,57 @@ const ProductList = () => {
       {paginationLoading ? (
         <SkeletonLoading />
       ) : (
-        <TableContainer component={Paper} sx={{ width: '100%', overflowX: 'auto' }}>
-          <Box sx={{ overflowX: 'auto' }}>
-            <Table sx={{ minWidth: '1300px' }}>
-              <TableHead>
-                <TableRow style={styles.tableHeaderCell}>
-                  <TableCell onClick={() => handleSort("productId")}>Product ID {sortConfig.key === "productId" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell onClick={() => handleSort("productName")}>Name {sortConfig.key === "productName" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell onClick={() => handleSort("category.name")}>Category {sortConfig.key === "category.name" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell onClick={() => handleSort("distributor.name")}>Distributor {sortConfig.key === "distributor.name" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell onClick={() => handleSort("price")}>Price {sortConfig.key === "price" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell onClick={() => handleSort("enabled")}>Enabled {sortConfig.key === "enabled" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell onClick={() => handleSort("manufactureDate")}>Manufacture Date {sortConfig.key === "manufactureDate" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell onClick={() => handleSort("expireDate")}>Expiry Date {sortConfig.key === "expireDate" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell>Actions</TableCell>
+        <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
+          <Table sx={{ minWidth: '1300px' }}>
+            <TableHead>
+              <TableRow style={styles.tableHeaderCell}>
+                <TableCell onClick={() => handleSort("productId")}>Product ID {sortConfig.key === "productId" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                <TableCell onClick={() => handleSort("productName")}>Name {sortConfig.key === "productName" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                <TableCell onClick={() => handleSort("category.name")}>Category {sortConfig.key === "category.name" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                <TableCell onClick={() => handleSort("distributor.name")}>Distributor {sortConfig.key === "distributor.name" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                <TableCell onClick={() => handleSort("price")}>Price {sortConfig.key === "price" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                <TableCell onClick={() => handleSort("enabled")}>Enabled {sortConfig.key === "enabled" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                <TableCell onClick={() => handleSort("manufactureDate")}>Manufacture Date {sortConfig.key === "manufactureDate" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                <TableCell onClick={() => handleSort("expireDate")}>Expiry Date {sortConfig.key === "expireDate" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                <TableCell>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {paginatedProduct.map((product, index) => (
+                <TableRow key={product.id} sx={styles.zebraStripe(index)}>
+                  <TableCell style={styles.tableCell}>{product.productId}</TableCell>
+                  <TableCell >{product.productName}</TableCell>
+                  <TableCell >{product.category.name}</TableCell>
+                  <TableCell >{product.distributor.name}</TableCell>
+                  <TableCell >{formatPrice(product.price)}</TableCell>
+                  <TableCell >{renderStatusIcon(product.enabled)}</TableCell>
+                  <TableCell >{formatDate(product.manufactureDate)}</TableCell>
+                  <TableCell >{formatDate(product.expireDate)}</TableCell>
+                  <TableCell style={styles.tableCell}>
+                    <IconButton component={Link} to={`/productmanagement/product/updateproduct/${product.id}`}>
+                      <Edit color="primary" />
+                    </IconButton>
+                    <IconButton onClick={() => confirmDelete(product.id)}>
+                      <Delete color="error" />
+                    </IconButton>
+                    <IconButton component={Link} to={`/productmanagement/product/viewproduct/${product.id}`}>
+                      <Preview color="primary" />
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {paginatedProduct.map((product, index) => (
-                  <TableRow key={product.id} sx={styles.zebraStripe(index)}>
-                    <TableCell style={styles.tableCell}>{product.productId}</TableCell>
-                    <TableCell >{product.productName}</TableCell>
-                    <TableCell >{product.category.name}</TableCell>
-                    <TableCell >{product.distributor.name}</TableCell>
-                    <TableCell >{formatPrice(product.price)}</TableCell>
-                    <TableCell >{renderStatusIcon(product.enabled)}</TableCell>
-                    <TableCell >{formatDate(product.manufactureDate)}</TableCell>
-                    <TableCell >{formatDate(product.expireDate)}</TableCell>
-                    <TableCell style={styles.tableCell}>
-                      <IconButton component={Link} to={`/productmanagement/product/updateproduct/${product.id}`}>
-                        <Edit color="primary" />
-                      </IconButton>
-                      <IconButton onClick={() => confirmDelete(product.id)}>
-                        <Delete color="error" />
-                      </IconButton>
-                      <IconButton component={Link} to={`/productmanagement/product/viewproduct/${product.id}`}>
-                        <Preview color="primary" />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Box>
+              ))}
+            </TableBody>
+          </Table>
+          <Pagination
+            count={Math.ceil(products.length / itemsPerPage)} // Total pages
+            page={currentPage}
+            onChange={handlePageChange}
+            color="primary"
+            style={styles.pagination}
+          />
         </TableContainer>
       )}
-      <Pagination
-        count={Math.ceil(products.length / itemsPerPage)} // Total pages
-        page={currentPage}
-        onChange={handlePageChange}
-        color="primary"
-        style={styles.pagination}
-      />
+
       <ConfirmationDialog
         open={dialogOpen}
         title="Delete Product"
