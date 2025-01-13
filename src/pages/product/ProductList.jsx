@@ -225,8 +225,8 @@ const ProductList = () => {
       {paginationLoading ? (
         <SkeletonLoading />
       ) : (
-        <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
-          <Table sx={{ minWidth: '1300px' }}>
+        <TableContainer component={Paper} >
+          <Table  sx={{ minWidth: '700px' }}>
             <TableHead>
               <TableRow style={styles.tableHeaderCell}>
                 <TableCell onClick={() => handleSort("productId")}>Product ID {sortConfig.key === "productId" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
@@ -244,23 +244,37 @@ const ProductList = () => {
               {paginatedProduct.map((product, index) => (
                 <TableRow key={product.id} sx={styles.zebraStripe(index)}>
                   <TableCell style={styles.tableCell}>{product.productId}</TableCell>
-                  <TableCell >{product.productName}</TableCell>
-                  <TableCell >{product.category.name}</TableCell>
-                  <TableCell >{product.distributor.name}</TableCell>
-                  <TableCell >{formatPrice(product.price)}</TableCell>
-                  <TableCell >{renderStatusIcon(product.enabled)}</TableCell>
-                  <TableCell >{formatDate(product.manufactureDate)}</TableCell>
-                  <TableCell >{formatDate(product.expireDate)}</TableCell>
+                  <TableCell style={styles.tableCell}>{product.productName}</TableCell>
+                  <TableCell style={styles.tableCell}>{product.category.name}</TableCell>
+                  <TableCell style={styles.tableCell}>{product.distributor.name}</TableCell>
+                  <TableCell style={styles.tableCell}>{formatPrice(product.price)}</TableCell>
+                  <TableCell style={styles.tableCell}>{renderStatusIcon(product.enabled)}</TableCell>
+                  <TableCell style={styles.tableCell}>{formatDate(product.manufactureDate)}</TableCell>
+                  <TableCell style={styles.tableCell}>{formatDate(product.expireDate)}</TableCell>
                   <TableCell style={styles.tableCell}>
-                    <IconButton component={Link} to={`/productmanagement/product/updateproduct/${product.id}`}>
-                      <Edit color="primary" />
-                    </IconButton>
-                    <IconButton onClick={() => confirmDelete(product.id)}>
-                      <Delete color="error" />
-                    </IconButton>
-                    <IconButton component={Link} to={`/productmanagement/product/viewproduct/${product.id}`}>
-                      <Preview color="primary" />
-                    </IconButton>
+                    <FormControl>
+                      <Select
+                        value=""
+                        onChange={(e) => {
+                          const action = e.target.value;
+                          if (action === "edit") {
+                            window.location.href = `/productmanagement/product/updateproduct/${product.id}`;
+                          } else if (action === "delete") {
+                            confirmDelete(product.id);
+                          } else if (action === "view") {
+                            window.location.href = `/productmanagement/product/viewproduct/${product.id}`;
+                          }
+                        }}
+                        displayEmpty
+                      >
+                        <MenuItem value="" disabled>
+                          Actions
+                        </MenuItem>
+                        <MenuItem value="edit">Edit</MenuItem>
+                        <MenuItem value="delete">Delete</MenuItem>
+                        <MenuItem value="view">View</MenuItem>
+                      </Select>
+                    </FormControl>
                   </TableCell>
                 </TableRow>
               ))}

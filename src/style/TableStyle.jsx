@@ -14,6 +14,7 @@ export const styles = {
         fontWeight: "bold",
         cursor: "pointer",
         backgroundColor: "#878c88",
+        textAlign:"center",
     },
     zebraStripe: (index) => ({
         backgroundColor: index % 2 === 0 ? 'rgba(0, 0, 0, 0.04)' : 'inherit',
