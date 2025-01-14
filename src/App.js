@@ -7,6 +7,9 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Sidebar from "./components/Sidebar";
 
+//Test Page
+import Test from "./utils/TestPage"
+
 // Home Page
 import Home from "./pages/home/Home";
 
@@ -83,10 +86,6 @@ import UserList from './pages/user/UserList';
 
 //Help Pages
 
-
-
- 
-
 // Layout Component for Conditional Sidebar/Footer
 const Layout = ({ children }) => {
     const location = useLocation();
@@ -95,7 +94,7 @@ const Layout = ({ children }) => {
     return (
         <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
             {/* Header */}
-            <Header />
+            {/* <Header /> */}
 
             {/* Main Content */}
             <Box sx={{ display: "flex", flex: 1 }}>
@@ -122,6 +121,9 @@ const App = () => {
                     <Route path="/home" element={<Home />} />
                     <Route path="/" element={<Home />} />
 
+                    {/* Test */}
+                    <Route path="/test" element={<Test />} />
+
                     {/* Sale Routes */}
                     <Route path="/sale/pos" element={<SalesScreen />} />
                     <Route path="/sale/addsale" element={<AddSale />} />
@@ -144,41 +146,41 @@ const App = () => {
                     <Route path="/usermanagement/user/createuser" element={<CreateUser />} />
                     <Route path="/usermanagement/user/updateuser/:userId" element={<UpdateUser />} />
                     <Route path="/usermanagement/user/viewuser/:userId" element={<ViewUser />} />
-                    
+
                     {/* Product Management */}
                     {/* Category Routes */}
-                    <Route path="/productmanagement/categorylist" element={<CategoryList />}/>
-                    <Route path="/productmanagement/category/createcategory" element={<CreateCategory />}/>
-                    <Route path="/productmanagement/category/updatecategory/:categoryId" element={<UpdateCategory />}/>
-                    <Route path="/productmanagement/category/viewcategory/:categoryId" element={<ViewCategory />}/>
+                    <Route path="/productmanagement/categorylist" element={<CategoryList />} />
+                    <Route path="/productmanagement/category/createcategory" element={<CreateCategory />} />
+                    <Route path="/productmanagement/category/updatecategory/:categoryId" element={<UpdateCategory />} />
+                    <Route path="/productmanagement/category/viewcategory/:categoryId" element={<ViewCategory />} />
                     {/* Brand */}
-                    <Route path="/productmanagement/brandlist" element={<Brandlist />}/>
-                    <Route path="/productmanagement/brand/createbrand" element={<CreateBrand />}/>
-                    <Route path="/productmanagement/brand/updatebrand/:brandId" element={<UpdateBrand />}/>
-                    <Route path="/productmanagement/brand/viewbrand/:brandId" element={<ViewBrand />}/>
+                    <Route path="/productmanagement/brandlist" element={<Brandlist />} />
+                    <Route path="/productmanagement/brand/createbrand" element={<CreateBrand />} />
+                    <Route path="/productmanagement/brand/updatebrand/:brandId" element={<UpdateBrand />} />
+                    <Route path="/productmanagement/brand/viewbrand/:brandId" element={<ViewBrand />} />
                     {/* Distributor */}
-                    <Route path="/productmanagement/distributorlist" element={<DistributorList />}/>
-                    <Route path="/productmanagement/distributor/createdistributor" element={<CreateDistributor />}/>
-                    <Route path="/productmanagement/distributor/updatedistributor/:distributorId" element={<UpdateDistributor />}/>
-                    <Route path="/productmanagement/distributor/viewdistributor/:distributorId" element={<ViewDistributor />}/>
+                    <Route path="/productmanagement/distributorlist" element={<DistributorList />} />
+                    <Route path="/productmanagement/distributor/createdistributor" element={<CreateDistributor />} />
+                    <Route path="/productmanagement/distributor/updatedistributor/:distributorId" element={<UpdateDistributor />} />
+                    <Route path="/productmanagement/distributor/viewdistributor/:distributorId" element={<ViewDistributor />} />
                     {/* Product */}
-                    <Route path="/productmanagement/productlist" element={<ProductList />}/>
-                    <Route path="/productmanagement/product/createproduct" element={<CreateProduct />}/>
-                    <Route path="/productmanagement/product/updateproduct/:id" element={<UpdateProduct />}/>
-                    <Route path="/productmanagement/product/viewproduct/:id" element={<ViewProduct />}/>
+                    <Route path="/productmanagement/productlist" element={<ProductList />} />
+                    <Route path="/productmanagement/product/createproduct" element={<CreateProduct />} />
+                    <Route path="/productmanagement/product/updateproduct/:id" element={<UpdateProduct />} />
+                    <Route path="/productmanagement/product/viewproduct/:id" element={<ViewProduct />} />
                     {/* Inventory */}
-                    <Route path="/productmanagement/inventorylist" element={<InventoryList />}/>
+                    <Route path="/productmanagement/inventorylist" element={<InventoryList />} />
                     {/* Customer management */}
                     {/* Customer group */}
-                    <Route path="/customermanagement/customergrouplist" element={<CustomerGroupList />}/>
-                    <Route path="/customermanagement/customergroup/createcustomergroup" element={<CreateCustomerGroup />}/>
-                    <Route path="/customermanagement/customergroup/updatecustomergroup/:customerGroupId" element={<UpdateCustomerGroup />}/>
-                    <Route path="/customermanagement/customergroup/viewcustomergroup/:customerGroupId" element={<ViewCustomerGroup />}/>
+                    <Route path="/customermanagement/customergrouplist" element={<CustomerGroupList />} />
+                    <Route path="/customermanagement/customergroup/createcustomergroup" element={<CreateCustomerGroup />} />
+                    <Route path="/customermanagement/customergroup/updatecustomergroup/:customerGroupId" element={<UpdateCustomerGroup />} />
+                    <Route path="/customermanagement/customergroup/viewcustomergroup/:customerGroupId" element={<ViewCustomerGroup />} />
                     {/* Customer */}
-                    <Route path="/customermanagement/customerlist" element={<CustomerList />}/>
-                    <Route path="/customermanagement/customer/createcustomer" element={<CreateCustomer />}/>
-                    <Route path="/customermanagement/customer/updatecustomer/:customerId" element={<UpdateCustomer />}/>
-                    <Route path="/customermanagement/customer/viewcustomer/:customerId" element={<ViewCustomer />}/>
+                    <Route path="/customermanagement/customerlist" element={<CustomerList />} />
+                    <Route path="/customermanagement/customer/createcustomer" element={<CreateCustomer />} />
+                    <Route path="/customermanagement/customer/updatecustomer/:customerId" element={<UpdateCustomer />} />
+                    <Route path="/customermanagement/customer/viewcustomer/:customerId" element={<ViewCustomer />} />
                 </Routes>
             </Layout>
         </Router>
