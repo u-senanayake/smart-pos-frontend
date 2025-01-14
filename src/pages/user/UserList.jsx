@@ -195,7 +195,7 @@ const UserList = () => {
       ) : (
         <TableContainer component={Paper} sx={{ width: '100%', overflowX: 'auto' }}>
           <Box sx={{ overflowX: 'auto' }}>
-            <Table sx={{ minWidth: '1300px' }}>
+            <Table sx={{ minWidth: '1000px' }}>
               <TableHead>
                 <TableRow style={styles.tableHeaderCell}>
                   <TableCell onClick={() => handleSort("username")}>Username {sortConfig.key === "username" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>

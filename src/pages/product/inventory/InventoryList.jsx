@@ -200,7 +200,7 @@ const InventoryList = () => {
             ) : (
                 <TableContainer component={Paper} sx={{ width: '100%', overflowX: 'auto' }}>
                     <Box sx={{ overflowX: 'auto' }}>
-                        <Table sx={{ minWidth: '1300px' }}>
+                        <Table sx={{ minWidth: '1000px' }}>
                             <TableHead style={styles.tableHeaderCell}>
                                 <TableRow>
                                     <TableCell onClick={() => handleSort("productStringId")}>Product ID {sortConfig.key === "productStringId" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>

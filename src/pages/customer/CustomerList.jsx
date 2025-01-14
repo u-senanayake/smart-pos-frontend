@@ -202,7 +202,7 @@ const CustomerList = () => {
             ) : (
                 <TableContainer component={Paper} sx={{ width: '100%', overflowX: 'auto' }}>
                     <Box sx={{ overflowX: 'auto' }}>
-                        <Table sx={{ minWidth: '1300px' }}>
+                        <Table sx={{ minWidth: '1000px' }}>
                             <TableHead style={styles.tableHeaderCell}>
                                 <TableRow>
                                     <TableCell onClick={() => handleSort("firstName")}>Name {sortConfig.key === "firstName" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>

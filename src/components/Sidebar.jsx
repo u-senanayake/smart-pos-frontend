@@ -115,27 +115,27 @@ export default function PersistentDrawerLeft() {
             subMenus: ["User List", "Role List", "Permission", "Sales Commission"]
         },
         {
-            name: "Report Management", 
-            icon: <Report />, 
+            name: "Report Management",
+            icon: <Report />,
             subMenus: ["Profit/Loss Report", "Product Purchase Report", "Sales Representative Report",
                 "Register Report", "Expense Report", "Sell Payment Report", "Purchase Payment Report", "Product Sell Report", "Item Report",
                 "Purchase & Sell", "Trending Product", "Stock Adjustment Report", "Stock Report", "Customer Group Report", "Supplier & Customer Report",
                 "Tax Report", "Activity Log"]
         },
-        { 
-            name: "Notification", 
-            icon: <CircleNotifications />, 
-            subMenus: ["Notification"] 
+        {
+            name: "Notification",
+            icon: <CircleNotifications />,
+            subMenus: ["Notification"]
         },
-        { 
-            name: "Settings", 
-            icon: <Settings />, 
-            subMenus: ["General Settings", "Payment Settings", "Notification Settings"] 
+        {
+            name: "Settings",
+            icon: <Settings />,
+            subMenus: ["General Settings", "Payment Settings", "Notification Settings"]
         },
-        { 
-            name: "Help/Support", 
-            icon: <Help />, 
-            subMenus: ["FAQ", "Contact Support", "User Guide"] 
+        {
+            name: "Help/Support",
+            icon: <Help />,
+            subMenus: ["FAQ", "Contact Support", "User Guide"]
         }
     ];
 

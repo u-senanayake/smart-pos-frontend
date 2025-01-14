@@ -25,6 +25,9 @@ export const styles = {
     tableCell: {
         padding: "6px 14px",
     },
+    actionSelect:{
+        padding:"0px"
+    },
     pagination: {
         marginTop: "20px",
         marginBottom: "20px",
