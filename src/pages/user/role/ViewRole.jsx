@@ -70,22 +70,8 @@ const ViewRole = () => {
             <ReadOnlyField label="Created At" value={formatDate(role.createdAt)} />
           </Grid2>
           <Grid2 size={6}>
-            <ReadOnlyField label={`Created By`} value={`${role.createdUser.firstName} ${role.createdUser.lastName} (${role.createdUser.username})`} />
-          </Grid2>
-          <Grid2 size={6}>
             <ReadOnlyField label="Updated At" value={formatDate(role.updatedAt)} />
           </Grid2>
-          <Grid2 size={6}>
-            <ReadOnlyField label={`Updated By`} value={`${role.updatedUser.firstName} ${role.updatedUser.lastName} (${role.updatedUser.username})`} />
-          </Grid2>
-          {role.deleted && (<>
-            <Grid2 size={6}>
-              <ReadOnlyField label="Deleted At" value={formatDate(role.deletedAt)} />
-            </Grid2>
-            <Grid2 size={6}>
-              <ReadOnlyField label={`Deleted By`} value={`${role.deletedUser.firstName} ${role.deletedUser.lastName} (${role.deletedUser.username})`} />
-            </Grid2>
-          </>)}
         </Grid2>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
           <Button variant="contained" color="primary" onClick={handleUpdate}> Update </Button>

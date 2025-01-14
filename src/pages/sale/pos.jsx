@@ -9,6 +9,18 @@ const PosPage = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowHeight(window.innerHeight);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    const contentHeight = windowHeight - 110;
 
     useEffect(() => {
         console.log('POS page is loaded');
@@ -37,36 +49,38 @@ const PosPage = () => {
                 </Toolbar>
             </AppBar>
             <Box sx={{ mt: 2 }}>
-                <Grid2 container spacing={1}>
+                <Grid2 container spacing={2}>
                     <Grid2 size={7}>
                         <Box sx={{ border: '1px solid black', padding: 2 }}>
                             Board Content
                         </Box>
                     </Grid2>
                     <Grid2 size={5}>
-                        <Box sx={{ border: '1px solid black', padding: 2 }}>
-                            {products.map((product) => (
-                                <Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>
-                                    <Card>
-                                        <CardActionArea>
-                                            <CardMedia
-                                                component="img"
-                                                height="140"
-                                                image={product.image} // Replace with your product image field
-                                                alt={product.name}
-                                            />
-                                            <CardContent>
-                                                <Typography gutterBottom variant="h5" component="div">
-                                                    {product.name}
-                                                </Typography>
-                                                <Typography variant="body2" color="text.secondary">
-                                                    {product.description}
-                                                </Typography>
-                                            </CardContent>
-                                        </CardActionArea>
-                                    </Card>
-                                </Grid>
-                            ))}
+                        <Box sx={{ border: '1px solid black', padding: 2, maxHeight: `${contentHeight}px`, overflowY: "auto" }}>
+                            <Grid2 container spacing={2}>
+                                {products.map((product) => (
+                                    <Grid2 size={4} key={product.id}>
+                                        <Card>
+                                            <CardActionArea>
+                                                <CardMedia
+                                                    component="img"
+                                                    height="140"
+                                                    image={product.image} // Replace with your product image field
+                                                    alt={product.name}
+                                                />
+                                                <CardContent>
+                                                    <Typography gutterBottom variant="h5" component="div">
+                                                        {product.name}
+                                                    </Typography>
+                                                    <Typography variant="body2" color="text.secondary">
+                                                        {product.description}
+                                                    </Typography>
+                                                </CardContent>
+                                            </CardActionArea>
+                                        </Card>
+                                    </Grid2>
+                                ))}
+                            </Grid2>
                         </Box>
                     </Grid2>
                 </Grid2>

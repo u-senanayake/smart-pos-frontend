@@ -164,9 +164,7 @@ const RoleList = () => {
                 <TableRow>
                   <TableCell style={styles.tableHeaderCell} onClick={() => handleSort("roleName")}>Name {sortConfig.key === "roleName" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
                   <TableCell style={styles.tableHeaderCell}>Enabled</TableCell>
-                  <TableCell style={styles.tableHeaderCell} onClick={() => handleSort("createdUser.username")}>Created User {sortConfig.key === "createdUser.username" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
                   <TableCell style={styles.tableHeaderCell} onClick={() => handleSort("createdAt")}>Created Date {sortConfig.key === "createdAt" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell style={styles.tableHeaderCell} onClick={() => handleSort("updatedUser.username")}>Updated User {sortConfig.key === "updatedUser.username" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
                   <TableCell style={styles.tableHeaderCell} onClick={() => handleSort("updatedAt")}>Last Updated Date {sortConfig.key === "updatedAt" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
                   <TableCell style={styles.tableHeaderCell}>Actions</TableCell>
                 </TableRow>
@@ -176,9 +174,7 @@ const RoleList = () => {
                   <TableRow key={role.roleId} sx={styles.zebraStripe(index)}>
                     <TableCell style={styles.tableCell}>{role.roleName}</TableCell>
                     <TableCell style={styles.tableCell}>{renderStatusIcon(role.enabled)}</TableCell>
-                    <TableCell style={styles.tableCell}>{role.createdUser.username}</TableCell>
                     <TableCell style={styles.tableCell}>{formatDate(role.createdAt)}</TableCell>
-                    <TableCell style={styles.tableCell}>{role.updatedUser.username}</TableCell>
                     <TableCell style={styles.tableCell}>{formatDate(role.updatedAt)}</TableCell>
                     <TableCell style={styles.tableCell}>
                       <IconButton component={Link} to={`/usermanagement/role/updaterole/${role.roleId}`}
