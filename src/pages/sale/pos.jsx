@@ -3,15 +3,15 @@ import {
     Box, Typography, Grid, Paper, TextField, Autocomplete, Button, Card, CardActionArea, CardMedia, CardContent,
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton,
 } from '@mui/material';
-import { Edit, Delete } from '@mui/icons-material';
+import { Edit, Delete, Save, Cancel } from '@mui/icons-material';
 // Services
 import ProductService from "../../services/ProductService";
 import CustomerService from "../../services/CustomerService";
 import SaleService from "../../services/SaleService";
 import SaleItemService from "../../services/SaleItemService";
-import POSHeader from './POSHeader';
 // Style
 import { POSStyle } from "../../style/POSStyle";
+import POSHeader from './POSHeader';
 
 const PosPage = () => {
     const [products, setProducts] = useState([]);
@@ -26,12 +26,14 @@ const PosPage = () => {
     const [saleItem, setSaleItem] = useState({
         saleId: '',
         productId: '',
-        quantity: 1,
+        quantity: '',
         pricePerUnit: '',
         itemDiscountVal: null,
         itemDiscountPer: null,
         totalPrice: ''
     });
+    const [editingItemId, setEditingItemId] = useState(null);
+    const [editedItem, setEditedItem] = useState({});
 
     // Initialize Sale on page load
     useEffect(() => {
@@ -70,21 +72,56 @@ const PosPage = () => {
             console.error('Failed to fetch sale items:', error);
         }
     };
+
+    useEffect(() => {
+        if (saleId) fetchSaleItems();
+    }, [saleId]);
+
     // Handle Edit Sale Item (Open a modal or inline edit)
     const handleEditItem = (item) => {
-        console.log('Edit item:', item);
-        // You can open a modal or enable inline editing here
+        setEditingItemId(item.salesItemId);
+        setEditedItem({ ...item });  // Pre-fill fields with current data
+    };
+
+    const handleCancelEdit = () => {
+        setEditingItemId(null);
+        setEditedItem({});
+    };
+
+    // const handleEditChange = (e) => {
+    //     const { name, value } = e.target;
+    //     setEditedItem((prevItem) => ({
+    //         ...prevItem,
+    //         [name]: value
+    //     }));
+    // };
+
+    const handleSaveEdit = async () => {
+        try {
+            const salesItem = { saleId, productId:editedItem.productId, quantity:editedItem.quantity, 
+                pricePerUnit:editedItem.pricePerunit, itemDiscountVal:editedItem.itemDiscountVal, itemDiscountPer:editedItem.itemDiscountPer, totalPrice:editedItem.totalPrice };
+            await SaleItemService.updateSaleItem(salesItem, editedItem.salesItemId);
+            fetchSaleItems(saleId);  // Refresh list
+            setEditingItemId(null);
+            setEditedItem({});
+        } catch (error) {
+            console.error("Failed to update item:", error);
+        }
     };
 
     // Handle Delete Sale Item
-    const handleDeleteItem = async (saleItemId) => {
-        try {
-            await SaleItemService.deleteSaleItem(saleItemId);
-            fetchSaleItems(saleId); // Refresh the list after deletion
-        } catch (error) {
-            console.error("Failed to delete item:", error);
+    const handleDeleteItem = async (salesItemId) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this item?");
+        if (confirmDelete) {
+            try {
+                await SaleItemService.deleteSaleItem(salesItemId);
+                fetchSaleItems(saleId);  // Refresh list
+            } catch (error) {
+                console.error("Failed to delete item:", error);
+            }
         }
     };
+
     // Handle Product Selection
     const handleProductChange = async (event, newValue) => {
         if (newValue && saleId) {
@@ -108,6 +145,62 @@ const PosPage = () => {
         }
     };
 
+    const handleEditChange = (e) => {
+        const { name, value } = e.target;
+        setEditedItem((prevSaleItem) => {
+            const updatedItem = {
+                ...prevSaleItem,
+                [name]: value,
+            };
+    
+            // Recalculate totalPrice
+            const discountValue = updatedItem.itemDiscountPer
+                ? (updatedItem.pricePerUnit * updatedItem.itemDiscountPer) / 100
+                : 0;
+    
+            const totalPrice = (updatedItem.pricePerUnit - discountValue) * updatedItem.quantity;
+    
+            return {
+                ...updatedItem,
+                totalPrice: isNaN(totalPrice) ? 0 : totalPrice, // Ensure totalPrice is calculated
+            };
+        });
+    };
+
+    const validateItem = () => {
+        const errors = {};
+        if (!saleItem.productId) errors.productId = "Product is required.";
+        if (!saleItem.quantity || saleItem.quantity <= 0) errors.quantity = "Quantity must be greater than 0.";
+        if (!saleItem.pricePerUnit || saleItem.pricePerUnit <= 0) errors.pricePerUnit = "Price per unit must be greater than 0.";
+    
+        //setFormErrors(errors);
+        return Object.keys(errors).length === 0; // Return true if no errors
+    };
+
+    const saveSaleItem = async () => {
+        if (!validateItem()) return;
+    
+        const saleItemRequest = {
+            saleId, // Ensure `saleId` is generated at the start
+            productId: saleItem.productId,
+            quantity: saleItem.quantity,
+            pricePerUnit: saleItem.pricePerUnit,
+            itemDiscountVal: saleItem.itemDiscountVal || null,
+            itemDiscountPer: saleItem.itemDiscountPer || null,
+            totalPrice: saleItem.totalPrice,
+        };
+    
+        try {
+            const response = await SaleItemService.createSaleItem(saleItemRequest);
+            console.log("Sale item added:", response.data);
+    
+            // Fetch updated sale items
+            fetchSaleItems();
+        } catch (error) {
+            console.error("Failed to save sale item:", error);
+        }
+    };
+    
     return (
         <Box sx={{ position: 'relative', padding: 0 }}>
             <POSHeader saleId={saleId} customers={customers} total={saleItems.reduce((sum, item) => sum + item.totalPrice, 0)} />
@@ -131,6 +224,10 @@ const PosPage = () => {
 
                         {/* SALE ITEMS LIST */}
                         <Paper sx={{ p: 2, mt: 2, maxHeight: '300px', overflowY: "auto" }}>
+                            <Typography variant="h6" gutterBottom>
+                                Sale Items
+                            </Typography>
+
                             {saleItems.length === 0 ? (
                                 <Typography>No items added yet.</Typography>
                             ) : (
@@ -138,6 +235,7 @@ const PosPage = () => {
                                     <Table>
                                         <TableHead>
                                             <TableRow>
+                                                <TableCell><strong>Product ID</strong></TableCell>
                                                 <TableCell><strong>Product Name</strong></TableCell>
                                                 <TableCell><strong>Quantity</strong></TableCell>
                                                 <TableCell><strong>Price/Unit ($)</strong></TableCell>
@@ -148,19 +246,77 @@ const PosPage = () => {
                                         </TableHead>
                                         <TableBody>
                                             {saleItems.map((item) => (
-                                                <TableRow key={item.saleItemId}>
-                                                    <TableCell>{item.productName}</TableCell>
-                                                    <TableCell>{item.quantity}</TableCell>
-                                                    <TableCell>{item.pricePerUnit}</TableCell>
-                                                    <TableCell>{item.itemDiscountPer || 0}</TableCell>
-                                                    <TableCell>{item.totalPrice}</TableCell>
+                                                <TableRow key={item.salesItemId}>
+                                                    {/* Displaying product details from the nested product object */}
+                                                    <TableCell>{item.product.productId}</TableCell>
+                                                    <TableCell>{item.product.name}</TableCell>
+
                                                     <TableCell>
-                                                        <IconButton color="primary" onClick={() => handleEditItem(item)}>
-                                                            <Edit />
-                                                        </IconButton>
-                                                        <IconButton color="error" onClick={() => handleDeleteItem(item.saleItemId)}>
-                                                            <Delete />
-                                                        </IconButton>
+                                                        {editingItemId === item.salesItemId ? (
+                                                            <TextField
+                                                                name="quantity"
+                                                                type="number"
+                                                                value={editedItem.quantity || item.quantity}
+                                                                onChange={handleEditChange}
+                                                                size="small"
+                                                            />
+                                                        ) : (
+                                                            item.quantity
+                                                        )}
+                                                    </TableCell>
+
+                                                    <TableCell>
+                                                        {editingItemId === item.salesItemId ? (
+                                                            <TextField
+                                                                name="pricePerUnit"
+                                                                type="number"
+                                                                value={editedItem.pricePerunit || item.pricePerunit}
+                                                                onChange={handleEditChange}
+                                                                size="small"
+                                                            />
+                                                        ) : (
+                                                            `$${item.pricePerunit.toFixed(2)}`
+                                                        )}
+                                                    </TableCell>
+
+                                                    <TableCell>
+                                                        {editingItemId === item.salesItemId ? (
+                                                            <TextField
+                                                                name="itemDiscountPer"
+                                                                type="number"
+                                                                value={editedItem.itemDiscountPer || item.itemDiscountPer}
+                                                                onChange={handleEditChange}
+                                                                size="small"
+                                                            />
+                                                        ) : (
+                                                            `${item.itemDiscountPer || 0}%`
+                                                        )}
+                                                    </TableCell>
+
+                                                    <TableCell>
+                                                        {`$${item.totalPrice.toFixed(2)}`}
+                                                    </TableCell>
+
+                                                    <TableCell>
+                                                        {editingItemId === item.salesItemId ? (
+                                                            <>
+                                                                <IconButton color="success" onClick={handleSaveEdit}>
+                                                                    <Save />
+                                                                </IconButton>
+                                                                <IconButton color="error" onClick={handleCancelEdit}>
+                                                                    <Cancel />
+                                                                </IconButton>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <IconButton color="primary" onClick={() => handleEditItem(item)}>
+                                                                    <Edit />
+                                                                </IconButton>
+                                                                <IconButton color="error" onClick={() => handleDeleteItem(item.salesItemId)}>
+                                                                    <Delete />
+                                                                </IconButton>
+                                                            </>
+                                                        )}
                                                     </TableCell>
                                                 </TableRow>
                                             ))}
@@ -169,8 +325,13 @@ const PosPage = () => {
                                 </TableContainer>
                             )}
 
-
+                            {/* Total Price Display */}
+                            <Typography variant="h6" sx={{ textAlign: 'right', mt: 2 }}>
+                                <strong>Total: </strong>
+                                {`$${saleItems.reduce((sum, item) => sum + item.totalPrice, 0).toFixed(2)}`}
+                            </Typography>
                         </Paper>
+
                         {/* Total Price Display */}
                         <Typography variant="h6" sx={{ textAlign: 'right', mt: 2 }}>
                             <strong>Total: </strong>${saleItems.reduce((sum, item) => sum + item.totalPrice, 0).toFixed(2)}
