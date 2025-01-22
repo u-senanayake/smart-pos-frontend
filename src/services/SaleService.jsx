@@ -7,5 +7,10 @@ class SaleService {
             const response = await axios.post(API_URL, sale);
             return response;
         }
+
+        async updateSale(saleId, sale) {
+            const response = await axios.put(`${API_URL}/${saleId}`, sale);
+            return response;
+        }
 };
 export default new SaleService();
