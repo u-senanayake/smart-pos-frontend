@@ -14,6 +14,7 @@ import {
   InputLabel, 
   Select, 
   MenuItem,
+  Alert,
 } from "@mui/material";
 
 import { styles } from "../style/FormStyle"
@@ -98,5 +99,25 @@ export const LockStatusFilter = ({ value, onChange, style }) => {
         <MenuItem value="false">Unlocked</MenuItem>
       </Select>
     </FormControl>
+  );
+};
+
+export const ErrorDialog = ({ open, message, onClose }) => {
+  return (
+    <Dialog open={open} onClose={onClose} aria-labelledby="error-dialog-title">
+      <DialogTitle id="error-dialog-title" sx={{ color: 'error.main' }}>
+        Error
+      </DialogTitle>
+      <DialogContent>
+        <Alert severity="error" sx={{ mt: 2 }}>
+          {message}
+        </Alert>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="primary">
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
