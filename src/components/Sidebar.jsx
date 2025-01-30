@@ -71,7 +71,7 @@ export default function PersistentDrawerLeft() {
         {
             name: "Sale",
             icon: <PointOfSale />,
-            subMenus: ["POS", "Add Sale", "List Drafts", "Sales History", "Sales Return", "List Return",
+            subMenus: ["POS", "List Drafts", "Sales History", "Sales Return", "List Return",
                 "Add Quotation", "List Quotation", "Shipments"]
         },
         {

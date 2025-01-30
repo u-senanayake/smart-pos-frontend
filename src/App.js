@@ -15,7 +15,6 @@ import Home from "./pages/home/Home";
 
 //Sale Pages
 import SalesScreen from './pages/sale/pos';
-import AddSale from './pages/sale/AddSale';
 import ListDrafts from './pages/sale/ListDrafts';
 import SalesHistory from './pages/sale/SalesHistory';
 import SalesReturn from './pages/sale/SalesReturn';
@@ -126,7 +125,6 @@ const App = () => {
 
                     {/* Sale Routes */}
                     <Route path="/sale/pos" element={<SalesScreen />} />
-                    <Route path="/sale/addsale" element={<AddSale />} />
                     <Route path="/sale/listdrafts" element={<ListDrafts />} />
                     <Route path="/sale/saleshistory" element={<SalesHistory />} />
                     <Route path="/sale/salesreturn" element={<SalesReturn />} />

@@ -304,13 +304,21 @@ const PosPage = () => {
     };
 
     // Calculate invoice summary
-    const invoiceSummary = {
-        itemCount: saleItems.length,
-        totalQuantity: saleItems.reduce((sum, item) => sum + item.quantity, 0),
-        totalDiscountPercentage: saleItems.reduce((sum, item) => sum + (item.itemDiscountPer || 0), 0),
-        totalDiscountValue: saleItems.reduce((sum, item) => sum + (item.itemDiscountVal || 0), 0),
-        totalAmount: saleItems.reduce((sum, item) => sum + item.totalPrice, 0),
-    };
+    const invoiceSummary = saleItems.length === 0
+        ? {
+            itemCount: 0,
+            totalQuantity: 0,
+            totalDiscountPercentage: 0,
+            totalDiscountValue: 0,
+            totalAmount: 0
+        }
+        : {
+            itemCount: saleItems.length,
+            totalQuantity: saleItems.reduce((sum, item) => sum + item.quantity, 0),
+            totalDiscountPercentage: saleItems.reduce((sum, item) => sum + (item.itemDiscountPer || 0), 0),
+            totalDiscountValue: saleItems.reduce((sum, item) => sum + (item.itemDiscountVal || 0), 0),
+            totalAmount: saleItems.reduce((sum, item) => sum + item.totalPrice, 0),
+        };
 
     // Add handler for payment changes
     const handlePaymentChange = (event) => {
@@ -563,15 +571,15 @@ const PosPage = () => {
                                 </Grid2>
                                 <Grid2 size={3}>
                                     <Typography variant="subtitle2">Discount</Typography>
-                                    <Typography variant="h6">${invoiceSummary.totalDiscountValue.toFixed(2)}</Typography>
+                                    <Typography variant="h6">${(invoiceSummary.totalDiscountValue || 0).toFixed(2)}</Typography>
                                 </Grid2>
                                 <Grid2 size={6}>
                                     <Typography variant="subtitle2">Total Amount</Typography>
-                                    <Typography variant="h6" color="primary">${invoiceSummary.totalAmount.toFixed(2)}</Typography>
+                                    <Typography variant="h6" color="primary">${(invoiceSummary.totalAmount || 0).toFixed(2)}</Typography>
                                 </Grid2>
                                 <Grid2 size={6}>
                                     <Typography variant="subtitle2">Due Amount</Typography>
-                                    <Typography variant="h6" color="error">${payment.remainBalance.toFixed(2)}</Typography>
+                                    <Typography variant="h6" color="error">${(payment.remainBalance || 0).toFixed(2)}</Typography>
                                 </Grid2>
                             </Grid2>
                         </Paper>
