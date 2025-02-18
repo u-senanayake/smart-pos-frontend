@@ -348,6 +348,41 @@ const PosPage = () => {
             return updated;
         });
     };
+    const handleFinalize = () => {
+        // Finalize logic here
+        if (!selectedCustomer || saleItems.length === 0) {
+            alert('Please select a customer and add at least one product to finalize the sale.');
+            return;
+        }
+
+        const saleData = {
+            customerId: selectedCustomer.id,
+            items: saleItems.map(item => ({
+                productId: item.product.id,
+                quantity: item.quantity,
+                pricePerUnit: item.pricePerUnit,
+                itemDiscountVal: item.itemDiscountVal,
+                itemDiscountPer: item.itemDiscountPer,
+                totalPrice: item.totalPrice
+            }))
+        };
+        const paymentData = {
+            customer: selectedCustomer,
+            totalAmount: invoiceSummary.totalAmount,
+            totalItemCount: invoiceSummary.itemCount,
+            payment:payment
+        }
+
+        SaleService.finalyzeSale(saleId, paymentData)
+            .then((res) => {
+                alert('Sale finalized successfully!');
+                // Reset state or navigate to another page if needed
+            })
+            .catch((error) => {
+                console.error('Error finalizing sale:', error);
+                alert('Failed to finalize sale. Please try again.');
+            });
+    };
 
     const validateItem = () => {
         const errors = {};
@@ -700,10 +735,10 @@ const PosPage = () => {
                                 </Grid2>
                             </Grid2>
                             <Box sx={{ display: 'flex', justifyContent: 'space-evenly', mt: 0.5 }}  >
-                                <Button variant="contained" color="error">
+                                <Button variant="contained" color="error" onClick={handleFinalize}>
                                     Finalyze Credit Sale
                                 </Button>
-                                <Button variant="contained" color="primary"  >
+                                <Button variant="contained" color="primary" onClick={handleFinalize} >
                                     Finalyze Cash Sale
                                 </Button>
                             </Box>

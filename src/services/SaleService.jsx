@@ -13,8 +13,18 @@ class SaleService {
         return response;
     }
 
+    async finalyzeSale(saleId, finalyzesale) {
+        const response = await axios.put(`${API_URL}/finalize/${saleId}`, finalyzesale);
+        return response;
+    }
+
     async getDraftsales() {
         const response = await axios.get(`${API_URL}/payment/PENDING`);
+        return response;
+    }
+
+    async getAllSales() {
+        const response = await axios.get(`${API_URL}`);
         return response;
     }
 
