@@ -23,6 +23,7 @@ const UpdateUser = () => {
       roleId: ''
     }
   });
+  
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -107,7 +108,12 @@ const UpdateUser = () => {
       setFormError(validationErrors);
     } else {
       setIsSaving(true);
-      UserService.updateUser(userId, user)
+      const requestData = {
+        ...user,
+        roleId: user.role.roleId, // Extract roleId
+      };
+      delete requestData.role; // Remove the role object
+      UserService.updateUser(userId, requestData)
         .then(() => {
           navigate('/usermanagement/userlist');
         })

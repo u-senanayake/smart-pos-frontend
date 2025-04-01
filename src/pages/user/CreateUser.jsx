@@ -104,7 +104,12 @@ const CreateUser = () => {
       setFormError(validationErrors);
     } else {
       setIsSaving(true);
-      UserService.createUser(user)
+      const requestData = {
+        ...user,
+        roleId: user.role.roleId, // Extract roleId
+      };
+      delete requestData.role; // Remove the role object
+      UserService.createUser(requestData)
         .then(() => {
           navigate('/usermanagement/userlist');
         })
@@ -112,9 +117,10 @@ const CreateUser = () => {
           if (error.response && error.response.data) {
             setServerError(error.response.data);
           } else {
-            console.error('Error updating user:', error);
+            console.error('Error creating user:', error);
           }
-        }).finally(() => setIsSaving(false));
+        })
+        .finally(() => setIsSaving(false));
     }
   };
 
