@@ -36,7 +36,7 @@ const UpdateRole = () => {
     const validateForm = (role) => {
         const formError = {};
         if (!validateRequired(role.roleName)) formError.roleName = 'Role name is required';
-        if (!validateLength(role.roleName, 10, 40)) formError.roleName = 'Role name must be between 10 and 40 characters';
+        if (!validateLength(role.roleName, 5, 20)) formError.roleName = 'Role name must be between 10 and 40 characters';
         if (!validateRequired(role.description)) formError.description = 'Role description is required';
         if (!validateLength(role.description, 10, 250)) formError.description = 'Role description must be between 10 and 250 characters';
         return formError;
