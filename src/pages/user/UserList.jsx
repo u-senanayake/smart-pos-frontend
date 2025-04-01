@@ -240,7 +240,7 @@ const UserList = () => {
         </TableContainer>
       )}
       <Pagination
-        count={Math.ceil(users.length / itemsPerPage)}
+        count={Math.ceil(filteredUsers.length / itemsPerPage)}
         page={currentPage}
         onChange={handlePageChange}
         color="primary"
