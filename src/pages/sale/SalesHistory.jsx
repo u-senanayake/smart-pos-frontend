@@ -18,7 +18,7 @@ const SalesHistory = () => {
 
     const fetchSalesHistory = async () => {
         try {
-            const response = await SaleService.getAllSales();
+            const response = await SaleService.getSaleHistory();
             setSales(response.data);
             setLoading(false);
         } catch (error) {
@@ -35,7 +35,7 @@ const SalesHistory = () => {
     const handleStatusFilterChange = (e) => {
         setStatusFilter(e.target.value);
     };
-    
+
     const handleDelete = async (saleId) => {
         if (window.confirm('Are you sure you want to delete this sale?')) {
             try {
@@ -49,6 +49,14 @@ const SalesHistory = () => {
 
     const handleViewDetails = (saleId) => {
         navigate(`/sale/details/${saleId}`);
+    };
+
+    const handleEditSale = (saleId) => {
+        navigate(`/sale/pos/${saleId}`); // Navigate to the POS page in editable mode
+    };
+
+    const handlePreviewSale = (saleId) => {
+        navigate(`/sale/pos/${saleId}?readonly=true`); // Navigate to the POS page in read-only mode
     };
 
     const filteredSales = sales.filter((sale) =>
@@ -65,7 +73,9 @@ const SalesHistory = () => {
                 <TextField
                     label="Filter by Customer Name"
                     variant="outlined"
-                    value={filter}
+                    size="small"
+                    fullWidth
+                    sx={{ mb: 2 }}
                     onChange={handleFilterChange}
                 />
             </Box>
@@ -78,6 +88,7 @@ const SalesHistory = () => {
                     <Table sx={{ minWidth: 650 }} aria-label="sales history table">
                         <TableHead>
                             <TableRow>
+                                <TableCell>Sale ID</TableCell>
                                 <TableCell>Customer Name</TableCell>
                                 <TableCell align="right">Date</TableCell>
                                 <TableCell align="right">Total Amount</TableCell>
@@ -87,7 +98,8 @@ const SalesHistory = () => {
                         </TableHead>
                         <TableBody>
                             {filteredSales.map((sale) => (
-                                <TableRow key={sale.id}>
+                                <TableRow key={sale.saleId}>
+                                    <TableCell component="th" scope="row">{sale.saleId}</TableCell>
                                     <TableCell component="th" scope="row">
                                         {sale.customer.firstName} {sale.customer.lastName}
                                     </TableCell>
@@ -96,17 +108,17 @@ const SalesHistory = () => {
                                     <TableCell align="right">{sale.paymentStatus}</TableCell>
                                     <TableCell align="right">
                                         {sale.paymentStatus !== 'FINALIZED' && (
-                                        <IconButton onClick={() => handleViewDetails(sale.id)}>
-                                            <Edit />
-                                        </IconButton>
-                                        )}
-                                        {sale.paymentStatus === 'PENDING' && (
-                                            <IconButton onClick={() => handleDelete(sale.id)}>
-                                                <Delete />
-                                            </IconButton>
+                                            <>
+                                                <IconButton onClick={() => handleEditSale(sale.saleId)}>
+                                                    <Edit />
+                                                </IconButton>
+                                                <IconButton onClick={() => handlePreviewSale(sale.saleId)}> {/* Use the updated preview handler */}
+                                                    <Preview />
+                                                </IconButton>
+                                            </>
                                         )}
                                         {sale.paymentStatus === 'FINALIZED' && (
-                                            <IconButton onClick={() => handleDelete(sale.id)}>
+                                            <IconButton onClick={() => handlePreviewSale(sale.saleId)}> {/* Use the updated preview handler */}
                                                 <Preview />
                                             </IconButton>
                                         )}

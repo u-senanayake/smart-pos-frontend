@@ -2,7 +2,8 @@ import React from 'react';
 import { AppBar, Toolbar, Typography, IconButton, Button, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Home, Settings, Add, Cancel, FolderOpen, Save } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
+import SaleService from "../../services/SaleService"; // Import SaleService
 
 const buttonStyle = {
     color: '#fff',
@@ -18,7 +19,35 @@ const POSHeader = ({
     onNewSale,
     onCancelSale,
     onOpenSale,
-    onSaveSale }) => {
+    onSaveSale
+}) => {
+    const navigate = useNavigate(); // Initialize navigate
+
+    const handleNewSale = async () => {
+        try {
+            const response = await SaleService.createSale({ customerId: 1 }); // Create a new sale with default customer
+            navigate(`/sale/pos/${response.data.saleId}`); // Navigate to the new sale
+        } catch (error) {
+            console.error("Failed to create new sale:", error);
+        }
+    };
+
+    const handleCancelSale = async () => {
+        if (saleId && window.confirm("Are you sure you want to cancel this sale?")) {
+            try {
+                await SaleService.deleteSale(saleId); // Delete the current sale
+                const response = await SaleService.createSale({ customerId: 1 }); // Create a new sale
+                navigate(`/sale/pos/${response.data.saleId}`); // Navigate to the new sale
+            } catch (error) {
+                console.error("Failed to cancel and create a new sale:", error);
+            }
+        }
+    };
+
+    const handleOpenSale = () => {
+        navigate('/sale/listdrafts'); // Navigate to the ListDrafts page
+    };
+
     return (
         <AppBar position="static" sx={{ height: appBarHeight }}>
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -33,7 +62,7 @@ const POSHeader = ({
                     </IconButton>
                     <Button
                         startIcon={<Add />}
-                        onClick={onNewSale}
+                        onClick={handleNewSale} // Use the new sale handler
                         sx={{
                             ...buttonStyle,
                             backgroundColor: 'success.main',
@@ -51,7 +80,7 @@ const POSHeader = ({
                             '&:hover': { backgroundColor: 'error.dark' },
                             mr: 1
                         }}
-                        onClick={onCancelSale}
+                        onClick={handleCancelSale} // Use the updated cancel handler
                     >
                         Cancel
                     </Button>
@@ -63,21 +92,9 @@ const POSHeader = ({
                             '&:hover': { backgroundColor: 'info.dark' },
                             mr: 1
                         }}
-                        onClick={onOpenSale}
+                        onClick={handleOpenSale} // Use the updated open handler
                     >
                         Open
-                    </Button>
-                    <Button
-                        startIcon={<Save />}
-                        sx={{
-                            ...buttonStyle,
-                            backgroundColor: 'warning.main',
-                            '&:hover': { backgroundColor: 'warning.dark' },
-                            mr: 1
-                        }}
-                        onClick={onSaveSale}
-                    >
-                        Save
                     </Button>
                 </Box>
                 <Typography variant="h5" sx={{ flexGrow: 0 }}>

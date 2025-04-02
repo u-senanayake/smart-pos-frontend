@@ -88,7 +88,7 @@ import UserList from './pages/user/UserList';
 // Layout Component for Conditional Sidebar/Footer
 const Layout = ({ children }) => {
     const location = useLocation();
-    const isSalesScreen = location.pathname === '/sale/pos'; // Adjust route if needed
+    const isSalesScreen = location.pathname.startsWith('/sale/pos'); // Adjust route to include /sale/pos/:saleId
 
     return (
         <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -124,7 +124,8 @@ const App = () => {
                     <Route path="/test" element={<Test />} />
 
                     {/* Sale Routes */}
-                    <Route path="/sale/pos" element={<SalesScreen />} />
+                    <Route path="/sale/pos" element={<SalesScreen />} /> {/* Route for new sale */}
+                    <Route path="/sale/pos/:saleId" element={<SalesScreen />} /> {/* Route for draft sale */}
                     <Route path="/sale/listdrafts" element={<ListDrafts />} />
                     <Route path="/sale/saleshistory" element={<SalesHistory />} />
                     <Route path="/sale/salesreturn" element={<SalesReturn />} />

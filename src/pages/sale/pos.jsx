@@ -4,6 +4,7 @@ import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, Grid2, Dialog, DialogTitle, DialogContent, DialogActions, Alert
 } from '@mui/material';
 import { Edit, Delete, Save, Cancel } from '@mui/icons-material';
+import { useParams } from "react-router-dom"; // Import useParams for URL parameters
 // Services
 import ProductService from "../../services/ProductService";
 import CustomerService from "../../services/CustomerService";
@@ -15,6 +16,7 @@ import POSHeader from './POSHeader';
 import { ReadOnlyField, ErrorDialog } from '../../utils/FieldUtils'
 
 const PosPage = () => {
+    const { saleId: paramSaleId } = useParams(); // Get saleId from URL parameters
     const [products, setProducts] = useState([]);
     const [customers, setCustomers] = useState([]);
     const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -141,10 +143,8 @@ const PosPage = () => {
             const updateSale = {
                 totalAmount: 0,
                 totalItemCount: 0,
-                paymentStatus: 'PENDING',
-                customer: {
-                    customerId: newValue.customerId
-                }
+                paymentStatus: 'DRAFT',
+                customerId: newValue.customerId
             };
             try {
                 await SaleService.updateSale(saleId, updateSale);
@@ -158,28 +158,29 @@ const PosPage = () => {
 
     // Initialize Sale on page load
     useEffect(() => {
-        const createSale = async () => {
+        const initializeSale = async () => {
             try {
-                // Initialize sale with default customer (ID: 1)
-                const initialSale = {
-                    customer: {
-                        customerId: 1
-                    },
-                    totalAmount: 0,
-                    totalItemCount: 0,
-                    paymentStatus: 'PENDING'
-                };
-                const response = await SaleService.createSale(initialSale);
-                setSaleId(response.data.saleId);
-                setSelectedCustomer({ customerId: 1 }); // Set default customer in state
-                console.log('Sale created:', response.data);
+                if (paramSaleId) {
+                    // Load draft sale if saleId is provided
+                    const saleResponse = await SaleService.getSaleById(paramSaleId);
+                    setSaleId(saleResponse.data.saleId);
+                    setSelectedCustomer({ customerId: saleResponse.data.customerId });
+                    fetchSaleItems(saleResponse.data.saleId); // Fetch sale items for the draft sale
+                } else {
+                    // Create a new sale if no saleId is provided
+                    const initialSale = { customerId: 1 };
+                    const response = await SaleService.createSale(initialSale);
+                    setSaleId(response.data.saleId);
+                    setSelectedCustomer({ customerId: 1 });
+                }
             } catch (error) {
-                console.error('Failed to create sale:', error);
-                setServerError('Create sale: ' + error.response.data);
+                console.error('Failed to initialize sale:', error);
+                setServerError('Initialize sale: ' + error.response?.data);
             }
         };
-        createSale();
-    }, []);
+
+        initializeSale();
+    }, [paramSaleId]); // Run this effect when paramSaleId changes
 
     // Fetch Sale Items for the current Sale
     const fetchSaleItems = async (saleId) => {
@@ -367,7 +368,7 @@ const PosPage = () => {
             }))
         };
         const paymentData = {
-            customer: selectedCustomer,
+            customerId: selectedCustomer.id,
             totalAmount: invoiceSummary.totalAmount,
             totalItemCount: invoiceSummary.itemCount,
             payment:payment
@@ -474,7 +475,7 @@ const PosPage = () => {
                                                         <TableCell>{currentItem.product?.productId || "N/A"}</TableCell>
 
                                                         {/* Product Name */}
-                                                        <TableCell>{currentItem.product?.name || "N/A"}</TableCell>
+                                                        <TableCell>{currentItem.product?.productName || "N/A"}</TableCell>
 
                                                         {/* Quantity */}
                                                         <TableCell>
@@ -499,12 +500,12 @@ const PosPage = () => {
                                                                 <TextField
                                                                     name="pricePerUnit"
                                                                     type="number"
-                                                                    value={currentItem.pricePerUnit || ""}
+                                                                    value={currentItem.product.price || ""}
                                                                     onChange={handleEditChange}
                                                                     size="small"
                                                                 />
                                                             ) : (
-                                                                `$${currentItem.pricePerUnit?.toFixed(2) || "0.00"}`
+                                                                `$${currentItem.product.price?.toFixed(2) || "0.00"}`
                                                             )}
                                                         </TableCell>
 
@@ -563,21 +564,45 @@ const PosPage = () => {
                         <Paper sx={{ p: 2, maxHeight: productContentHeight, overflowY: "auto" }}>
                             <Grid2 container spacing={2}>
                                 {products.map((product) => (
-                                    <Grid2 item size={3} key={product.productId}>
-                                        <Card>
-                                            <CardActionArea>
+                                    <Grid2 item size={4} key={product.productId}>
+                                        <Card sx={{ width: 150, height: 200 }}> {/* Set fixed width and height */}
+                                            <CardActionArea
+                                                sx={{ height: '100%' }}
+                                                onClick={async () => {
+                                                    if (saleId) {
+                                                        const newSaleItem = {
+                                                            saleId: saleId,
+                                                            productId: product.id,
+                                                            quantity: 1,
+                                                            pricePerUnit: product.price,
+                                                            itemDiscountVal: 0,
+                                                            itemDiscountPer: 0,
+                                                            totalPrice: product.price
+                                                        };
+
+                                                        try {
+                                                            await SaleItemService.createSaleItem(newSaleItem);
+                                                            console.log('Sale item added:', newSaleItem);
+                                                            fetchSaleItems(saleId); // Refresh sale items list
+                                                        } catch (error) {
+                                                            console.error('Failed to create sale item:', error);
+                                                            setServerError('Create sale item: ' + error.response?.data);
+                                                        }
+                                                    }
+                                                }}
+                                            >
                                                 <CardMedia
                                                     component="img"
                                                     height="100"
                                                     image={product.image}
                                                     alt={product.productName}
                                                 />
-                                                <CardContent>
-                                                    <Typography gutterBottom variant="h6">
+                                                <CardContent sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
+                                                    <Typography gutterBottom variant="h6" sx={{ fontSize: '0.9rem', textAlign: 'center' }}>
                                                         {product.productName}
                                                     </Typography>
-                                                    <Typography variant="body2" color="text.secondary">
-                                                        ${product.price}
+                                                    <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
+                                                        ${product.price?.toFixed(2) || "0.00"} {/* Ensure price is displayed correctly */}
                                                     </Typography>
                                                 </CardContent>
                                             </CardActionArea>

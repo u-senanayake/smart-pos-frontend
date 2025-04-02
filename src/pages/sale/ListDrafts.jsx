@@ -44,7 +44,7 @@ const SaleDraftListPage = () => {
 
     // Open sale draft in POS page
     const handleOpenSale = (saleId) => {
-        navigate(`/pos?saleId=${saleId}`);
+        navigate(`/sale/pos/${saleId}`); // Navigate to the correct POS route with saleId
     };
 
     // Filter sales based on search input

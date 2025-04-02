@@ -19,7 +19,12 @@ class SaleService {
     }
 
     async getDraftsales() {
-        const response = await axios.get(`${API_URL}/payment/PENDING`);
+        const response = await axios.get(`${API_URL}/payment/draft`);
+        return response;
+    }
+
+    async getSaleHistory() {
+        const response = await axios.get(`${API_URL}/payment/notdraft`);
         return response;
     }
 
@@ -32,5 +37,10 @@ class SaleService {
         const response = await axios.delete(`${API_URL}/${saleId}`);
         return response;
     }
+
+    async getSaleById(id) {
+            const response = await axios.get(`${API_URL}/${id}`);
+            return response;
+        }
 };
 export default new SaleService();
