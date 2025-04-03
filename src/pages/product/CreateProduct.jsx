@@ -155,7 +155,7 @@ const CreateProduct = () => {
     const serverErrorMessages = Object.values(serverErrors);
 
     return (
-        <Container maxWidth="md">
+        <Container maxWidth="md" sx={{ mt: 10 }}>
             <Paper sx={{ p: 3, mt: 3 }}>
                 <Typography variant="h4" gutterBottom>
                     Create Product
