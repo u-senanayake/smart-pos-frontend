@@ -28,6 +28,7 @@ export const ReadOnlyField = ({ label, value }) => (
     variant="outlined"
     margin="normal"
     style={styles.readOnlyField}
+    size="small"
   />
 );
 
