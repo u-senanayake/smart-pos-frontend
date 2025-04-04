@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton, Typography, Pagination, Box, } from "@mui/material";
+import { Paper, Button, IconButton, Typography, Stack, } from "@mui/material";
 import { Delete, Edit, Add, Preview } from "@mui/icons-material";
+import { DataGrid } from '@mui/x-data-grid';
 
 //Service
 import RoleService from "../../../services/RoleService";
 //Utils
 import { renderStatusIcon } from "../../../utils/utils";
 import { formatDate } from '../../../utils/Dateutils';
-import { SkeletonLoading, ErrorMessage, ConfirmationDialog, ActiveStatusFilter, lockStatusFilter } from '../../../utils/FieldUtils'
-import { getSortedData, toggleSortDirection } from "../../../utils/SortUtils";
+import { SkeletonLoading, ErrorMessage, ConfirmationDialog, } from '../../../utils/FieldUtils'
 //Style
 import { styles } from "../../../style/TableStyle";
 
@@ -20,11 +20,10 @@ const RoleList = () => {
   const [error, setError] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
   const [paginationLoading, setPaginationLoading] = useState(false);
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" }); // Sorting state
-  const [statusFilter, setStatusFilter] = useState(""); // Account status filter state
-  const itemsPerPage = 10;
+  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+
+  const tableheight = windowHeight / 100 * 60;
 
   useEffect(() => {
     RoleService.getRoles()
@@ -66,34 +65,72 @@ const RoleList = () => {
     setSelectedId(null);
   };
 
-  const handlePageChange = (event, value) => {
-    setPaginationLoading(true);
-    setTimeout(() => {
-      setCurrentPage(value);
-      setPaginationLoading(false);
-    }, 500); // Simulate a delay (replace this with actual fetching logic if needed)
-  };
+  const columns = [
+    {
+      field: 'roleName',
+      headerName: 'Name',
+      flex: 1,
+      headerClassName: 'super-app-theme--header',
+    },
+    {
+      field: 'active',
+      headerName: 'Active Status',
+      flex: 0.8,
+      filterable: false,
+      headerClassName: 'super-app-theme--header',
+      renderCell: (params) => renderStatusIcon(params.row.enabled),
+    },
+    {
+      field: 'createdAt',
+      headerName: 'Created Date',
+      flex: 1.2,
+      filterable: false,
+      headerClassName: 'super-app-theme--header',
+      renderCell: (params) => formatDate(params.row.createdAt),
+    },
+    {
+      field: 'updatedAt',
+      headerName: 'Last Updated Date',
+      flex: 1.2,
+      filterable: false,
+      headerClassName: 'super-app-theme--header',
+      renderCell: (params) => formatDate(params.row.updatedAt),
+    },
+    {
+      field: 'action',
+      headerName: 'Actions',
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      headerClassName: 'super-app-theme--header',
+      disableClickEventBubbling: true,
+      renderCell: (params) => {
+        const onClick = (e) => {
+          const currentRow = params.row;
+          return alert(JSON.stringify(currentRow, null, 4));
+        };
+        return (
+          <Stack direction="row" spacing={2}>
+            <IconButton component={Link} to={`/usermanagement/role/updaterole/${params.row.roleId}`}
+              aria-label="Edit Role">
+              <Edit color="primary" />
+            </IconButton>
+            <IconButton onClick={() => confirmDelete(params.row.roleId)}
+              aria-label="Delete Role">
+              <Delete color="error" />
+            </IconButton>
+            <IconButton component={Link} to={`/usermanagement/role/viewrole/${params.row.roleId}`}
+              aria-label="Update Role">
+              <Preview color="primary" />
+            </IconButton>
+          </Stack>
+        );
+      },
+    },
+  ];
+  const rows = roles;
 
-  const handleSort = (key) => {
-    setSortConfig((currentConfig) => toggleSortDirection(currentConfig, key));
-  };
-
-  const applyFilters = () => {
-    return roles.filter((role) => {
-      const matchesStatus = statusFilter ? String(role.enabled) === statusFilter : true;
-
-      return matchesStatus;
-    });
-  };
-
-  const filteredRoles = applyFilters();
-
-  const sortedRoles = getSortedData(filteredRoles, sortConfig);
-
-  const paginatedRoles = sortedRoles.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const paginationModel = { page: 0, pageSize: 10 };
 
   if (loading || paginationLoading) {
     return <SkeletonLoading />;
@@ -128,10 +165,8 @@ const RoleList = () => {
   }
 
   return (
-    <div style={styles.mainContainer}>
-      <Typography variant="h4" style={styles.title}>
-        Role List
-      </Typography>
+    <div style={styles.mainContainer} sx={{ mt:10}}>
+      <Typography variant="h6" style={styles.title}>Role List</Typography>
       <div style={styles.filterContainer}>
         <Button
           component={Link}
@@ -143,68 +178,28 @@ const RoleList = () => {
         >
           Add Role
         </Button>
-        <Paper sx={{ p: 1, mt: 1, mb: 1 }}>
-          <Typography variant="h6" style={styles.filterTitle}>
-            Filter data
-          </Typography>
-          <ActiveStatusFilter
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            style={styles.filterFormController}
-          />
-        </Paper>
       </div>
-      {paginationLoading ? (
-        <SkeletonLoading />
-      ) : (
-        <TableContainer component={Paper} sx={{ width: '100%', overflowX: 'auto' }}>
-          <Box sx={{ overflowX: 'auto' }}>
-            <Table sx={{ minWidth: '1300px' }}>
-              <TableHead>
-                <TableRow>
-                  <TableCell style={styles.tableHeaderCell} onClick={() => handleSort("roleName")}>Name {sortConfig.key === "roleName" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell style={styles.tableHeaderCell}>Enabled</TableCell>
-                  <TableCell style={styles.tableHeaderCell} onClick={() => handleSort("createdAt")}>Created Date {sortConfig.key === "createdAt" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell style={styles.tableHeaderCell} onClick={() => handleSort("updatedAt")}>Last Updated Date {sortConfig.key === "updatedAt" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell style={styles.tableHeaderCell}>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {paginatedRoles.map((role, index) => (
-                  <TableRow key={role.roleId} sx={styles.zebraStripe(index)}>
-                    <TableCell style={styles.tableCell}>{role.roleName}</TableCell>
-                    <TableCell style={styles.tableCell}>{renderStatusIcon(role.enabled)}</TableCell>
-                    <TableCell style={styles.tableCell}>{formatDate(role.createdAt)}</TableCell>
-                    <TableCell style={styles.tableCell}>{formatDate(role.updatedAt)}</TableCell>
-                    <TableCell style={styles.tableCell}>
-                      <IconButton component={Link} to={`/usermanagement/role/updaterole/${role.roleId}`}
-                        aria-label="Edit role">
-                        <Edit color="primary" />
-                      </IconButton>
-                      <IconButton onClick={() => confirmDelete(role.roleId)}
-                        aria-label="Delete role">
-                        <Delete color="error" />
-                      </IconButton>
-                      <IconButton component={Link} to={`/usermanagement/role/viewrole/${role.roleId}`}
-                        aria-label="Update role">
-                        <Preview color="primary" />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Box>
-        </TableContainer>
+      <Paper sx={{ height: tableheight, width: '100%' }}>
+        <DataGrid
+          getRowId={(row) => row.roleId}
+          rows={rows}
+          columns={columns}
+          initialState={{ pagination: { paginationModel } }}
+          pageSizeOptions={[5, 10]}
+          sx={{
+            boxShadow: 1,
+            border: 1,
+            borderColor: 'primary.dark',
+            '& .MuiDataGrid-cell:hover': {
+              color: 'primary.main',
+            },
+            '& .super-app-theme--header': {
+              backgroundColor: 'ButtonShadow',
+            },
+          }}
+        />
+      </Paper>
 
-      )}
-      <Pagination
-        count={Math.ceil(roles.length / itemsPerPage)} // Total pages
-        page={currentPage}
-        onChange={handlePageChange}
-        color="primary"
-        style={styles.pagination}
-      />
       <ConfirmationDialog
         open={dialogOpen}
         title="Delete Role"
