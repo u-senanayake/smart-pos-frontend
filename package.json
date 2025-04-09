@@ -7,6 +7,7 @@
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^6.2.1",
     "@mui/material": "^6.2.1",
+    "@mui/styles": "^6.4.10",
     "@mui/x-data-grid": "^7.28.3",
     "@mui/x-data-grid-generator": "^7.28.3",
     "@mui/x-data-grid-pro": "^7.28.3",

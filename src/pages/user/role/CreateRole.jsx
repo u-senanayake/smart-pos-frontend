@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, TextField, Button, Typography, Box, Paper, FormControlLabel, Checkbox, Grid2 } from '@mui/material';
+import { Container, Typography, Box, Paper, FormControlLabel, Checkbox, Grid2, Breadcrumbs } from '@mui/material';
 
 import RoleService from '../../../services/RoleService';
 import { validateRequired, validateLength, } from '../../../utils/Validations';
+import EditableTextField from "../../../components/PageElements/EditableTextField";
+import { SaveButton, CancelButton } from "../../../components/Utils/Buttons";
+import { useStyles } from "../../../style/makeStyle";
+import { Home, RoleList } from "../../../components/Utils/BreadcrumbsLinks";
+import PageTitle from "../../../components/PageElements/PageTitle";
 
 const CreateRole = () => {
+
+    const classes = useStyles();
     const [roleName, setRoleName] = useState('');
     const [description, setDescription] = useState('');
     const [enabled, setEnabled] = useState(false);
@@ -48,12 +55,25 @@ const CreateRole = () => {
 
     const serverErrorMessages = typeof serverError === 'string' ? [serverError] : Object.values(serverError);
 
+    function handleClick(event) {
+        navigate(event.target.href);
+    }
+
     return (
-        <Container maxWidth="md">
-            <Paper sx={{ p: 3, mt: 3 }}>
-                <Typography variant="h4" gutterBottom>
-                    Create Role
-                </Typography>
+        <Container maxWidth="md" className={classes.mainContainer}>
+
+            <div role="presentation" onClick={handleClick}>
+                <Breadcrumbs aria-label="breadcrumb">
+                    <Home />
+                    <RoleList />
+                    <Typography sx={{ color: 'text.primary' }}>Edit Role</Typography>
+                </Breadcrumbs>
+            </div>
+
+            <PageTitle title={"Create Role"} />
+
+            <Paper elevation={4} className={classes.formContainer}>
+
                 <form onSubmit={handleSubmit}>
                     {Object.keys(serverErrorMessages).length > 0 && (
                         <Box sx={{ mb: 2 }}>
@@ -64,34 +84,25 @@ const CreateRole = () => {
                     )}
                     <Grid2 container spacing={2}>
                         <Grid2 size={8}>
-                            <TextField
+                            <EditableTextField
                                 label="Role Name"
-                                variant="outlined"
                                 name="roleName"
-                                fullWidth
-                                margin="normal"
                                 value={roleName}
                                 onChange={(e) => setRoleName(e.target.value)}
-                                required
                                 error={!!formError.roleName}
                                 helperText={formError.roleName}
-                                slotProps={{ htmlInput: { autoComplete: 'off' } }}
+
                             />
                         </Grid2>
-                        <Grid2 size={4}></Grid2>
                         <Grid2 size={12}>
-                            <TextField
+                            <EditableTextField
                                 label="Description"
-                                variant="outlined"
                                 name="description"
-                                fullWidth
-                                margin="normal"
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
-                                required
                                 error={!!formError.description}
                                 helperText={formError.description}
-                                slotProps={{ htmlInput: { autoComplete: 'off' } }}
+                                required={true}
                             />
                         </Grid2>
                         <Grid2 size={6}>
@@ -107,15 +118,10 @@ const CreateRole = () => {
                                 label="Enabled"
                             />
                         </Grid2>
-                        <Grid2 size={6}></Grid2>
                     </Grid2>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-                        <Button type="submit" variant="contained" color="primary">
-                            {isSaving ? 'Saving...' : 'Save'}
-                        </Button>
-                        <Button variant="outlined" color="secondary" onClick={handleCancel}>
-                            Cancel
-                        </Button>
+                    <Box className={classes.formButtonsContainer}>
+                        <SaveButton onClick={handleSubmit} isSaving={isSaving} />
+                        <CancelButton onClick={handleCancel} />
                     </Box>
                 </form>
             </Paper>

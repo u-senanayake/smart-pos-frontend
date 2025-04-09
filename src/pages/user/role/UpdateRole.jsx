@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Container, TextField, Button, Typography, Box, Paper, FormControlLabel, Checkbox, Grid2 } from '@mui/material';
+import { Container, Typography, Box, Paper, FormControlLabel, Checkbox, Grid2, Breadcrumbs } from '@mui/material';
 
 import RoleService from '../../../services/RoleService';
 import { Loading, ErrorMessage, ReadOnlyField } from "../../../utils/FieldUtils";
 import { validateRequired, validateLength, } from '../../../utils/Validations';
+import { Home, RoleList } from "../../../components/Utils/BreadcrumbsLinks";
+import PageTitle from "../../../components/PageElements/PageTitle";
+import { UpdateSaveButton, CancelButton } from "../../../components/Utils/Buttons";
+import EditableTextField from "../../../components/PageElements/EditableTextField";
+
+import { useStyles } from "../../../style/makeStyle";
 
 const UpdateRole = () => {
 
+    const classes = useStyles();
     const { roleId } = useParams();
     const [roleName, setRoleName] = useState('');
     const [description, setDescription] = useState('');
@@ -65,6 +72,10 @@ const UpdateRole = () => {
 
     const handleCancel = () => navigate('/usermanagement/rolelist');
 
+    function handleClick(event) {
+        navigate(event.target.href);
+    }
+
     if (loading) {
         return <Loading />;
     }
@@ -80,12 +91,20 @@ const UpdateRole = () => {
     }
     const serverErrorMessages = Object.values(serverError);
     return (
-        <Container maxWidth="md">
-            <Paper sx={{ p: 3, mt: 3 }}>
-                <Typography variant="h4" gutterBottom>
-                    Update Role
-                </Typography>
-                <form onSubmit={handleSubmit}>
+        <Container maxWidth="md" className={classes.mainContainer}>
+
+            <div role="presentation" onClick={handleClick}>
+                <Breadcrumbs aria-label="breadcrumb">
+                    <Home />
+                    <RoleList />
+                    <Typography sx={{ color: 'text.primary' }}>Edit Role</Typography>
+                </Breadcrumbs>
+            </div>
+
+            <PageTitle title={"Update Role " + roleName} />
+
+            <Paper elevation={4} className={classes.formContainer}>
+                <form>
                     {Object.keys(serverErrorMessages).length > 0 && (
                         <Box sx={{ mb: 2 }}>
                             <Typography color="error">
@@ -98,34 +117,27 @@ const UpdateRole = () => {
                             <ReadOnlyField label="Role ID" value={roleId} />
                         </Grid2>
                         <Grid2 size={8}>
-                            <TextField
+                            <EditableTextField
                                 label="Role Name"
-                                variant="outlined"
                                 name="roleName"
-                                fullWidth
-                                margin="normal"
                                 value={roleName}
                                 onChange={(e) => setRoleName(e.target.value)}
-                                required
                                 error={!!formError.roleName}
                                 helperText={formError.roleName}
-                                slotProps={{ htmlInput: { autoComplete: 'off' } }}
+                                required={true}
                             />
                         </Grid2>
                         <Grid2 size={12}>
-                            <TextField
+                            <EditableTextField
                                 label="Description"
-                                variant="outlined"
                                 name="description"
-                                fullWidth
-                                margin="normal"
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
-                                required
                                 error={!!formError.description}
                                 helperText={formError.description}
-                                slotProps={{ htmlInput: { autoComplete: 'off' } }}
+                                required={true}
                             />
+
                         </Grid2>
                         <Grid2 size={6}>
                             <FormControlLabel
@@ -142,13 +154,9 @@ const UpdateRole = () => {
                         </Grid2>
                         <Grid2 size={6}></Grid2>
                     </Grid2>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-                        <Button type="submit" variant="contained" color="primary">
-                            {isSaving ? 'Updating...' : 'Update'}
-                        </Button>
-                        <Button variant="outlined" color="secondary" onClick={handleCancel}>
-                            Cancel
-                        </Button>
+                    <Box className={classes.formButtonsContainer}>
+                        <UpdateSaveButton onClick={handleSubmit} isSaving={isSaving} />
+                        <CancelButton onClick={handleCancel} />
                     </Box>
                 </form>
             </Paper>

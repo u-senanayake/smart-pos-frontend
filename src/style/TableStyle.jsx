@@ -1,9 +1,9 @@
 export const styles = {
     mainContainer: {
         padding: "20px",
-        marginTop: "80px",
+        //marginTop: "80px",
     },
-    title: {
+    errorTitle: {
         textAlign: "center",
         marginBottom: "20px",
     },
@@ -53,7 +53,7 @@ export const styles = {
         height: "56px",
     },
     filterButton: {
-        margin: "10px",
+        marginBottom: "10px",
         height: "56px",
     },
     filterTitle: {

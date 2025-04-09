@@ -1,17 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Paper, Button, IconButton, Typography, Stack, } from "@mui/material";
-import { Delete, Edit, Add, Preview } from "@mui/icons-material";
-import { DataGrid } from '@mui/x-data-grid';
+import { useNavigate } from "react-router-dom";
+import { Typography, Stack, Breadcrumbs, Container } from "@mui/material";
 
+import DataTable from "../../../components/PageElements/DataTable";
+import AddNewButton from "../../../components/PageElements/AddNewButton";
+import PageTitle from "../../../components/PageElements/PageTitle";
+
+import ErrorMessage from "../../../components/DialogBox/ErrorMessage";
+import DeleteConfirmDialog from "../../../components/DialogBox/DeleteConfirmDialog";
+
+import { SkeletonLoading } from "../../../components/Utils/Loading";
+import { Home } from "../../../components/Utils/BreadcrumbsLinks";
+import { EditIcon, DeleteIcon, PreviewIcon } from "../../../components/Utils/IconButtons";
 //Service
 import RoleService from "../../../services/RoleService";
 //Utils
 import { renderStatusIcon } from "../../../utils/utils";
 import { formatDate } from '../../../utils/Dateutils';
-import { SkeletonLoading, ErrorMessage, ConfirmationDialog, } from '../../../utils/FieldUtils'
 //Style
-import { styles } from "../../../style/TableStyle";
+import { useStyles } from "../../../style/makeStyle";
 
 const RoleList = () => {
 
@@ -20,10 +27,9 @@ const RoleList = () => {
   const [error, setError] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
-  const [paginationLoading, setPaginationLoading] = useState(false);
-  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+  const navigate = useNavigate();
 
-  const tableheight = windowHeight / 100 * 60;
+  const classes = useStyles();
 
   useEffect(() => {
     RoleService.getRoles()
@@ -46,25 +52,9 @@ const RoleList = () => {
         setError("Failed to delete role. Please try again later.");
       });
   };
-
-  const confirmDelete = (id) => {
-    setSelectedId(id);
-    setDialogOpen(true);
-  };
-
-  const handleDialogConfirm = () => {
-    if (selectedId) {
-      deleteRole(selectedId);
-    }
-    setDialogOpen(false);
-    setSelectedId(null);
-  };
-
-  const handleDialogCancel = () => {
-    setDialogOpen(false);
-    setSelectedId(null);
-  };
-
+  function handleClick(event) {
+    navigate(event.target.href);
+  }
   const columns = [
     {
       field: 'roleName',
@@ -111,103 +101,54 @@ const RoleList = () => {
         };
         return (
           <Stack direction="row" spacing={2}>
-            <IconButton component={Link} to={`/usermanagement/role/updaterole/${params.row.roleId}`}
-              aria-label="Edit Role">
-              <Edit color="primary" />
-            </IconButton>
-            <IconButton onClick={() => confirmDelete(params.row.roleId)}
-              aria-label="Delete Role">
-              <Delete color="error" />
-            </IconButton>
-            <IconButton component={Link} to={`/usermanagement/role/viewrole/${params.row.roleId}`}
-              aria-label="Update Role">
-              <Preview color="primary" />
-            </IconButton>
+            <EditIcon url={`/usermanagement/role/updaterole/${params.row.roleId}`} />
+            <DeleteIcon
+              onClick={() => {
+                setSelectedId(params.row.roleId);
+                setDialogOpen(true);
+              }}
+            />
+            <PreviewIcon url={`/usermanagement/role/viewrole/${params.row.roleId}`} />
           </Stack>
         );
       },
     },
   ];
-  const rows = roles;
 
-  const paginationModel = { page: 0, pageSize: 10 };
-
-  if (loading || paginationLoading) {
+  if (loading) {
     return <SkeletonLoading />;
   }
 
   if (error) {
     return (
-      <ErrorMessage
-        message={error}
-        actionText="Retry"
-        onAction={() => window.location.reload()}
-      />
+      <ErrorMessage message={error} actionText="Retry" onAction={() => window.location.reload()} />
     );
   }
 
   if (roles.length === 0) {
     return (
-      <div style={styles.title}>
+      <div className={classes.errorTitle}>
         <Typography variant="h6">No roles found. Add some roles to see them here.</Typography>
-        <Button
-          component={Link}
-          to="/usermanagement/role/createrole"
-          variant="contained"
-          color="primary"
-          startIcon={<Add />}
-          style={styles.addButton}
-        >
-          Add Role
-        </Button>
+        <AddNewButton url="/usermanagement/role/createrole" />
       </div>
     );
   }
 
   return (
-    <div style={styles.mainContainer} sx={{ mt:10}}>
-      <Typography variant="h6" style={styles.title}>Role List</Typography>
-      <div style={styles.filterContainer}>
-        <Button
-          component={Link}
-          to="/usermanagement/role/createrole"
-          variant="contained"
-          color="primary"
-          startIcon={<Add />}
-          style={styles.filterButton}
-        >
-          Add Role
-        </Button>
+    <Container className={classes.mainContainer}>
+      <div role="presentation" onClick={handleClick}>
+        <Breadcrumbs aria-label="breadcrumb">
+          <Home />
+          <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Role List</Typography>
+        </Breadcrumbs>
       </div>
-      <Paper sx={{ height: tableheight, width: '100%' }}>
-        <DataGrid
-          getRowId={(row) => row.roleId}
-          rows={rows}
-          columns={columns}
-          initialState={{ pagination: { paginationModel } }}
-          pageSizeOptions={[5, 10]}
-          sx={{
-            boxShadow: 1,
-            border: 1,
-            borderColor: 'primary.dark',
-            '& .MuiDataGrid-cell:hover': {
-              color: 'primary.main',
-            },
-            '& .super-app-theme--header': {
-              backgroundColor: 'ButtonShadow',
-            },
-          }}
-        />
-      </Paper>
-
-      <ConfirmationDialog
-        open={dialogOpen}
-        title="Delete Role"
-        message="Are you sure you want to delete this role?"
-        onConfirm={handleDialogConfirm}
-        onCancel={handleDialogCancel}
-      />
-    </div>
+      <PageTitle title={"Role List"} />
+      <div style={{ marginBottom: "10px" }}>
+        <AddNewButton url="/usermanagement/role/createrole" />
+      </div >
+      <DataTable rows={roles} columns={columns} />
+      <DeleteConfirmDialog open={dialogOpen} onDelete={deleteRole} onCancel={() => setDialogOpen(false)} id={selectedId} />
+    </Container>
   );
 };
 

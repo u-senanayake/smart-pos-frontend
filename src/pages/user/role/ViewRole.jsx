@@ -1,15 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Container, Typography, Box, Paper, Button, Grid2 } from "@mui/material";
+import { Container, Typography, Box, Paper, Button, Grid2, Breadcrumbs } from "@mui/material";
 
 import RoleService from '../../../services/RoleService';
 import { renderStatusIcon, } from "../../../utils/utils";
 import { formatDate } from "../../../utils/Dateutils";
-import { Loading, ErrorMessage, ReadOnlyField } from "../../../utils/FieldUtils";
+import ReadOnlyField from "../../../components/PageElements/ReadOnlyField";
+import PageTitle from "../../../components/PageElements/PageTitle";
 
+import { Loading, ErrorMessage, } from "../../../utils/FieldUtils";
+import { Home, RoleList } from "../../../components/Utils/BreadcrumbsLinks";
+import { UpdateButton, CancelButton } from "../../../components/Utils/Buttons";
+
+import { useStyles } from "../../../style/makeStyle";
 
 const ViewRole = () => {
 
+  const classes = useStyles();
   const { roleId } = useParams();
   const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -30,9 +37,7 @@ const ViewRole = () => {
 
   const cancel = () => navigate('/usermanagement/rolelist');
 
-  const handleUpdate = () => {
-    navigate(`/usermanagement/role/updaterole/${roleId}`);
-  };
+  const handleUpdate = () => { navigate(`/usermanagement/role/updaterole/${roleId}`); };
 
   if (loading) {
     return <Loading />;
@@ -48,12 +53,25 @@ const ViewRole = () => {
     );
   }
 
+  function handleClick(event) {
+    navigate(event.target.href);
+  }
+
   return (
-    <Container maxWidth="md">
-      <Paper sx={{ p: 3, mt: 3 }}>
-        <Typography variant="h4" gutterBottom>
-          Role Details
-        </Typography>
+    <Container maxWidth="md" className={classes.mainContainer}>
+
+      <div role="presentation" onClick={handleClick}>
+        <Breadcrumbs aria-label="breadcrumb">
+          <Home />
+          <RoleList />
+          <Typography sx={{ color: 'text.primary' }}>View Role</Typography>
+        </Breadcrumbs>
+      </div>
+
+      <PageTitle title={"View Role " + role.roleName} />
+
+      <Paper elevation={4} className={classes.formContainer}>
+
         <Grid2 container spacing={2}>
           <Grid2 size={4}>
             <ReadOnlyField label="Role ID" value={role.roleId} />
@@ -73,10 +91,12 @@ const ViewRole = () => {
             <ReadOnlyField label="Updated At" value={formatDate(role.updatedAt)} />
           </Grid2>
         </Grid2>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-          <Button variant="contained" color="primary" onClick={handleUpdate}> Update </Button>
-          <Button variant="outlined" color="secondary" onClick={cancel}> Cancel</Button>
+
+        <Box className={classes.formButtonsContainer}>
+          <UpdateButton onClick={handleUpdate} />
+          <CancelButton onClick={cancel} />
         </Box>
+
       </Paper>
     </Container>
   );
