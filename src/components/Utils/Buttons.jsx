@@ -1,51 +1,70 @@
-import { Button } from "@mui/material";
-import { Update, Cancel, Save } from '@mui/icons-material';
-
-export const UpdateButton = ({ onClick, }) => {
+import { Update as UpdateIcon, Save as SaveIcon, Edit as EditIcon, ArrowBackIosNew as ArrowBackIcon, Add as AddIcon } from '@mui/icons-material';
+import Fab from '@mui/material/Fab';
+import { Link } from "react-router-dom";
+export const EditButton = ({ onClick, }) => {
     return (
-        <Button
-            variant="contained"
+        <Fab
+            variant="extended"
+            size="medium"
             color="primary"
-            onClick={onClick}
-            startIcon={<Update />}>
-            Update </Button>
+            aria-label="add"
+            onClick={onClick}>
+            <EditIcon sx={{ mr: 1 }} /> Edit
+        </Fab>
     );
 };
 
 export const CancelButton = ({ onClick, }) => {
     return (
-        <Button
-            variant="outlined"
+        <Fab
+            variant="extended"
+            size="medium"
             color="secondary"
-            onClick={onClick}
-            startIcon={<Cancel />}>
+            onClick={onClick}>
+            <ArrowBackIcon sx={{ mr: 1 }} />
             Cancel
-        </Button>
+        </Fab>
     );
 };
 
-export const UpdateSaveButton = ({ onClick, isSaving }) => {
+export const UpdateButton = ({ onClick, isSaving }) => {
     return (
-        <Button
+        <Fab
             disabled={isSaving}
-            variant="contained"
+            variant="extended"
+            size="medium"
             color="primary"
-            onClick={onClick}
-            startIcon={<Update />}>
-            {isSaving ? 'Updating...' : 'Update'}
-        </Button>
+            aria-label="add"
+            onClick={onClick}>
+            <UpdateIcon sx={{ mr: 1 }} /> {isSaving ? 'Updating...' : 'Update'}
+        </Fab>
     );
 };
 
 export const SaveButton = ({ onClick, isSaving }) => {
     return (
-        <Button
+        <Fab
             disabled={isSaving}
-            variant="contained"
+            variant="extended"
+            size="medium"
             color="primary"
-            onClick={onClick}
-            startIcon={<Save />}>
-            {isSaving ? 'Saving...' : 'Save'}
-        </Button>
+            aria-label="add"
+            onClick={onClick}>
+            <SaveIcon sx={{ mr: 1 }} />  {isSaving ? 'Saving...' : 'Save'}
+        </Fab>
+    );
+};
+
+export const AddNewButton = ({ url, }) => {
+    return (
+        <Fab
+            component={Link}
+            to={url}
+            variant="extended"
+            size="medium"
+            color="primary"
+            aria-label="add">
+            <AddIcon sx={{ mr: 1 }} />  Add New
+        </Fab>
     );
 };

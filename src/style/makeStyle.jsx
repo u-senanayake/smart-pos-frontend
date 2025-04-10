@@ -17,9 +17,6 @@ export const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
     textTransform: "uppercase",
   },
-  addButton: {
-    height: "56px",
-  },
   readOnlyField: {
     padding: "1px",
   },

@@ -7,7 +7,7 @@ import { Loading, ErrorMessage, ReadOnlyField } from "../../../utils/FieldUtils"
 import { validateRequired, validateLength, } from '../../../utils/Validations';
 import { Home, RoleList } from "../../../components/Utils/BreadcrumbsLinks";
 import PageTitle from "../../../components/PageElements/PageTitle";
-import { UpdateSaveButton, CancelButton } from "../../../components/Utils/Buttons";
+import { UpdateButton, CancelButton } from "../../../components/Utils/Buttons";
 import EditableTextField from "../../../components/PageElements/EditableTextField";
 
 import { useStyles } from "../../../style/makeStyle";
@@ -155,7 +155,7 @@ const UpdateRole = () => {
                         <Grid2 size={6}></Grid2>
                     </Grid2>
                     <Box className={classes.formButtonsContainer}>
-                        <UpdateSaveButton onClick={handleSubmit} isSaving={isSaving} />
+                        <UpdateButton onClick={handleSubmit} isSaving={isSaving} />
                         <CancelButton onClick={handleCancel} />
                     </Box>
                 </form>

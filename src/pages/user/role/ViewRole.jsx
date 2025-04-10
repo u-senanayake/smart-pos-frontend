@@ -10,7 +10,7 @@ import PageTitle from "../../../components/PageElements/PageTitle";
 
 import { Loading, ErrorMessage, } from "../../../utils/FieldUtils";
 import { Home, RoleList } from "../../../components/Utils/BreadcrumbsLinks";
-import { UpdateButton, CancelButton } from "../../../components/Utils/Buttons";
+import { EditButton, CancelButton } from "../../../components/Utils/Buttons";
 
 import { useStyles } from "../../../style/makeStyle";
 
@@ -67,9 +67,7 @@ const ViewRole = () => {
           <Typography sx={{ color: 'text.primary' }}>View Role</Typography>
         </Breadcrumbs>
       </div>
-
       <PageTitle title={"View Role " + role.roleName} />
-
       <Paper elevation={4} className={classes.formContainer}>
 
         <Grid2 container spacing={2}>
@@ -93,7 +91,7 @@ const ViewRole = () => {
         </Grid2>
 
         <Box className={classes.formButtonsContainer}>
-          <UpdateButton onClick={handleUpdate} />
+          <EditButton onClick={handleUpdate} />
           <CancelButton onClick={cancel} />
         </Box>
 

@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Typography, Stack, Breadcrumbs, Container } from "@mui/material";
 
 import DataTable from "../../../components/PageElements/DataTable";
-import AddNewButton from "../../../components/PageElements/AddNewButton";
+//import AddNewButton from "../../../components/PageElements/AddNewButton";
+import { AddNewButton } from "../../../components/Utils/Buttons";
 import PageTitle from "../../../components/PageElements/PageTitle";
 
 import ErrorMessage from "../../../components/DialogBox/ErrorMessage";
