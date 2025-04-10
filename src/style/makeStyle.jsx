@@ -11,15 +11,6 @@ export const useStyles = makeStyles((theme) => ({
     textAlign: "center",
     marginBottom: theme.spacing(2),
   },
-  pageTitle: {
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: theme.spacing(2),
-    textTransform: "uppercase",
-  },
-  readOnlyField: {
-    padding: "1px",
-  },
   formContainer: {
     padding: theme.spacing(3),
     marginTop: theme.spacing(3),

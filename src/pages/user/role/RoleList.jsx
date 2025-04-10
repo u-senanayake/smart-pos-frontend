@@ -3,16 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { Typography, Stack, Breadcrumbs, Container } from "@mui/material";
 
 import DataTable from "../../../components/PageElements/DataTable";
-//import AddNewButton from "../../../components/PageElements/AddNewButton";
-import { AddNewButton } from "../../../components/Utils/Buttons";
-import PageTitle from "../../../components/PageElements/PageTitle";
+import { AddNewButton } from "../../../components/PageElements/Buttons";
+import {PageTitle} from "../../../components/PageElements/CommonElements";
+import { SkeletonLoading } from "../../../components/PageElements/Loading";
+import { EditIcon, DeleteIcon, PreviewIcon } from "../../../components/PageElements/IconButtons";
+import { Home } from "../../../components/PageElements/BreadcrumbsLinks";
 
 import ErrorMessage from "../../../components/DialogBox/ErrorMessage";
 import DeleteConfirmDialog from "../../../components/DialogBox/DeleteConfirmDialog";
 
-import { SkeletonLoading } from "../../../components/Utils/Loading";
-import { Home } from "../../../components/Utils/BreadcrumbsLinks";
-import { EditIcon, DeleteIcon, PreviewIcon } from "../../../components/Utils/IconButtons";
 //Service
 import RoleService from "../../../services/RoleService";
 //Utils

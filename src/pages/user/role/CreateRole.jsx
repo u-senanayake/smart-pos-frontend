@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { Container, Typography, Box, Paper, FormControlLabel, Checkbox, Grid2, Breadcrumbs } from '@mui/material';
 
 import RoleService from '../../../services/RoleService';
+
 import { validateRequired, validateLength, } from '../../../utils/Validations';
-import EditableTextField from "../../../components/PageElements/EditableTextField";
-import { SaveButton, CancelButton } from "../../../components/Utils/Buttons";
+import {EditableTextField, PageTitle} from "../../../components/PageElements/CommonElements";
+import { SaveButton, CancelButton } from "../../../components/PageElements/Buttons";
+import { Home, RoleList } from "../../../components/PageElements/BreadcrumbsLinks"; 
+
 import { useStyles } from "../../../style/makeStyle";
-import { Home, RoleList } from "../../../components/Utils/BreadcrumbsLinks";
-import PageTitle from "../../../components/PageElements/PageTitle";
 
 const CreateRole = () => {
 

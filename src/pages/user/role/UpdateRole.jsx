@@ -5,10 +5,10 @@ import { Container, Typography, Box, Paper, FormControlLabel, Checkbox, Grid2, B
 import RoleService from '../../../services/RoleService';
 import { Loading, ErrorMessage, ReadOnlyField } from "../../../utils/FieldUtils";
 import { validateRequired, validateLength, } from '../../../utils/Validations';
-import { Home, RoleList } from "../../../components/Utils/BreadcrumbsLinks";
-import PageTitle from "../../../components/PageElements/PageTitle";
-import { UpdateButton, CancelButton } from "../../../components/Utils/Buttons";
-import EditableTextField from "../../../components/PageElements/EditableTextField";
+
+import { Home, RoleList } from "../../../components/PageElements/BreadcrumbsLinks";
+import { UpdateButton, CancelButton } from "../../../components/PageElements/Buttons";
+import {EditableTextField, PageTitle} from "../../../components/PageElements/CommonElements";
 
 import { useStyles } from "../../../style/makeStyle";
 
