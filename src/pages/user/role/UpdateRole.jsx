@@ -5,11 +5,11 @@ import { Container, Typography, Box, Paper, FormControlLabel, Checkbox, Grid2, B
 import RoleService from '../../../services/RoleService';
 
 import { Loading, } from '../../../components/PageElements/Loading';
-import ErrorMessage from '../../../components/DialogBox/ErrorMessage';
 import { validateRequired, validateLength, } from '../../../utils/Validations';
 import { Home, RoleList } from "../../../components/PageElements/BreadcrumbsLinks";
 import { UpdateButton, CancelButton } from "../../../components/PageElements/Buttons";
 import { EditableTextField, PageTitle, ReadOnlyField } from "../../../components/PageElements/CommonElements";
+import { SuccessAlert, ErrorAlert, } from '../../../components/DialogBox/Alerts';
 
 import { useStyles } from "../../../style/makeStyle";
 
@@ -26,9 +26,9 @@ const UpdateRole = () => {
     const [enabled, setEnabled] = useState(false);
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
-    const [error, setError] = useState(null);//Error message for user
+    const [errorMessage, setErrorMessage] = useState(null);//Error message for user
     const [formError, setFormError] = useState({});//Form validation error
-    const [serverError, setServerError] = useState('');////Server error
+    const [successMessage, setSuccessMessage] = useState(''); // State for success message
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -40,8 +40,8 @@ const UpdateRole = () => {
                 setEnabled(role.enabled);
             })
             .catch((error) => {
-                console.error(MESSAGE.ROLE_FEATCHING_ERROR, error);
-                setError(MESSAGE.ROLE_FEATCHING_ERROR_MSG);
+                console.error(MESSAGE.ROLE_FEATCHING_ERROR, error.response.data);
+                setErrorMessage(MESSAGE.ROLE_FEATCHING_ERROR_MSG);
             }).finally(() => setLoading(false));
     }, [roleId]);
 
@@ -63,14 +63,13 @@ const UpdateRole = () => {
         } else {
             setIsSaving(true);
             RoleService.updateRole(role, roleId)
-                .then(() => navigate('/usermanagement/rolelist'))
+                .then(() => {
+                    setSuccessMessage(MESSAGE.ROLE_UPDATE_SUCCESS); // Set success message
+                    setTimeout(() => navigate('/usermanagement/rolelist'), 2000); // Delay navigation
+                })
                 .catch((error) => {
-                    if (error.response && error.response.data) {
-                        setServerError(error.response.data);
-                    } else {
-                        console.error(MESSAGE.ROLE_UPDATE_ERROR, error);
-                    }
-                    //setError('Failed to update role. Please try again.');
+                    setErrorMessage(MESSAGE.ROLE_UPDATE_ERROR_MSG);
+                    console.error(MESSAGE.ROLE_UPDATE_ERROR, error.response.data);
                 }).finally(() => setIsSaving(false));;
         }
     };
@@ -85,16 +84,6 @@ const UpdateRole = () => {
         return <Loading />;
     }
 
-    if (error) {
-        return (
-            <ErrorMessage
-                message={error}
-                actionText="Retry"
-                onAction={() => window.location.reload()}
-            />
-        );
-    }
-    const serverErrorMessages = Object.values(serverError);
     return (
         <Container maxWidth="md" className={classes.mainContainer}>
 
@@ -110,13 +99,9 @@ const UpdateRole = () => {
 
             <Paper elevation={4} className={classes.formContainer}>
                 <form>
-                    {Object.keys(serverErrorMessages).length > 0 && (
-                        <Box sx={{ mb: 2 }}>
-                            <Typography color="error">
-                                {serverErrorMessages}
-                            </Typography>
-                        </Box>
-                    )}
+                    <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
+                    <ErrorAlert message={errorMessage} />
+
                     <Grid2 container spacing={2}>
                         <Grid2 size={4}>
                             <ReadOnlyField label={LABEL.ID} value={roleId} />

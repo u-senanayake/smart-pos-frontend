@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Typography, Box, Paper, FormControlLabel, Checkbox, Grid2, Breadcrumbs } from '@mui/material';
+import { Container, Typography, Box, Paper, FormControlLabel, Checkbox, Grid2, Breadcrumbs, Alert } from '@mui/material';
 
 import RoleService from '../../../services/RoleService';
 
@@ -8,6 +8,7 @@ import { validateRequired, validateLength, } from '../../../utils/Validations';
 import { EditableTextField, PageTitle } from "../../../components/PageElements/CommonElements";
 import { SaveButton, CancelButton } from "../../../components/PageElements/Buttons";
 import { Home, RoleList } from "../../../components/PageElements/BreadcrumbsLinks";
+import { SuccessAlert, ErrorAlert, } from '../../../components/DialogBox/Alerts';
 
 import * as LABEL from '../../../utils/const/FieldLabels';
 import * as MESSAGE from '../../../utils/const/Message';
@@ -23,7 +24,8 @@ const CreateRole = () => {
     const [enabled, setEnabled] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [formError, setFormError] = useState({});//Form validation error
-    const [serverError, setServerError] = useState('');//Server error
+    const [errorMessage, setErrorMessage] = useState('');//Server error
+    const [successMessage, setSuccessMessage] = useState(''); // State for success message
     const navigate = useNavigate();
 
     const validateForm = (role) => {
@@ -44,20 +46,18 @@ const CreateRole = () => {
         } else {
             setIsSaving(true);
             RoleService.createRole(role)
-                .then(() => navigate('/usermanagement/rolelist'))
+                .then(() => {
+                    setSuccessMessage(MESSAGE.ROLE_CREATE_SUCCESS); // Set success message
+                    setTimeout(() => navigate('/usermanagement/rolelist'), 2000); // Delay navigation
+                })
                 .catch((error) => {
-                    if (error.response && error.response.data) {
-                        setServerError(error.response.data);
-                    } else {
-                        console.error(MESSAGE.ROLE_CREATE_ERROR, error);
-                    }
+                    setErrorMessage(MESSAGE.ROLE_CREATE_ERROR_MSG);
+                    console.error(MESSAGE.ROLE_CREATE_ERROR, error.response.data);
                 }).finally(() => setIsSaving(false));
         }
     };
 
     const handleCancel = () => navigate('/usermanagement/rolelist');
-
-    const serverErrorMessages = typeof serverError === 'string' ? [serverError] : Object.values(serverError);
 
     function handleClick(event) {
         navigate(event.target.href);
@@ -79,13 +79,10 @@ const CreateRole = () => {
             <Paper elevation={4} className={classes.formContainer}>
 
                 <form onSubmit={handleSubmit}>
-                    {Object.keys(serverErrorMessages).length > 0 && (
-                        <Box sx={{ mb: 2 }}>
-                            <Typography color="error">
-                                {serverErrorMessages}
-                            </Typography>
-                        </Box>
-                    )}
+
+                    <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
+                    <ErrorAlert message={errorMessage} />
+
                     <Grid2 container spacing={2}>
                         <Grid2 size={8}>
                             <EditableTextField
