@@ -5,9 +5,10 @@ import { Container, Typography, Box, Paper, Button, Grid2, Breadcrumbs } from "@
 import RoleService from '../../../services/RoleService';
 
 import { renderStatusIcon, } from "../../../utils/utils";
-import { Loading, ErrorMessage, } from "../../../utils/FieldUtils";
 import { formatDate } from "../../../utils/Dateutils";
 
+import { Loading, } from "../../../components/PageElements/Loading";
+import ErrorMessage from "../../../components/DialogBox/ErrorMessage";
 import { ReadOnlyField, PageTitle } from "../../../components/PageElements/CommonElements";
 import { Home, RoleList } from "../../../components/PageElements/BreadcrumbsLinks";
 import { EditButton, CancelButton } from "../../../components/PageElements/Buttons";
