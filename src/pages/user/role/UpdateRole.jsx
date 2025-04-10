@@ -13,6 +13,10 @@ import { EditableTextField, PageTitle, ReadOnlyField } from "../../../components
 
 import { useStyles } from "../../../style/makeStyle";
 
+import * as MESSAGE from '../../../utils/const/Message';
+import * as PROPERTY from '../../../utils/const/FieldProperty';
+import * as LABEL from '../../../utils/const/FieldLabels';
+
 const UpdateRole = () => {
 
     const classes = useStyles();
@@ -22,9 +26,9 @@ const UpdateRole = () => {
     const [enabled, setEnabled] = useState(false);
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
-    const [error, setError] = useState(null);
-    const [formError, setFormError] = useState({});
-    const [serverError, setServerError] = useState('');
+    const [error, setError] = useState(null);//Error message for user
+    const [formError, setFormError] = useState({});//Form validation error
+    const [serverError, setServerError] = useState('');////Server error
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -36,17 +40,17 @@ const UpdateRole = () => {
                 setEnabled(role.enabled);
             })
             .catch((error) => {
-                console.error('Error fetching role:', error);
-                setError("Failed to fetch role. Please try again later.");
+                console.error(MESSAGE.ROLE_FEATCHING_ERROR, error);
+                setError(MESSAGE.ROLE_FEATCHING_ERROR_MSG);
             }).finally(() => setLoading(false));
     }, [roleId]);
 
     const validateForm = (role) => {
         const formError = {};
-        if (!validateRequired(role.roleName)) formError.roleName = 'Role name is required';
-        if (!validateLength(role.roleName, 5, 20)) formError.roleName = 'Role name must be between 10 and 40 characters';
-        if (!validateRequired(role.description)) formError.description = 'Role description is required';
-        if (!validateLength(role.description, 10, 250)) formError.description = 'Role description must be between 10 and 250 characters';
+        if (!validateRequired(role.roleName)) formError.roleName = MESSAGE.ROLE_NAME_REQUIRED;
+        if (!validateLength(role.roleName, PROPERTY.ROLE_NAME_MIN, PROPERTY.ROLE_NAME_MAX)) formError.roleName = MESSAGE.ROLE_NAME_MIN_MAX_LENGTH;
+        if (!validateRequired(role.description)) formError.description = MESSAGE.ROLE_DESCRIPTION_REQUIRED;
+        if (!validateLength(role.description, PROPERTY.ROLE_DESCRIPTION_MIN, PROPERTY.ROLE_DESCRIPTION_MAX)) formError.description = MESSAGE.ROLE_DESCRIPTION_MIN_MAX_LENGTH;
         return formError;
     };
 
@@ -64,7 +68,7 @@ const UpdateRole = () => {
                     if (error.response && error.response.data) {
                         setServerError(error.response.data);
                     } else {
-                        console.error('Error updating user:', error);
+                        console.error(MESSAGE.ROLE_UPDATE_ERROR, error);
                     }
                     //setError('Failed to update role. Please try again.');
                 }).finally(() => setIsSaving(false));;
@@ -102,7 +106,7 @@ const UpdateRole = () => {
                 </Breadcrumbs>
             </div>
 
-            <PageTitle title={"Update Role " + roleName} />
+            <PageTitle title={LABEL.PAGE_TITLE_ROLE_UPDATE + roleName} />
 
             <Paper elevation={4} className={classes.formContainer}>
                 <form>
@@ -115,11 +119,11 @@ const UpdateRole = () => {
                     )}
                     <Grid2 container spacing={2}>
                         <Grid2 size={4}>
-                            <ReadOnlyField label="Role ID" value={roleId} />
+                            <ReadOnlyField label={LABEL.ID} value={roleId} />
                         </Grid2>
                         <Grid2 size={8}>
                             <EditableTextField
-                                label="Role Name"
+                                label={LABEL.NAME}
                                 name="roleName"
                                 value={roleName}
                                 onChange={(e) => setRoleName(e.target.value)}
@@ -130,7 +134,7 @@ const UpdateRole = () => {
                         </Grid2>
                         <Grid2 size={12}>
                             <EditableTextField
-                                label="Description"
+                                label={LABEL.DESCRIPTION}
                                 name="description"
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
@@ -150,7 +154,7 @@ const UpdateRole = () => {
                                         color="primary"
                                     />
                                 }
-                                label="Enabled"
+                                label={LABEL.ENABLED}
                             />
                         </Grid2>
                         <Grid2 size={6}></Grid2>

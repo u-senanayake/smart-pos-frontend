@@ -16,6 +16,10 @@ import RoleService from "../../../services/RoleService";
 //Utils
 import { renderStatusIcon } from "../../../utils/utils";
 import { formatDate } from '../../../utils/Dateutils';
+
+import * as LABEL from '../../../utils/const/FieldLabels';
+import * as MESSAGE from '../../../utils/const/Message';
+
 //Style
 import { useStyles } from "../../../style/makeStyle";
 
@@ -37,8 +41,8 @@ const RoleList = () => {
         setLoading(false);
       })
       .catch((error) => {
-        console.error("Error fetching roles:", error);
-        setError("Failed to fetch roles. Please try again later.");
+        console.error(MESSAGE.ROLE_FEATCHING_ERROR, error);
+        setError(MESSAGE.ROLE_FEATCHING_ERROR_MSG);
         setLoading(false);
       });
   }, []);
@@ -47,8 +51,8 @@ const RoleList = () => {
     RoleService.deleteRole(id)
       .then(() => setRoles(roles.filter((role) => role.roleId !== id)))
       .catch((error) => {
-        console.error("Error deleting role:", error);
-        setError("Failed to delete role. Please try again later.");
+        console.error(MESSAGE.ROLE_DELETE_ERROR, error);
+        setError(MESSAGE.ROLE_DELETE_ERROR_MSG);
       });
   };
   function handleClick(event) {
@@ -57,13 +61,13 @@ const RoleList = () => {
   const columns = [
     {
       field: 'roleName',
-      headerName: 'Name',
+      headerName: LABEL.TABLE_NAME,
       flex: 1,
       headerClassName: 'super-app-theme--header',
     },
     {
       field: 'active',
-      headerName: 'Active Status',
+      headerName: LABEL.TABLE_STATUS,
       flex: 0.8,
       filterable: false,
       headerClassName: 'super-app-theme--header',
@@ -71,7 +75,7 @@ const RoleList = () => {
     },
     {
       field: 'createdAt',
-      headerName: 'Created Date',
+      headerName: LABEL.TABLE_CREATED_DATE,
       flex: 1.2,
       filterable: false,
       headerClassName: 'super-app-theme--header',
@@ -79,7 +83,7 @@ const RoleList = () => {
     },
     {
       field: 'updatedAt',
-      headerName: 'Last Updated Date',
+      headerName: LABEL.TABLE_LAST_UPDATED_DATE,
       flex: 1.2,
       filterable: false,
       headerClassName: 'super-app-theme--header',
@@ -87,7 +91,7 @@ const RoleList = () => {
     },
     {
       field: 'action',
-      headerName: 'Actions',
+      headerName: LABEL.TABLE_ACTION,
       flex: 1,
       sortable: false,
       filterable: false,
@@ -141,7 +145,7 @@ const RoleList = () => {
           <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Role List</Typography>
         </Breadcrumbs>
       </div>
-      <PageTitle title={"Role List"} />
+      <PageTitle title={LABEL.PAGE_TITLE_ROLE_LIST} />
       <div style={{ marginBottom: "10px" }}>
         <AddNewButton url="/usermanagement/role/createrole" />
       </div >

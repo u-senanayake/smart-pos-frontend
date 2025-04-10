@@ -9,6 +9,10 @@ import { EditableTextField, PageTitle } from "../../../components/PageElements/C
 import { SaveButton, CancelButton } from "../../../components/PageElements/Buttons";
 import { Home, RoleList } from "../../../components/PageElements/BreadcrumbsLinks";
 
+import * as LABEL from '../../../utils/const/FieldLabels';
+import * as MESSAGE from '../../../utils/const/Message';
+import * as PROPERTY from '../../../utils/const/FieldProperty';
+
 import { useStyles } from "../../../style/makeStyle";
 
 const CreateRole = () => {
@@ -17,18 +21,17 @@ const CreateRole = () => {
     const [roleName, setRoleName] = useState('');
     const [description, setDescription] = useState('');
     const [enabled, setEnabled] = useState(false);
-
     const [isSaving, setIsSaving] = useState(false);
-    const [formError, setFormError] = useState({});
-    const [serverError, setServerError] = useState('');
+    const [formError, setFormError] = useState({});//Form validation error
+    const [serverError, setServerError] = useState('');//Server error
     const navigate = useNavigate();
 
     const validateForm = (role) => {
         const formError = {};
-        if (!validateRequired(role.roleName)) formError.roleName = 'Role name is required';
-        if (!validateLength(role.roleName, 5, 20)) formError.roleName = 'Role name must be between 10 and 25 characters long';
-        if (!validateRequired(role.description)) formError.description = 'Role description is required';
-        if (!validateLength(role.description, 10, 100)) formError.description = 'Role description must be between 10 and 100 characters long';
+        if (!validateRequired(role.roleName)) formError.roleName = MESSAGE.ROLE_NAME_REQUIRED;
+        if (!validateLength(role.roleName, PROPERTY.ROLE_NAME_MIN, PROPERTY.ROLE_NAME_MAX)) formError.roleName = MESSAGE.ROLE_NAME_MIN_MAX_LENGTH;
+        if (!validateRequired(role.description)) formError.description = MESSAGE.ROLE_DESCRIPTION_REQUIRED;
+        if (!validateLength(role.description, PROPERTY.ROLE_DESCRIPTION_MIN, PROPERTY.ROLE_DESCRIPTION_MAX)) formError.description = MESSAGE.ROLE_DESCRIPTION_MIN_MAX_LENGTH;
         return formError;
     };
 
@@ -46,7 +49,7 @@ const CreateRole = () => {
                     if (error.response && error.response.data) {
                         setServerError(error.response.data);
                     } else {
-                        console.error('Error updating user:', error);
+                        console.error(MESSAGE.ROLE_CREATE_ERROR, error);
                     }
                 }).finally(() => setIsSaving(false));
         }
@@ -71,7 +74,7 @@ const CreateRole = () => {
                 </Breadcrumbs>
             </div>
 
-            <PageTitle title={"Create Role"} />
+            <PageTitle title={LABEL.PAGE_TITLE_ROLE_CREATE} />
 
             <Paper elevation={4} className={classes.formContainer}>
 
@@ -86,7 +89,7 @@ const CreateRole = () => {
                     <Grid2 container spacing={2}>
                         <Grid2 size={8}>
                             <EditableTextField
-                                label="Role Name"
+                                label={LABEL.NAME}
                                 name="roleName"
                                 value={roleName}
                                 onChange={(e) => setRoleName(e.target.value)}
@@ -97,7 +100,7 @@ const CreateRole = () => {
                         </Grid2>
                         <Grid2 size={12}>
                             <EditableTextField
-                                label="Description"
+                                label={LABEL.DESCRIPTION}
                                 name="description"
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
@@ -116,7 +119,7 @@ const CreateRole = () => {
                                         color="primary"
                                     />
                                 }
-                                label="Enabled"
+                                label={LABEL.ENABLED}
                             />
                         </Grid2>
                     </Grid2>
