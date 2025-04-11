@@ -19,6 +19,7 @@ import { formatDate } from '../../../utils/Dateutils';
 
 import * as LABEL from '../../../utils/const/FieldLabels';
 import * as MESSAGE from '../../../utils/const/Message';
+import * as ROUTES from '../../../utils/const/RouteProperty';
 
 //Style
 import { useStyles } from "../../../style/makeStyle";
@@ -104,14 +105,14 @@ const RoleList = () => {
         };
         return (
           <Stack direction="row" spacing={2}>
-            <EditIcon url={`/user/role/updaterole/${params.row.roleId}`} />
+            <EditIcon url={ROUTES.ROLE_UPDATE.replace(':roleId', params.row.roleId)} />
             <DeleteIcon
               onClick={() => {
                 setSelectedId(params.row.roleId);
                 setDialogOpen(true);
               }}
             />
-            <PreviewIcon url={`/user/role/viewrole/${params.row.roleId}`} />
+            <PreviewIcon url={ROUTES.ROLE_VIEW.replace(':roleId', params.row.roleId)} />
           </Stack>
         );
       },
@@ -132,7 +133,7 @@ const RoleList = () => {
     return (
       <div className={classes.errorTitle}>
         <Typography variant="h6">No roles found. Add some roles to see them here.</Typography>
-        <AddNewButton url="/user/role/createrole" />
+        <AddNewButton url={ROUTES.ROLE_CREATE} />
       </div>
     );
   }
@@ -147,7 +148,7 @@ const RoleList = () => {
       </div>
       <PageTitle title={LABEL.PAGE_TITLE_ROLE_LIST} />
       <div style={{ marginBottom: "10px" }}>
-        <AddNewButton url="/user/role/createrole" />
+        <AddNewButton url={ROUTES.ROLE_CREATE} />
       </div >
       <DataTable rows={roles} columns={columns} />
       <DeleteConfirmDialog open={dialogOpen} onDelete={deleteRole} onCancel={() => setDialogOpen(false)} id={selectedId} />

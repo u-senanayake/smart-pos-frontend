@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import { CssBaseline, Box } from "@mui/material";
 
+import * as ROUTES from "./utils/const/RouteProperty";
+
 // Importing Components
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -105,7 +107,7 @@ const Layout = ({ children }) => {
 
             {/* Main Content */}
             {/* <Box sx={{ display: "flex", flex: 1 }}> */}
-                {<Sidebar children={children} />}
+            {<Sidebar children={children} />}
             {/* </Box> */}
 
             {/* Conditionally Render Footer */}
@@ -137,7 +139,7 @@ const App = () => {
 
                     <Route path="/quotation/addquotation" element={<AddQuotation />} />
                     <Route path="/quotation/listquotation" element={<ListQuotation />} />
-                    
+
                     <Route path="/delivery/shipments" element={<Shipments />} />
 
                     <Route path="/purchase/listpurchase" element={<ListPurchase />} />
@@ -150,10 +152,10 @@ const App = () => {
 
                     {/* User Management */}
                     {/* Role Routes */}
-                    <Route path="/user/rolelist" element={<RoleList />} />
-                    <Route path="/user/role/createrole" element={<CreateRole />} />
-                    <Route path="/user/role/updaterole/:roleId" element={<UpdateRole />} />
-                    <Route path="/user/role/viewrole/:roleId" element={<ViewRole />} />
+                    <Route path={ROUTES.ROLE_LIST} element={<RoleList />} />
+                    <Route path={ROUTES.ROLE_CREATE} element={<CreateRole />} />
+                    <Route path={ROUTES.ROLE_UPDATE} element={<UpdateRole />} />
+                    <Route path={ROUTES.ROLE_VIEW} element={<ViewRole />} />
                     {/* User Routes */}
                     <Route path="/user/userlist" element={<UserList />} />
                     <Route path="/user/createuser" element={<CreateUser />} />

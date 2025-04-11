@@ -20,7 +20,7 @@ const RoleDataGrid = ({ rows, columns }) => {
   const paginationModel = { page: 0, pageSize: 10 };
 
   return (
-    <Paper sx={{ height: tableheight, width: "100%" }}>
+    <Paper sx={{ height: tableheight, width: "100%"}}>
       <DataGrid
         getRowId={(row) => row.roleId}
         rows={rows}
@@ -29,14 +29,8 @@ const RoleDataGrid = ({ rows, columns }) => {
         pageSizeOptions={[5, 10]}
         sx={{
           boxShadow: 1,
-          border: 1,
-          borderColor: "primary.dark",
-          "& .MuiDataGrid-cell:hover": {
-            color: "primary.main",
-          },
-          "& .super-app-theme--header": {
-            backgroundColor: "ButtonShadow",
-          },
+          border: 0.5,
+          borderRadius: 4,
         }}
       />
     </Paper>

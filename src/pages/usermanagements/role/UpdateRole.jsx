@@ -16,6 +16,8 @@ import { useStyles } from "../../../style/makeStyle";
 import * as MESSAGE from '../../../utils/const/Message';
 import * as PROPERTY from '../../../utils/const/FieldProperty';
 import * as LABEL from '../../../utils/const/FieldLabels';
+import * as APP_PROPERTY from '../../../utils/const/AppProperty';
+import * as ROUTES from '../../../utils/const/RouteProperty';
 
 const UpdateRole = () => {
 
@@ -65,7 +67,7 @@ const UpdateRole = () => {
             RoleService.updateRole(role, roleId)
                 .then(() => {
                     setSuccessMessage(MESSAGE.ROLE_UPDATE_SUCCESS); // Set success message
-                    setTimeout(() => navigate('/user/rolelist'), 2000); // Delay navigation
+                    setTimeout(() => navigate(ROUTES.ROLE_LIST), APP_PROPERTY.ALERT_TIMEOUT); // Delay navigation
                 })
                 .catch((error) => {
                     setErrorMessage(MESSAGE.ROLE_UPDATE_ERROR_MSG);
@@ -74,7 +76,7 @@ const UpdateRole = () => {
         }
     };
 
-    const handleCancel = () => navigate('/user/rolelist');
+    const handleCancel = () => navigate(ROUTES.ROLE_LIST);
 
     function handleClick(event) {
         navigate(event.target.href);
@@ -85,7 +87,7 @@ const UpdateRole = () => {
     }
 
     return (
-        <Container maxWidth="md" className={classes.mainContainer}>
+        <Container className={classes.mainContainer}>
 
             <div role="presentation" onClick={handleClick}>
                 <Breadcrumbs aria-label="breadcrumb">
@@ -96,60 +98,61 @@ const UpdateRole = () => {
             </div>
 
             <PageTitle title={LABEL.PAGE_TITLE_ROLE_UPDATE + roleName} />
+            <Container maxWidth="sm" >
+                <Paper elevation={4} className={classes.formContainer}>
+                    <form>
+                        <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
+                        <ErrorAlert message={errorMessage} />
 
-            <Paper elevation={4} className={classes.formContainer}>
-                <form>
-                    <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
-                    <ErrorAlert message={errorMessage} />
+                        <Grid2 container spacing={2}>
+                            <Grid2 size={4}>
+                                <ReadOnlyField label={LABEL.ID} value={roleId} />
+                            </Grid2>
+                            <Grid2 size={8}>
+                                <EditableTextField
+                                    label={LABEL.NAME}
+                                    name="roleName"
+                                    value={roleName}
+                                    onChange={(e) => setRoleName(e.target.value)}
+                                    error={!!formError.roleName}
+                                    helperText={formError.roleName}
+                                    required={true}
+                                />
+                            </Grid2>
+                            <Grid2 size={12}>
+                                <EditableTextField
+                                    label={LABEL.DESCRIPTION}
+                                    name="description"
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                    error={!!formError.description}
+                                    helperText={formError.description}
+                                    required={true}
+                                />
 
-                    <Grid2 container spacing={2}>
-                        <Grid2 size={4}>
-                            <ReadOnlyField label={LABEL.ID} value={roleId} />
+                            </Grid2>
+                            <Grid2 size={6}>
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={enabled}
+                                            onChange={(e) => setEnabled(e.target.checked)}
+                                            name="enabled"
+                                            color="primary"
+                                        />
+                                    }
+                                    label={LABEL.ENABLED}
+                                />
+                            </Grid2>
+                            <Grid2 size={6}></Grid2>
                         </Grid2>
-                        <Grid2 size={8}>
-                            <EditableTextField
-                                label={LABEL.NAME}
-                                name="roleName"
-                                value={roleName}
-                                onChange={(e) => setRoleName(e.target.value)}
-                                error={!!formError.roleName}
-                                helperText={formError.roleName}
-                                required={true}
-                            />
-                        </Grid2>
-                        <Grid2 size={12}>
-                            <EditableTextField
-                                label={LABEL.DESCRIPTION}
-                                name="description"
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                                error={!!formError.description}
-                                helperText={formError.description}
-                                required={true}
-                            />
-
-                        </Grid2>
-                        <Grid2 size={6}>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={enabled}
-                                        onChange={(e) => setEnabled(e.target.checked)}
-                                        name="enabled"
-                                        color="primary"
-                                    />
-                                }
-                                label={LABEL.ENABLED}
-                            />
-                        </Grid2>
-                        <Grid2 size={6}></Grid2>
-                    </Grid2>
-                    <Box className={classes.formButtonsContainer}>
-                        <UpdateButton onClick={handleSubmit} isSaving={isSaving} />
-                        <CancelButton onClick={handleCancel} />
-                    </Box>
-                </form>
-            </Paper>
+                        <Box className={classes.formButtonsContainer}>
+                            <UpdateButton onClick={handleSubmit} isSaving={isSaving} />
+                            <CancelButton onClick={handleCancel} />
+                        </Box>
+                    </form>
+                </Paper>
+            </Container>
         </Container>
     );
 };

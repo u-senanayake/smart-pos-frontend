@@ -17,6 +17,7 @@ import { useStyles } from "../../../style/makeStyle";
 
 import * as MESSAGE from '../../../utils/const/Message';
 import * as LABEL from '../../../utils/const/FieldLabels';
+import * as ROUTES from '../../../utils/const/RouteProperty';
 
 const ViewRole = () => {
 
@@ -39,9 +40,9 @@ const ViewRole = () => {
 
   }, [roleId]);
 
-  const cancel = () => navigate('/user/rolelist');
+  const cancel = () => navigate(ROUTES.ROLE_LIST);
 
-  const handleUpdate = () => { navigate(`/user/role/updaterole/${roleId}`); };
+  const handleUpdate = () => { navigate(ROUTES.ROLE_UPDATE.replace(':roleId', roleId)); };
 
   if (loading) {
     return <Loading />;
@@ -62,7 +63,7 @@ const ViewRole = () => {
   }
 
   return (
-    <Container maxWidth="md" className={classes.mainContainer}>
+    <Container className={classes.mainContainer}>
 
       <div role="presentation" onClick={handleClick}>
         <Breadcrumbs aria-label="breadcrumb">
@@ -72,34 +73,36 @@ const ViewRole = () => {
         </Breadcrumbs>
       </div>
       <PageTitle title={LABEL.PAGE_TITLE_ROLE_VIEW + role.roleName} />
-      <Paper elevation={4} className={classes.formContainer}>
+      <Container maxWidth="md">
+        <Paper elevation={4} className={classes.formContainer}>
 
-        <Grid2 container spacing={2}>
-          <Grid2 size={4}>
-            <ReadOnlyField label={LABEL.ID} value={role.roleId} />
+          <Grid2 container spacing={2}>
+            <Grid2 size={4}>
+              <ReadOnlyField label={LABEL.ID} value={role.roleId} />
+            </Grid2>
+            <Grid2 size={8}>
+              <ReadOnlyField label={LABEL.NAME} value={role.roleName} />
+            </Grid2>
+            <Grid2 size={12}>
+              <ReadOnlyField label={LABEL.DESCRIPTION} value={role.description} />
+            </Grid2>
+            <Grid2 size={6}><Typography variant="h5">{LABEL.ENABLED} {renderStatusIcon(role.enabled)}</Typography></Grid2>
+            <Grid2 size={6}></Grid2>
+            <Grid2 size={6}>
+              <ReadOnlyField label={LABEL.CREATED_AT} value={formatDate(role.createdAt)} />
+            </Grid2>
+            <Grid2 size={6}>
+              <ReadOnlyField label={LABEL.UPDATED_AT} value={formatDate(role.updatedAt)} />
+            </Grid2>
           </Grid2>
-          <Grid2 size={8}>
-            <ReadOnlyField label={LABEL.NAME} value={role.roleName} />
-          </Grid2>
-          <Grid2 size={12}>
-            <ReadOnlyField label={LABEL.DESCRIPTION} value={role.description} />
-          </Grid2>
-          <Grid2 size={6}><Typography variant="h5">{LABEL.ENABLED} {renderStatusIcon(role.enabled)}</Typography></Grid2>
-          <Grid2 size={6}></Grid2>
-          <Grid2 size={6}>
-            <ReadOnlyField label={LABEL.CREATED_AT} value={formatDate(role.createdAt)} />
-          </Grid2>
-          <Grid2 size={6}>
-            <ReadOnlyField label={LABEL.UPDATED_AT} value={formatDate(role.updatedAt)} />
-          </Grid2>
-        </Grid2>
 
-        <Box className={classes.formButtonsContainer}>
-          <EditButton onClick={handleUpdate} />
-          <CancelButton onClick={cancel} />
-        </Box>
+          <Box className={classes.formButtonsContainer}>
+            <EditButton onClick={handleUpdate} />
+            <CancelButton onClick={cancel} />
+          </Box>
 
-      </Paper>
+        </Paper>
+      </Container>
     </Container>
   );
 };

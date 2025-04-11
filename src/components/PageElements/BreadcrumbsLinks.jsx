@@ -11,7 +11,7 @@ export const Home = () => {
 };
 export const RoleList = () => {
     return (
-        <Link underline="hover" color="inherit" href="/usermanagement/rolelist">
+        <Link underline="hover" color="inherit" href="/user/rolelist">
             Role List
         </Link>
     )
