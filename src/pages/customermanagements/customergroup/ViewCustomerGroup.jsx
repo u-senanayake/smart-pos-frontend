@@ -24,9 +24,9 @@ const ViewCustomergroup = () => {
             .finally(() => setLoading(false));
     }, [customerGroupId]);
 
-    const cancel = () => navigate('/customermanagement/customergrouplist');
+    const cancel = () => navigate('/customer/customergrouplist');
     const handleUpdate = () => {
-        navigate(`/customermanagement/customergroup/updatecustomergroup/${customerGroupId}`);
+        navigate(`/customer/customergroup/updatecustomergroup/${customerGroupId}`);
     };
 
     if (loading) {

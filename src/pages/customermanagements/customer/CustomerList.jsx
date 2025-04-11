@@ -8,15 +8,15 @@ import {
 import { Delete, Edit, Add, Preview } from "@mui/icons-material";
 
 //Service
-import CustomerService from "../../services/CustomerService";
-import CustomerGroupService from "../../services/CustomerGroupService";
+import CustomerService from "../../../services/CustomerService";
+import CustomerGroupService from "../../../services/CustomerGroupService";
 //Utils
-import { renderStatusIcon, renderLockIcon } from "../../utils/utils";
-import { formatDate } from '../../utils/Dateutils';
-import { SkeletonLoading, ConfirmationDialog, ErrorMessage, ActiveStatusFilter, LockStatusFilter } from '../../utils/FieldUtils'
-import { getSortedData, toggleSortDirection } from "../../utils/SortUtils";
+import { renderStatusIcon, renderLockIcon } from "../../../utils/utils";
+import { formatDate } from '../../../utils/Dateutils';
+import { SkeletonLoading, ConfirmationDialog, ErrorMessage, ActiveStatusFilter, LockStatusFilter } from '../../../utils/FieldUtils'
+import { getSortedData, toggleSortDirection } from "../../../utils/SortUtils";
 //Style
-import { styles } from "../../style/TableStyle";
+import { styles } from "../../../style/TableStyle";
 
 const CustomerList = () => {
     const [customers, setCustomers] = useState([]);
@@ -138,7 +138,7 @@ const CustomerList = () => {
                 <Typography variant="h6">No brands found. Add some brand to see them here.</Typography>
                 <Button
                     component={Link}
-                    to="/customermanagement/customer/createcustomer"
+                    to="/customer/createcustomer"
                     variant="contained"
                     color="primary"
                     startIcon={<Add />}
@@ -159,7 +159,7 @@ const CustomerList = () => {
             <div style={styles.filterContainer}>
                 <Button
                     component={Link}
-                    to="/customermanagement/customer/createcustomer"
+                    to="/customer/createcustomer"
                     variant="contained"
                     color="primary"
                     startIcon={<Add />}
@@ -224,13 +224,13 @@ const CustomerList = () => {
                                         <TableCell style={styles.tableCell}>{renderStatusIcon(customer.enabled)}</TableCell>
                                         <TableCell style={styles.tableCell}>{renderLockIcon(customer.locked)}</TableCell>
                                         <TableCell style={styles.tableCell}>
-                                            <IconButton component={Link} to={`/customermanagement/customer/updatecustomer/${customer.customerId}`}>
+                                            <IconButton component={Link} to={`/customer/updatecustomer/${customer.customerId}`}>
                                                 <Edit color="primary" />
                                             </IconButton>
                                             <IconButton onClick={() => confirmDelete(customer.customerId)}>
                                                 <Delete color="error" />
                                             </IconButton>
-                                            <IconButton component={Link} to={`/customermanagement/customer/viewcustomer/${customer.customerId}`}>
+                                            <IconButton component={Link} to={`/customer/viewcustomer/${customer.customerId}`}>
                                                 <Preview color="primary" />
                                             </IconButton>
                                         </TableCell>

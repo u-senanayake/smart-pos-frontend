@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Container, TextField, Button, MenuItem, FormControlLabel, Checkbox, Grid2 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 //Service
-import CustomerService from '../../services/CustomerService';
-import CustomerGroupService from '../../services/CustomerGroupService';
+import CustomerService from '../../../services/CustomerService';
+import CustomerGroupService from '../../../services/CustomerGroupService';
 //Utils
-import { validateEmail, validatePassword, validateRequired, validateLength } from '../../utils/Validations';
-import { Loading, ErrorMessage, ReadOnlyField } from "../../utils/FieldUtils";
+import { validateEmail, validatePassword, validateRequired, validateLength } from '../../../utils/Validations';
+import { Loading, ErrorMessage, ReadOnlyField } from "../../../utils/FieldUtils";
 
 const UpdateCustomer = () => {
 
@@ -116,7 +116,7 @@ const UpdateCustomer = () => {
             setIsSaving(true);
             CustomerService.updateCustomer(customerId, customer)
                 .then(() => {
-                    navigate('/customermanagement/customerlist');
+                    navigate('/customer/customerlist');
                 })
                 .catch((error) => {
                     if (error.response && error.response.data) {
@@ -129,7 +129,7 @@ const UpdateCustomer = () => {
         }
     };
 
-    const handleCancel = () => { navigate('/customermanagement/customerlist'); };
+    const handleCancel = () => { navigate('/customer/customerlist'); };
 
     if (loading) {
         return <Loading />;

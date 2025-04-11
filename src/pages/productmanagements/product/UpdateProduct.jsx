@@ -11,9 +11,9 @@ import { validateRequired, validateLength } from '../../../utils/Validations';
 import { formatDateToYYYYMMDD, formatDate } from '../../../utils/Dateutils';
 import { Loading, ErrorMessage, ReadOnlyField } from "../../../utils/FieldUtils";
 import { formatPrice, } from "../../../utils/utils";
-import AddStockDialog from '../../../pages/product/inventory/AddStockDialog';
-import AdjustStockDialog from '../../../pages/product/inventory/AdjustStockDialog';
-import UpdateStockAlertDialog from '../../../pages/product/inventory/UpdateStockAlertDialog';
+import AddStockDialog from '../inventory/AddStockDialog';
+import AdjustStockDialog from '../inventory/AdjustStockDialog';
+import UpdateStockAlertDialog from '../inventory/UpdateStockAlertDialog';
 
 const UpdateProduct = () => {
     const { id } = useParams();

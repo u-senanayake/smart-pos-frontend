@@ -14,24 +14,24 @@ import Test from "./utils/TestPage"
 import Home from "./pages/home/Home";
 
 //Sale Pages
-import SalesScreen from './pages/sales/sale/pos';
-import ListDrafts from './pages/sales/sale/ListDrafts';
-import SalesHistory from './pages/sales/sale/SalesHistory';
-import SalesReturn from './pages/sales/sale/SalesReturn';
-import ListReturn from './pages/sales/sale/ListReturn';
+import SalesScreen from './pages/salesmanagements/sale/pos';
+import ListDrafts from './pages/salesmanagements/sale/ListDrafts';
+import SalesHistory from './pages/salesmanagements/sale/SalesHistory';
+import SalesReturn from './pages/salesmanagements/sale/SalesReturn';
+import ListReturn from './pages/salesmanagements/sale/ListReturn';
 
-import AddQuotation from './pages/sales/quotation/AddQuotation';
-import ListQuotation from './pages/sales/quotation/ListQuotation';
+import AddQuotation from './pages/salesmanagements/quotation/AddQuotation';
+import ListQuotation from './pages/salesmanagements/quotation/ListQuotation';
 
-import Shipments from './pages/sales/delivery/Shipments';
+import Shipments from './pages/salesmanagements/delivery/Shipments';
 
-import ListPurchase from './pages/sales/purchase/ListPurchase';
-import CreatePurchase from './pages/sales/purchase/CreatePurchase';
-import ListPurchaseReturns from './pages/sales/purchase/ListPurchaseReturns';
+import ListPurchase from './pages/salesmanagements/purchase/ListPurchase';
+import CreatePurchase from './pages/salesmanagements/purchase/CreatePurchase';
+import ListPurchaseReturns from './pages/salesmanagements/purchase/ListPurchaseReturns';
 
-import ListExpenses from './pages/sales/expenses/ListExpenses';
-import CreateExpense from './pages/sales/expenses/CreateExpense';
-import ExpenseCategory from './pages/sales/expenses/ExpenseCategory';
+import ListExpenses from './pages/salesmanagements/expenses/ListExpenses';
+import CreateExpense from './pages/salesmanagements/expenses/CreateExpense';
+import ExpenseCategory from './pages/salesmanagements/expenses/ExpenseCategory';
 
 
 //Purchase Pages
@@ -40,39 +40,39 @@ import ExpenseCategory from './pages/sales/expenses/ExpenseCategory';
 
 //Product Pages
 //Category
-import CategoryList from "./pages/product/product/category/CategoryList";
-import ViewCategory from "./pages/product/product/category/ViewCategory";
-import CreateCategory from "./pages/product/product/category/CreateCategory";
-import UpdateCategory from "./pages/product/product/category/UpdateCategory";
+import CategoryList from "./pages/productmanagements/product/category/CategoryList";
+import ViewCategory from "./pages/productmanagements/product/category/ViewCategory";
+import CreateCategory from "./pages/productmanagements/product/category/CreateCategory";
+import UpdateCategory from "./pages/productmanagements/product/category/UpdateCategory";
 //Brand
-import Brandlist from "./pages/product/product/brand/BrandList";
-import ViewBrand from "./pages/product/product/brand/ViewBrand";
-import CreateBrand from "./pages/product/product/brand/CreateBrand";
-import UpdateBrand from "./pages/product/product/brand/Updatebrand";
+import Brandlist from "./pages/productmanagements/product/brand/BrandList";
+import ViewBrand from "./pages/productmanagements/product/brand/ViewBrand";
+import CreateBrand from "./pages/productmanagements/product/brand/CreateBrand";
+import UpdateBrand from "./pages/productmanagements/product/brand/Updatebrand";
 //Distributor
-import DistributorList from "./pages/product/product/distributor/DistributorList";
-import ViewDistributor from "./pages/product/product/distributor/ViewDistributor";
-import CreateDistributor from "./pages/product/product/distributor/CreateDistributor";
-import UpdateDistributor from "./pages/product/product/distributor/UpdateDistributor";
+import DistributorList from "./pages/productmanagements/product/distributor/DistributorList";
+import ViewDistributor from "./pages/productmanagements/product/distributor/ViewDistributor";
+import CreateDistributor from "./pages/productmanagements/product/distributor/CreateDistributor";
+import UpdateDistributor from "./pages/productmanagements/product/distributor/UpdateDistributor";
 //Product
-import ProductList from "./pages/product/product/ProductList";
-import ViewProduct from "./pages/product/product/ViewProduct";
-import CreateProduct from "./pages/product/product/CreateProduct";
-import UpdateProduct from "./pages/product/product/UpdateProduct";
+import ProductList from "./pages/productmanagements/product/ProductList";
+import ViewProduct from "./pages/productmanagements/product/ViewProduct";
+import CreateProduct from "./pages/productmanagements/product/CreateProduct";
+import UpdateProduct from "./pages/productmanagements/product/UpdateProduct";
 //Inventory
-import InventoryList from './pages/product/inventory/InventoryList';
+import InventoryList from './pages/productmanagements/inventory/InventoryList';
 
 //Customer Pages
 //Customer Group
-import CustomerGroupList from './pages/customer/customergroup/CustomerGroupList';
-import ViewCustomerGroup from './pages/customer/customergroup/ViewCustomerGroup';
-import CreateCustomerGroup from './pages/customer/customergroup/CreateCustomerGroup';
-import UpdateCustomerGroup from './pages/customer/customergroup/UpdateCustomerGroup';
+import CustomerGroupList from './pages/customermanagements/customergroup/CustomerGroupList';
+import ViewCustomerGroup from './pages/customermanagements/customergroup/ViewCustomerGroup';
+import CreateCustomerGroup from './pages/customermanagements/customergroup/CreateCustomerGroup';
+import UpdateCustomerGroup from './pages/customermanagements/customergroup/UpdateCustomerGroup';
 //Customer
-import CustomerList from './pages/customer/CustomerList';
-import ViewCustomer from './pages/customer/ViewCustomer';
-import CreateCustomer from './pages/customer/CreateCustomer';
-import UpdateCustomer from './pages/customer/UpdateCustomer';
+import CustomerList from './pages/customermanagements/customer/CustomerList';
+import ViewCustomer from './pages/customermanagements/customer/ViewCustomer';
+import CreateCustomer from './pages/customermanagements/customer/CreateCustomer';
+import UpdateCustomer from './pages/customermanagements/customer/UpdateCustomer';
 
 //Promotion Pages
 
@@ -185,15 +185,15 @@ const App = () => {
                     <Route path="/inventory/inventorylist" element={<InventoryList />} />
                     {/* Customer management */}
                     {/* Customer group */}
-                    <Route path="/customermanagement/customergrouplist" element={<CustomerGroupList />} />
-                    <Route path="/customermanagement/customergroup/createcustomergroup" element={<CreateCustomerGroup />} />
-                    <Route path="/customermanagement/customergroup/updatecustomergroup/:customerGroupId" element={<UpdateCustomerGroup />} />
-                    <Route path="/customermanagement/customergroup/viewcustomergroup/:customerGroupId" element={<ViewCustomerGroup />} />
+                    <Route path="/customer/customergrouplist" element={<CustomerGroupList />} />
+                    <Route path="/customer/customergroup/createcustomergroup" element={<CreateCustomerGroup />} />
+                    <Route path="/customer/customergroup/updatecustomergroup/:customerGroupId" element={<UpdateCustomerGroup />} />
+                    <Route path="/customer/customergroup/viewcustomergroup/:customerGroupId" element={<ViewCustomerGroup />} />
                     {/* Customer */}
-                    <Route path="/customermanagement/customerlist" element={<CustomerList />} />
-                    <Route path="/customermanagement/customer/createcustomer" element={<CreateCustomer />} />
-                    <Route path="/customermanagement/customer/updatecustomer/:customerId" element={<UpdateCustomer />} />
-                    <Route path="/customermanagement/customer/viewcustomer/:customerId" element={<ViewCustomer />} />
+                    <Route path="/customer/customerlist" element={<CustomerList />} />
+                    <Route path="/customer/createcustomer" element={<CreateCustomer />} />
+                    <Route path="/customer/updatecustomer/:customerId" element={<UpdateCustomer />} />
+                    <Route path="/customer/viewcustomer/:customerId" element={<ViewCustomer />} />
                 </Routes>
             </Layout>
         </Router>

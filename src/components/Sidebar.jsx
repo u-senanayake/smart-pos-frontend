@@ -134,11 +134,11 @@ const NAVIGATION = [
         title: 'Customer Management',
     },
     {
-        segment: 'customermanagement',
+        segment: 'customer',
         title: 'Customer Management',
         icon: <PeopleIcon />,
         children: [
-            { segment: 'customergrouplistrylist', title: 'Customer Group List', icon: <GroupIcon /> },
+            { segment: 'customergrouplist', title: 'Customer Group List', icon: <GroupIcon /> },
             { segment: 'customerlist', title: 'Customer List', icon: <PeopleIcon /> },
             { segment: 'loyaltypoint', title: 'Loyalty Point', icon: <LoyaltyIcon /> },
             { segment: 'feedback', title: 'Feedback', icon: <FeedbackIcon /> },

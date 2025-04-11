@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Container, Typography, Box, Paper, Button, TextField, Grid2, } from "@mui/material";
 //Service
-import CustomerService from '../../services/CustomerService';
+import CustomerService from '../../../services/CustomerService';
 //Utils
-import { renderStatusIcon, renderLockIcon } from "../../utils/utils";
-import { formatDate } from "../../utils/Dateutils";
-import { Loading, ReadOnlyField, ErrorMessage } from '../../utils/FieldUtils'
+import { renderStatusIcon, renderLockIcon } from "../../../utils/utils";
+import { formatDate } from "../../../utils/Dateutils";
+import { Loading, ReadOnlyField, ErrorMessage } from '../../../utils/FieldUtils'
 
 const ViewCustomer = () => {
     const { customerId } = useParams();
@@ -26,10 +26,10 @@ const ViewCustomer = () => {
             }).finally(() => setLoading(false));
     }, [customerId]);
 
-    const cancel = () => navigate('/customermanagement/customerlist');
+    const cancel = () => navigate('/customer/customerlist');
 
     const handleUpdate = () => {
-        navigate(`/customermanagement/customer/updatecustomer/${customerId}`);
+        navigate(`/customer/updatecustomer/${customerId}`);
     };
 
     if (loading) {

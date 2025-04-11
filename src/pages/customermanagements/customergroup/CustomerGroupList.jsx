@@ -119,7 +119,7 @@ const CustomerGroupList = () => {
                 <Typography variant="h6">No Customer groups found. Add some customer group to see them here.</Typography>
                 <Button
                     component={Link}
-                    to="/customermanagement/customergroup/createcustomergroup"
+                    to="/customer/customergroup/createcustomergroup"
                     variant="contained"
                     color="primary"
                     startIcon={<Add />}
@@ -139,7 +139,7 @@ const CustomerGroupList = () => {
             <div style={styles.filterContainer}>
                 <Button
                     component={Link}
-                    to="/customermanagement/customergroup/createcustomergroup"
+                    to="/customer/customergroup/createcustomergroup"
                     variant="contained"
                     color="primary"
                     startIcon={<Add />}
@@ -179,13 +179,13 @@ const CustomerGroupList = () => {
                                         <TableCell style={styles.tableCell}>{customerGroup.description}</TableCell>
                                         <TableCell style={styles.tableCell}>{renderStatusIcon(customerGroup.enabled)}</TableCell>
                                         <TableCell style={styles.tableCell}>
-                                            <IconButton component={Link} to={`/customermanagement/customergroup/updatecustomergroup/${customerGroup.customerGroupId}`}>
+                                            <IconButton component={Link} to={`/customer/customergroup/updatecustomergroup/${customerGroup.customerGroupId}`}>
                                                 <Edit color="primary" />
                                             </IconButton>
                                             <IconButton onClick={() => confirmDelete(customerGroup.customerGroupId)}>
                                                 <Delete color="error" />
                                             </IconButton>
-                                            <IconButton component={Link} to={`/customermanagement/customergroup/viewcustomergroup/${customerGroup.customerGroupId}`}>
+                                            <IconButton component={Link} to={`/customer/customergroup/viewcustomergroup/${customerGroup.customerGroupId}`}>
                                                 <Preview color="primary" />
                                             </IconButton>
                                         </TableCell>

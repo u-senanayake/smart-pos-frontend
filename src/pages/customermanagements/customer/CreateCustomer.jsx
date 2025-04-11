@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Container, TextField, Button, MenuItem, FormControlLabel, Checkbox, Grid2 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 //Service
-import CustomerService from '../../services/CustomerService';
-import CustomerGroupService from '../../services/CustomerGroupService';
+import CustomerService from '../../../services/CustomerService';
+import CustomerGroupService from '../../../services/CustomerGroupService';
 //Utils
-import { validateEmail, validatePassword, validateRequired, validateLength } from '../../utils/Validations';
-import { Loading } from "../../utils/FieldUtils";
+import { validateEmail, validatePassword, validateRequired, validateLength } from '../../../utils/Validations';
+import { Loading } from "../../../utils/FieldUtils";
 
 const CreateCustomer = () => {
 
@@ -107,7 +107,7 @@ const CreateCustomer = () => {
             setIsSaving(true);
             CustomerService.createCustomer(customer)
                 .then(() => {
-                    navigate('/customermanagement/customerlist');
+                    navigate('/customer/customerlist');
                 })
                 .catch((error) => {
                     if (error.response && error.response.data) {
@@ -119,7 +119,7 @@ const CreateCustomer = () => {
         }
     };
 
-    const handleCancel = () => { navigate('/customermanagement/customerlist'); };
+    const handleCancel = () => { navigate('/customer/customerlist'); };
 
     if (loading) {
         return <Loading />;

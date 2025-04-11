@@ -1,47 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Container, TextField, Button, FormControlLabel, Checkbox, Grid2 } from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Box, Typography, Paper, Container, TextField, Button, Grid2, FormControlLabel, Checkbox } from '@mui/material';
 //Service
 import CustomerGroupService from '../../../services/CustomerGroupService';
 //Utils
 import { validateRequired, validateLength } from '../../../utils/Validations';
-import { Loading, ErrorMessage, ReadOnlyField } from '../../../utils/FieldUtils'
 
-const UpdateCustomerGropu = () => {
-
-    const { customerGroupId } = useParams();
+const CreateCustomerGroup = () => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [enabled, setEnabled] = useState(true);
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
-    const [formErrors, setFormErrors] = useState({});
-    const [serverError, setServerError] = useState('');
+    const [formError, setFormError] = useState({});
+    const [serverErrors, setServerErrors] = useState({});
     const navigate = useNavigate();
 
-    useEffect(() => {
-        CustomerGroupService.getCustomerGroupById(customerGroupId)
-            .then((res) => {
-                const customerGroup = res.data;
-                setName(customerGroup.name);
-                setDescription(customerGroup.description);
-                setEnabled(customerGroup.enabled);
-            })
-            .catch((error) => {
-                console.error('Error fetching customer group:', error);
-                setError("Failed to fetch customer group. Please try again later.");
-            }).finally(() => setLoading(false));
-    }, [customerGroupId]);
-
-    const validateForm = (brand) => {
+    const validateForm = (customergroup) => {
         const errors = {};
         //Name
-        if (!validateRequired(brand.name)) errors.name = 'Name is required';
-        if (!validateLength(brand.name, 10, 20)) errors.name = 'Name must be between 5 and 20 characters';
+        if (!validateRequired(customergroup.name)) errors.name = 'Name is required';
+        if (!validateLength(customergroup.name, 10, 20)) errors.name = 'Name must be between 10 and 20 characters';
         //Description
-        if (!validateRequired(brand.description)) errors.description = 'Description is required';
-        if (!validateLength(brand.description, 1, 250)) errors.description = 'Description must be less than 250 characters';
+        if (!validateRequired(customergroup.description)) errors.description = 'Description is required';
+        if (!validateLength(customergroup.description, 1, 250)) errors.description = 'Description must be less than 250 characters';
 
         return errors;
     };
@@ -51,47 +32,30 @@ const UpdateCustomerGropu = () => {
         const customerGroup = { name, description, enabled };
         const validationErrors = validateForm(customerGroup);
         if (Object.keys(validationErrors).length > 0) {
-            setFormErrors(validationErrors);
+            setFormError(validationErrors);
         } else {
-            setIsSaving(true);
-            CustomerGroupService.updateCustomerGroup(customerGroupId, customerGroup)
+            CustomerGroupService.createCustomerGroup(customerGroup)
                 .then(() => {
-                    navigate('/customermanagement/customergrouplist');
+                    navigate('/customer/customergrouplist');
                 })
                 .catch((error) => {
                     if (error.response && error.response.data) {
-                        setServerError(error.response.data);
+                        setServerErrors(error.response.data);
                     } else {
-                        console.error('Error updating brand:', error);
+                        console.error('Error creating brand:', error);
                     }
-                })
-                .finally(() => setIsSaving(false));
+                });
         }
     };
 
-    const handleCancel = () => { navigate('/customermanagement/customergrouplist'); };
-
-    if (loading) {
-        return <Loading />;
-    }
-
-    if (error) {
-        return (
-            <ErrorMessage
-                message={error}
-                actionText="Retry"
-                onAction={() => window.location.reload()}
-            />
-        );
-    }
-
-    const serverErrorMessages = Object.values(serverError);
+    const handleCancel = () => { navigate('/customer/customergrouplist'); };
+    const serverErrorMessages = Object.values(serverErrors);
 
     return (
         <Container maxWidth="md">
             <Paper sx={{ p: 3, mt: 3 }}>
                 <Typography variant="h4" gutterBottom>
-                    Update Customer Group
+                    Create Customer Group
                 </Typography>
                 <form onSubmit={handleSubmit}>
                     {Object.keys(serverErrorMessages).length > 0 && (
@@ -102,9 +66,6 @@ const UpdateCustomerGropu = () => {
                         </Box>
                     )}
                     <Grid2 container spacing={2}>
-                        <Grid2 size={4}>
-                            <ReadOnlyField label="Customer Group ID" value={customerGroupId} />
-                        </Grid2>
                         <Grid2 size={8}>
                             <TextField
                                 label="Name"
@@ -115,10 +76,11 @@ const UpdateCustomerGropu = () => {
                                 variant="outlined"
                                 margin="normal"
                                 required
-                                error={!!formErrors.name}
-                                helperText={formErrors.name}
+                                error={!!formError.name}
+                                helperText={formError.name}
                             />
                         </Grid2>
+                        <Grid2 size={4}></Grid2>
                         <Grid2 size={12}>
                             <TextField
                                 label="Description"
@@ -129,8 +91,8 @@ const UpdateCustomerGropu = () => {
                                 variant="outlined"
                                 margin="normal"
                                 required
-                                error={!!formErrors.description}
-                                helperText={formErrors.description}
+                                error={!!formError.description}
+                                helperText={formError.description}
                             />
                         </Grid2>
                         <Grid2 size={6}>
@@ -150,18 +112,16 @@ const UpdateCustomerGropu = () => {
                     </Grid2>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                         <Button type="submit" variant="contained" color="primary">
-                            {isSaving ? 'Updating...' : 'Update'}
+                            {isSaving ? 'Saving...' : 'Save'}
                         </Button>
                         <Button variant="outlined" color="secondary" onClick={handleCancel}>
                             Cancel
                         </Button>
                     </Box>
-
                 </form>
             </Paper>
         </Container>
     );
-
 };
 
-export default UpdateCustomerGropu;
+export default CreateCustomerGroup;
