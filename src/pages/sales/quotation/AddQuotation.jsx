@@ -3,16 +3,16 @@ import { Box, Typography, Paper, Container, Autocomplete, TextField, Button, Men
 import { useNavigate, useParams } from 'react-router-dom';
 import { DataGrid } from '@mui/x-data-grid';
 
-import ProductService from "../../services/ProductService";
-import CustomerService from "../../services/CustomerService";
-import CategoryService from '../../services/CategoryService';
-import DistributorService from '../../services/DistributorService';
-import BrandService from '../../services/BrandService';
-import SaleItemService from "../../services/SaleItemService";
-import SaleService from "../../services/SaleService";
-import { validateRequired, validateLength } from '../../utils/Validations';
-import { formatDateToYYYYMMDD } from '../../utils/Dateutils';
-import { Loading, ReadOnlyField } from "../../utils/FieldUtils";
+import ProductService from "../../../services/ProductService";
+import CustomerService from "../../../services/CustomerService";
+import CategoryService from '../../../services/CategoryService';
+import DistributorService from '../../../services/DistributorService';
+import BrandService from '../../../services/BrandService';
+import SaleItemService from "../../../services/SaleItemService";
+import SaleService from "../../../services/SaleService";
+import { validateRequired, validateLength } from '../../../utils/Validations';
+import { formatDateToYYYYMMDD } from '../../../utils/Dateutils';
+import { Loading, ReadOnlyField } from "../../../utils/FieldUtils";
 
 const CreateProduct = () => {
 

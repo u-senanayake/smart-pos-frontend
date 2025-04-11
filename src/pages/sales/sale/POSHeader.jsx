@@ -3,7 +3,7 @@ import { AppBar, Toolbar, Typography, IconButton, Button, Box } from '@mui/mater
 import { styled } from '@mui/material/styles';
 import { Home, Settings, Add, Cancel, FolderOpen, Save } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
-import SaleService from "../../services/SaleService"; // Import SaleService
+import SaleService from "../../../services/SaleService"; // Import SaleService
 
 const buttonStyle = {
     color: '#fff',

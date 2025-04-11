@@ -2,20 +2,19 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton, Typography, Pagination, Box } from "@mui/material";
 import { Delete, Edit, Add, Preview } from "@mui/icons-material";
-
 //Service
-import BrandService from "../../../services/BrandService";
+import DistributorService from "../../../../services/DistributorService";
 //Utils
-import { renderStatusIcon } from "../../../utils/utils";
-import { formatDate } from '../../../utils/Dateutils';
-import { SkeletonLoading, ConfirmationDialog, ErrorMessage, ActiveStatusFilter } from '../../../utils/FieldUtils'
-import { getSortedData, toggleSortDirection } from "../../../utils/SortUtils";
+import { renderStatusIcon } from "../../../../utils/utils";
+import { formatDate } from '../../../../utils/Dateutils';
+import { SkeletonLoading, ErrorMessage, ConfirmationDialog, ActiveStatusFilter } from '../../../../utils/FieldUtils'
+import { getSortedData, toggleSortDirection } from "../../../../utils/SortUtils";
 //Style
-import { styles } from "../../../style/TableStyle";
+import { styles } from "../../../../style/TableStyle";
 
-const BrandList = () => {
+const DistributorList = () => {
 
-  const [brands, setBrands] = useState([]);
+  const [distributors, setDistributors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -28,24 +27,24 @@ const BrandList = () => {
   const itemsPerPage = 10;
 
   useEffect(() => {
-    BrandService.getBrands()
+    DistributorService.getDistributors()
       .then((res) => {
-        setBrands(res.data);
+        setDistributors(res.data);
         setLoading(false);
       })
       .catch((error) => {
-        console.error("Error fetching brands:", error);
-        setError("Failed to fetch brands. Please try again later.");
+        console.error("Error fetching distributors:", error);
+        setError("Failed to fetch distributors. Please try again later.");
         setLoading(false);
       });
   }, []);
 
-  const deleteBrand = (id) => {
-    BrandService.deleteBrand(id)
-      .then(() => setBrands(brands.filter((brand) => brand.brandId !== id)))
+  const deleteDistributor = (id) => {
+    DistributorService.deleteDistributor(id)
+      .then(() => setDistributors(distributors.filter((distributor) => distributor.distributorId !== id)))
       .catch((error) => {
-        console.error("Error deleting brand:", error);
-        setError("Failed to delete brand. Please try again later.");
+        console.error("Error deleting distributor:", error);
+        setError("Failed to delete distributor. Please try again later.");
       });
   };
 
@@ -56,7 +55,7 @@ const BrandList = () => {
 
   const handleDialogConfirm = () => {
     if (selectedId) {
-      deleteBrand(selectedId);
+      deleteDistributor(selectedId);
     }
     setDialogOpen(false);
     setSelectedId(null);
@@ -67,6 +66,18 @@ const BrandList = () => {
     setSelectedId(null);
   };
 
+  const handleSort = (key) => {
+    setSortConfig((currentConfig) => toggleSortDirection(currentConfig, key));
+  };
+
+  const applyFilters = () => {
+    return distributors.filter((distributor) => {
+      const matchesStatus = statusFilter ? String(distributor.enabled) === statusFilter : true;
+
+      return matchesStatus;
+    });
+  };
+
   const handlePageChange = (event, value) => {
     setPaginationLoading(true);
     setTimeout(() => {
@@ -75,26 +86,15 @@ const BrandList = () => {
     }, 500); // Simulate a delay (replace this with actual fetching logic if needed)
   };
 
-  const handleSort = (key) => {
-    setSortConfig((currentConfig) => toggleSortDirection(currentConfig, key));
-  };
+  const filteredDistributor = applyFilters();
 
+  const sortedDistributor = getSortedData(filteredDistributor, sortConfig);
 
-  const applyFilters = () => {
-    return brands.filter((user) => {
-      const matchesStatus = statusFilter ? String(user.enabled) === statusFilter : true;
-
-      return matchesStatus;
-    });
-  };
-
-  const filteredBrands = applyFilters();
-  const sortedBrands = getSortedData(filteredBrands, sortConfig);
-
-  const paginatedBrand = sortedBrands.slice(
+  const paginatedDistributor = sortedDistributor.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
 
   if (loading || paginationLoading) {
     return <SkeletonLoading />;
@@ -110,39 +110,40 @@ const BrandList = () => {
     );
   }
 
-  if (brands.length === 0) {
+  if (distributors.length === 0) {
     return (
       <div style={{ textAlign: "center", marginTop: "20px" }}>
-        <Typography variant="h6">No brands found. Add some brand to see them here.</Typography>
+        <Typography variant="h6">No distributors found. Add some distributor to see them here.</Typography>
         <Button
           component={Link}
-          to="/productmanagement/brand/createbrand"
+          to="/product/distributor/createdistributor"
           variant="contained"
           color="primary"
           startIcon={<Add />}
           style={{ marginTop: "10px" }}
         >
-          Add Brand
+          Add Distributor
         </Button>
       </div>
     );
-  }
+  };
+
 
   return (
     <div style={styles.mainContainer}>
       <Typography variant="h4" style={styles.title}>
-        Brand List
+        Distributor List
       </Typography>
       <div style={styles.filterContainer}>
         <Button
           component={Link}
-          to="/productmanagement/brand/createbrand"
+          to="/product/distributor/createdistributor"
           variant="contained"
           color="primary"
           startIcon={<Add />}
           style={{ marginBottom: "20px" }}
         >
-          Add Brand
+          Add Distributor
         </Button>
         <Paper sx={{ p: 1, mt: 1, mb: 1 }}>
           <Typography variant="h6" style={styles.filterTitle}>
@@ -155,34 +156,39 @@ const BrandList = () => {
           />
         </Paper>
       </div>
+
       {paginationLoading ? (
         <SkeletonLoading />
       ) : (
         <TableContainer component={Paper} sx={{ width: '100%', overflowX: 'auto' }}>
           <Box sx={{ overflowX: 'auto' }}>
-            <Table sx={{ minWidth: '1000px' }}>
+            <Table sx={{ minWidth: '1300px' }}>
               <TableHead>
                 <TableRow style={styles.tableHeaderCell}>
-                  <TableCell onClick={() => handleSort("name")}>Brand Name {sortConfig.key === "name" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell>Description</TableCell>
+                  <TableCell onClick={() => handleSort("companyName")}>Company Name {sortConfig.key === "companyName" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell onClick={() => handleSort("email")}>Email {sortConfig.key === "email" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell>Phone Number</TableCell>
+                  <TableCell onClick={() => handleSort("address")}>Address {sortConfig.key === "address" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
                   <TableCell onClick={() => handleSort("enabled")}>Enabled {sortConfig.key === "enabled" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
                   <TableCell>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {paginatedBrand.map((brand, index) => (
-                  <TableRow key={brand.brandId} sx={styles.zebraStripe(index)}>
-                    <TableCell style={styles.tableCell}>{brand.name}</TableCell>
-                    <TableCell style={styles.tableCell}>{brand.description}</TableCell>
-                    <TableCell style={styles.tableCell}>{renderStatusIcon(brand.enabled)}</TableCell>
+                {paginatedDistributor.map((distributor, index) => (
+                  <TableRow key={distributor.distributorId} sx={styles.zebraStripe(index)}>
+                    <TableCell style={styles.tableCell}>{distributor.companyName}</TableCell>
+                    <TableCell style={styles.tableCell}>{distributor.email}</TableCell>
+                    <TableCell style={styles.tableCell}>{`${distributor.phoneNo1} / ${distributor.phoneNo2} `}</TableCell>
+                    <TableCell style={styles.tableCell}>{distributor.address}</TableCell>
+                    <TableCell style={styles.tableCell}>{renderStatusIcon(distributor.enabled)}</TableCell>
                     <TableCell style={styles.tableCell}>
-                      <IconButton component={Link} to={`/productmanagement/brand/updatebrand/${brand.brandId}`}>
+                      <IconButton component={Link} to={`/product/distributor/updatedistributor/${distributor.distributorId}`}>
                         <Edit color="primary" />
                       </IconButton>
-                      <IconButton onClick={() => confirmDelete(brand.brandId)}>
+                      <IconButton onClick={() => confirmDelete(distributor.distributorId)}>
                         <Delete color="error" />
                       </IconButton>
-                      <IconButton component={Link} to={`/productmanagement/brand/viewbrand/${brand.brandId}`}>
+                      <IconButton component={Link} to={`/product/distributor/viewdistributor/${distributor.distributorId}`}>
                         <Preview color="primary" />
                       </IconButton>
                     </TableCell>
@@ -194,7 +200,7 @@ const BrandList = () => {
         </TableContainer>
       )}
       <Pagination
-        count={Math.ceil(brands.length / itemsPerPage)} // Total pages
+        count={Math.ceil(distributors.length / itemsPerPage)} // Total pages
         page={currentPage}
         onChange={handlePageChange}
         color="primary"
@@ -211,4 +217,4 @@ const BrandList = () => {
   );
 };
 
-export default BrandList;
+export default DistributorList;

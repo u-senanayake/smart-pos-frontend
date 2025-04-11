@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Container, Typography, Box, Paper, Button, Grid2, } from "@mui/material";
 //Service
-import BrandService from '../../../services/BrandService';
+import BrandService from '../../../../services/BrandService';
 //Utils
-import { renderStatusIcon, } from "../../../utils/utils";
-import { formatDate } from "../../../utils/Dateutils";
-import { Loading, ReadOnlyField, ErrorMessage } from '../../../utils/FieldUtils'
+import { renderStatusIcon, } from "../../../../utils/utils";
+import { formatDate } from "../../../../utils/Dateutils";
+import { Loading, ReadOnlyField, ErrorMessage } from '../../../../utils/FieldUtils'
 
 const ViewBrand = () => {
 

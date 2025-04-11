@@ -6,7 +6,7 @@ import {
 import { Delete, OpenInNew } from '@mui/icons-material';
 
 // Service
-import SaleService from "../../services/SaleService";
+import SaleService from "../../../services/SaleService";
 import { useNavigate } from "react-router-dom";
 
 const SaleDraftListPage = () => {

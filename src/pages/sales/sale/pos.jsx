@@ -5,14 +5,14 @@ import {
 } from '@mui/material';
 import { Edit, Delete, Save, Cancel } from '@mui/icons-material';
 // Services
-import ProductService from "../../services/ProductService";
-import CustomerService from "../../services/CustomerService";
-import SaleService from "../../services/SaleService";
-import SaleItemService from "../../services/SaleItemService";
+import ProductService from "../../../services/ProductService";
+import CustomerService from "../../../services/CustomerService";
+import SaleService from "../../../services/SaleService";
+import SaleItemService from "../../../services/SaleItemService";
 // Style
-import { POSStyle } from "../../style/POSStyle";
+import { POSStyle } from "../../../style/POSStyle";
 import POSHeader from './POSHeader';
-import { ReadOnlyField, ErrorDialog } from '../../utils/FieldUtils'
+import { ReadOnlyField, ErrorDialog } from '../../../utils/FieldUtils'
 
 const PosPage = () => {
     const [products, setProducts] = useState([]);

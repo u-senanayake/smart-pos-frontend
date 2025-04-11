@@ -3,17 +3,17 @@ import { Box, Typography, Paper, Container, TextField, Button, MenuItem, FormCon
 import { useNavigate, useParams } from 'react-router-dom';
 import { Add, Update } from "@mui/icons-material";
 //Service
-import ProductService from '../../services/ProductService';
-import CategoryService from '../../services/CategoryService';
-import DistributorService from '../../services/DistributorService';
+import ProductService from '../../../services/ProductService';
+import CategoryService from '../../../services/CategoryService';
+import DistributorService from '../../../services/DistributorService';
 //Utils
-import { validateRequired, validateLength } from '../../utils/Validations';
-import { formatDateToYYYYMMDD, formatDate } from '../../utils/Dateutils';
-import { Loading, ErrorMessage, ReadOnlyField } from "../../utils/FieldUtils";
-import { formatPrice, } from "../../utils/utils";
-import AddStockDialog from '../../pages/product/inventory/AddStockDialog';
-import AdjustStockDialog from '../../pages/product/inventory/AdjustStockDialog';
-import UpdateStockAlertDialog from '../../pages/product/inventory/UpdateStockAlertDialog';
+import { validateRequired, validateLength } from '../../../utils/Validations';
+import { formatDateToYYYYMMDD, formatDate } from '../../../utils/Dateutils';
+import { Loading, ErrorMessage, ReadOnlyField } from "../../../utils/FieldUtils";
+import { formatPrice, } from "../../../utils/utils";
+import AddStockDialog from '../../../pages/product/inventory/AddStockDialog';
+import AdjustStockDialog from '../../../pages/product/inventory/AdjustStockDialog';
+import UpdateStockAlertDialog from '../../../pages/product/inventory/UpdateStockAlertDialog';
 
 const UpdateProduct = () => {
     const { id } = useParams();

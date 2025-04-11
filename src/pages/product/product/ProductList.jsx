@@ -6,16 +6,16 @@ import {
 } from "@mui/material";
 import { Delete, Edit, Add, Preview } from "@mui/icons-material";
 //Service
-import ProductService from "../../services/ProductService";
-import CategoryService from "../../services/CategoryService";
-import DistributorService from "../../services/DistributorService";
+import ProductService from "../../../services/ProductService";
+import CategoryService from "../../../services/CategoryService";
+import DistributorService from "../../../services/DistributorService";
 //Utils
-import { renderStatusIcon, formatPrice } from "../../utils/utils";
-import { formatDate } from '../../utils/Dateutils';
-import { SkeletonLoading, ErrorMessage, ConfirmationDialog, ActiveStatusFilter } from "../../utils/FieldUtils";
-import { getSortedData, toggleSortDirection } from "../../utils/SortUtils";
+import { renderStatusIcon, formatPrice } from "../../../utils/utils";
+import { formatDate } from '../../../utils/Dateutils';
+import { SkeletonLoading, ErrorMessage, ConfirmationDialog, ActiveStatusFilter } from "../../../utils/FieldUtils";
+import { getSortedData, toggleSortDirection } from "../../../utils/SortUtils";
 //Style
-import { styles } from "../../style/TableStyle";
+import { styles } from "../../../style/TableStyle";
 
 const ProductList = () => {
 
@@ -153,7 +153,7 @@ const ProductList = () => {
         <Typography variant="h6">No products found. Add some product to see them here.</Typography>
         <Button
           component={Link}
-          to="/productmanagement/product/createproduct"
+          to="/product/createproduct"
           variant="contained"
           color="primary"
           startIcon={<Add />}
@@ -175,7 +175,7 @@ const ProductList = () => {
       <div style={styles.filterContainer}>
         <Button
           component={Link}
-          to="/productmanagement/product/createproduct"
+          to="/product/createproduct"
           variant="contained"
           color="primary"
           startIcon={<Add />}
@@ -258,11 +258,11 @@ const ProductList = () => {
                         onChange={(e) => {
                           const action = e.target.value;
                           if (action === "edit") {
-                            window.location.href = `/productmanagement/product/updateproduct/${product.id}`;
+                            window.location.href = `/product/updateproduct/${product.id}`;
                           } else if (action === "delete") {
                             confirmDelete(product.id);
                           } else if (action === "view") {
-                            window.location.href = `/productmanagement/product/viewproduct/${product.id}`;
+                            window.location.href = `/product/viewproduct/${product.id}`;
                           }
                         }}
                         displayEmpty

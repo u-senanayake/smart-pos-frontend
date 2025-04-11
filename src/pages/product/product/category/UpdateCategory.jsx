@@ -2,18 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Container, TextField, Button, FormControlLabel, Checkbox, Grid2 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 //Service
-import BrandService from '../../../services/BrandService';
+import CategoryService from '../../../../services/CategoryService';
 //Utils
-import { validateRequired, validateLength } from '../../../utils/Validations';
-import { Loading, ErrorMessage, ReadOnlyField } from '../../../utils/FieldUtils'
+import { validateRequired, validateLength } from '../../../../utils/Validations';
+import { Loading, ReadOnlyField, ErrorMessage } from '../../../../utils/FieldUtils'
 
-const UpdateBrand = () => {
-
-    const { brandId } = useParams();
+const UpdateCategory = () => {
+    const { categoryId } = useParams();
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
+    const [catPrefix, setCatPrefix] = useState('');
     const [enabled, setEnabled] = useState(true);
-
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState(null);
@@ -22,55 +21,61 @@ const UpdateBrand = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        BrandService.getBrandById(brandId)
+        CategoryService.getCategoryById(categoryId)
             .then((res) => {
-                const brand = res.data;
-                setName(brand.name);
-                setDescription(brand.description);
-                setEnabled(brand.enabled);
+                const category = res.data;
+                setName(category.name);
+                setDescription(category.description);
+                setCatPrefix(category.catPrefix);
+                setEnabled(category.enabled);
             })
             .catch((error) => {
-                console.error('Error fetching brand:', error);
-                setError("Failed to fetch brand. Please try again later.");
+                console.error('Error fetching category:', error);
+                setError("Failed to fetch category. Please try again later.");
             }).finally(() => setLoading(false));
-    }, [brandId]);
+    }, [categoryId]);
 
-    const validateForm = (brand) => {
+    const validateForm = (category) => {
         const errors = {};
         //Name
-        if (!validateRequired(brand.name)) errors.name = 'Name is required';
-        if (!validateLength(brand.name, 5, 20)) errors.name = 'Name must be between 5 and 20 characters';
+        if (!validateRequired(category.name)) errors.name = 'Name is required';
+        if (!validateLength(category.name, 1, 20)) errors.name = 'Name must be between 1 and 20 characters';
         //Description
-        if (!validateRequired(brand.description)) errors.description = 'Description is required';
-        if (!validateLength(brand.description, 10, 250)) errors.description = 'Description must be between 10 and 250 characters';
+        if (!validateRequired(category.description)) errors.description = 'Description is required';
+        if (!validateLength(category.description, 1, 250)) errors.description = 'Description must be less than 250 characters';
+        //Category prefix
+        if (!validateRequired(category.catPrefix)) errors.catPrefix = 'Category prefix is required';
+        if (!validateLength(category.catPrefix, 1, 1)) errors.catPrefix = 'Category prefix must 1 character';
 
         return errors;
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const brand = { name, description, enabled };
-        const validationErrors = validateForm(brand);
+        const category = { name, description, catPrefix, enabled };
+        const validationErrors = validateForm(category);
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
         } else {
             setIsSaving(true);
-            BrandService.updateBrand(brandId, brand)
+            CategoryService.updateCategory(categoryId, category)
                 .then(() => {
-                    navigate('/productmanagement/brandlist');
+                    navigate('/productmanagement/categorylist');
                 })
                 .catch((error) => {
                     if (error.response && error.response.data) {
                         setServerError(error.response.data);
                     } else {
-                        console.error('Error updating brand:', error);
+                        console.error('Error updating category:', error);
                     }
                 })
                 .finally(() => setIsSaving(false));
         }
     };
 
-    const handleCancel = () => { navigate('/productmanagement/brandlist'); };
+    const handleCancel = () => {
+        navigate('/productmanagement/categorylist');
+    };
 
     if (loading) {
         return <Loading />;
@@ -87,7 +92,7 @@ const UpdateBrand = () => {
     }
     const serverErrorMessages = Object.values(serverError);
     return (
-        <Container maxWidth="md">
+        <Container maxWidth="sm">
             <Paper sx={{ p: 3, mt: 3 }}>
                 <Typography variant="h4" gutterBottom>
                     Update Category
@@ -102,9 +107,9 @@ const UpdateBrand = () => {
                     )}
                     <Grid2 container spacing={2}>
                         <Grid2 size={4}>
-                            <ReadOnlyField label="Brand ID" value={brandId} />
+                            <ReadOnlyField label="Category ID" value={categoryId} />
                         </Grid2>
-                        <Grid2 size={8}>
+                        <Grid2 size={4}>
                             <TextField
                                 label="Name"
                                 name="name"
@@ -116,6 +121,20 @@ const UpdateBrand = () => {
                                 required
                                 error={!!formError.name}
                                 helperText={formError.name}
+                            />
+                        </Grid2>
+                        <Grid2 size={4}>
+                            <TextField
+                                label="Category Prefix"
+                                name="catPrefix"
+                                value={catPrefix}
+                                onChange={(e) => setCatPrefix(e.target.value)}
+                                fullWidth
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={!!formError.catPrefix}
+                                helperText={formError.catPrefix}
                             />
                         </Grid2>
                         <Grid2 size={12}>
@@ -155,10 +174,9 @@ const UpdateBrand = () => {
                             Cancel
                         </Button>
                     </Box>
-
                 </form>
             </Paper>
         </Container>
     );
 };
-export default UpdateBrand;
+export default UpdateCategory;

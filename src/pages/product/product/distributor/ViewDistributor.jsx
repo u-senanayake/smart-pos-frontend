@@ -3,11 +3,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Container, Typography, Box, Paper, Button, TextField, Grid2, } from "@mui/material";
 
 //Service
-import DistributorService from '../../../services/DistributorService';
+import DistributorService from '../../../../services/DistributorService';
 //Utils
-import { renderStatusIcon, } from "../../../utils/utils";
-import { formatDate } from "../../../utils/Dateutils";
-import { Loading, ReadOnlyField, ErrorMessage } from '../../../utils/FieldUtils'
+import { renderStatusIcon, } from "../../../../utils/utils";
+import { formatDate } from "../../../../utils/Dateutils";
+import { Loading, ReadOnlyField, ErrorMessage } from '../../../../utils/FieldUtils'
 
 const ViewDistributor = () => {
 

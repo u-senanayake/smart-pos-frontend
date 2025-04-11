@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton, Typography, Pagination, Box} from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton, Typography, Pagination, Box } from "@mui/material";
 import { Delete, Edit, Add, Preview } from "@mui/icons-material";
 
 //Service
-import CategoryService from "../../../services/CategoryService";
+import BrandService from "../../../../services/BrandService";
 //Utils
-import { renderStatusIcon } from "../../../utils/utils";
-import { SkeletonLoading, ErrorMessage, ConfirmationDialog, ActiveStatusFilter } from '../../../utils/FieldUtils'
-import { getSortedData, toggleSortDirection } from "../../../utils/SortUtils";
+import { renderStatusIcon } from "../../../../utils/utils";
+import { formatDate } from '../../../../utils/Dateutils';
+import { SkeletonLoading, ConfirmationDialog, ErrorMessage, ActiveStatusFilter } from '../../../../utils/FieldUtils'
+import { getSortedData, toggleSortDirection } from "../../../../utils/SortUtils";
 //Style
-import { styles } from "../../../style/TableStyle";
+import { styles } from "../../../../style/TableStyle";
 
-const CategoryList = () => {
+const BrandList = () => {
 
-  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -23,27 +24,28 @@ const CategoryList = () => {
   const [paginationLoading, setPaginationLoading] = useState(false);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" }); // Sorting state
   const [statusFilter, setStatusFilter] = useState(""); // Account status filter state
+
   const itemsPerPage = 10;
 
   useEffect(() => {
-    CategoryService.getCategories()
+    BrandService.getBrands()
       .then((res) => {
-        setCategories(res.data);
+        setBrands(res.data);
         setLoading(false);
       })
       .catch((error) => {
-        console.error("Error fetching categories:", error);
-        setError("Failed to fetch categories. Please try again later.");
+        console.error("Error fetching brands:", error);
+        setError("Failed to fetch brands. Please try again later.");
         setLoading(false);
       });
   }, []);
 
-  const deleteCategory = (id) => {
-    CategoryService.deleteCategory(id)
-      .then(() => setCategories(categories.filter((category) => category.categoryId !== id)))
+  const deleteBrand = (id) => {
+    BrandService.deleteBrand(id)
+      .then(() => setBrands(brands.filter((brand) => brand.brandId !== id)))
       .catch((error) => {
-        console.error("Error deleting category:", error);
-        setError("Failed to delete category. Please try again later.");
+        console.error("Error deleting brand:", error);
+        setError("Failed to delete brand. Please try again later.");
       });
   };
 
@@ -54,7 +56,7 @@ const CategoryList = () => {
 
   const handleDialogConfirm = () => {
     if (selectedId) {
-      deleteCategory(selectedId);
+      deleteBrand(selectedId);
     }
     setDialogOpen(false);
     setSelectedId(null);
@@ -77,17 +79,19 @@ const CategoryList = () => {
     setSortConfig((currentConfig) => toggleSortDirection(currentConfig, key));
   };
 
+
   const applyFilters = () => {
-    return categories.filter((category) => {
-      const matchesStatus = statusFilter ? String(category.enabled) === statusFilter : true;
+    return brands.filter((user) => {
+      const matchesStatus = statusFilter ? String(user.enabled) === statusFilter : true;
+
       return matchesStatus;
     });
   };
 
-  const filteredCategories = applyFilters();
-  const sortedCategories = getSortedData(filteredCategories, sortConfig);
+  const filteredBrands = applyFilters();
+  const sortedBrands = getSortedData(filteredBrands, sortConfig);
 
-  const paginatedCategory = sortedCategories.slice(
+  const paginatedBrand = sortedBrands.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -106,19 +110,19 @@ const CategoryList = () => {
     );
   }
 
-  if (categories.length === 0) {
+  if (brands.length === 0) {
     return (
       <div style={{ textAlign: "center", marginTop: "20px" }}>
-        <Typography variant="h6">No categories found. Add some category to see them here.</Typography>
+        <Typography variant="h6">No brands found. Add some brand to see them here.</Typography>
         <Button
           component={Link}
-          to="/productmanagement/category/createcategory"
+          to="/product/brand/createbrand"
           variant="contained"
           color="primary"
           startIcon={<Add />}
           style={{ marginTop: "10px" }}
         >
-          Add Category
+          Add Brand
         </Button>
       </div>
     );
@@ -127,19 +131,18 @@ const CategoryList = () => {
   return (
     <div style={styles.mainContainer}>
       <Typography variant="h4" style={styles.title}>
-        Category List
+        Brand List
       </Typography>
-
       <div style={styles.filterContainer}>
         <Button
           component={Link}
-          to="/productmanagement/category/createcategory"
+          to="/product/brand/createbrand"
           variant="contained"
           color="primary"
           startIcon={<Add />}
           style={{ marginBottom: "20px" }}
         >
-          Add Category
+          Add Brand
         </Button>
         <Paper sx={{ p: 1, mt: 1, mb: 1 }}>
           <Typography variant="h6" style={styles.filterTitle}>
@@ -160,31 +163,26 @@ const CategoryList = () => {
             <Table sx={{ minWidth: '1000px' }}>
               <TableHead>
                 <TableRow style={styles.tableHeaderCell}>
-                  <TableCell onClick={() => handleSort("name")}>Name {sortConfig.key === "name" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell onClick={() => handleSort("name")}>Brand Name {sortConfig.key === "name" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
                   <TableCell>Description</TableCell>
-                  <TableCell onClick={() => handleSort("catPrefix")}>Category Prefix {sortConfig.key === "catPrefix" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
                   <TableCell onClick={() => handleSort("enabled")}>Enabled {sortConfig.key === "enabled" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
                   <TableCell>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {paginatedCategory.map((category, index) => (
-                  <TableRow key={category.categoryId} sx={styles.zebraStripe(index)}>
-                    <TableCell style={styles.tableCell}>{category.name}</TableCell>
-                    <TableCell style={styles.tableCell}>{category.description}</TableCell>
-                    <TableCell style={styles.tableCell}>{category.catPrefix}</TableCell>
-                    <TableCell style={styles.tableCell}>{renderStatusIcon(category.enabled)}</TableCell>
+                {paginatedBrand.map((brand, index) => (
+                  <TableRow key={brand.brandId} sx={styles.zebraStripe(index)}>
+                    <TableCell style={styles.tableCell}>{brand.name}</TableCell>
+                    <TableCell style={styles.tableCell}>{brand.description}</TableCell>
+                    <TableCell style={styles.tableCell}>{renderStatusIcon(brand.enabled)}</TableCell>
                     <TableCell style={styles.tableCell}>
-                      <IconButton component={Link} to={`/productmanagement/category/updatecategory/${category.categoryId}`}
-                        aria-label="Edit">
+                      <IconButton component={Link} to={`/product/brand/updatebrand/${brand.brandId}`}>
                         <Edit color="primary" />
                       </IconButton>
-                      <IconButton onClick={() => confirmDelete(category.categoryId)}
-                        aria-label="Delete">
+                      <IconButton onClick={() => confirmDelete(brand.brandId)}>
                         <Delete color="error" />
                       </IconButton>
-                      <IconButton component={Link} to={`/productmanagement/category/viewcategory/${category.categoryId}`}
-                        aria-label="Update">
+                      <IconButton component={Link} to={`/product/brand/viewbrand/${brand.brandId}`}>
                         <Preview color="primary" />
                       </IconButton>
                     </TableCell>
@@ -196,7 +194,7 @@ const CategoryList = () => {
         </TableContainer>
       )}
       <Pagination
-        count={Math.ceil(categories.length / itemsPerPage)} // Total pages
+        count={Math.ceil(brands.length / itemsPerPage)} // Total pages
         page={currentPage}
         onChange={handlePageChange}
         color="primary"
@@ -213,4 +211,4 @@ const CategoryList = () => {
   );
 };
 
-export default CategoryList;
+export default BrandList;

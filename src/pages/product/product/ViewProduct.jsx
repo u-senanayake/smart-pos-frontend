@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Container, Typography, Box, Paper, Button, TextField, Grid2, } from "@mui/material";
 //Service
-import ProductService from '../../services/ProductService';
+import ProductService from '../../../services/ProductService';
 //Utils
-import { ReadOnlyField, Loading, ErrorMessage } from '../../utils/FieldUtils'
-import { formatDate } from "../../utils/Dateutils";
-import { renderStatusIcon, formatPrice, formatPhoneNumber, } from "../../utils/utils";
+import { ReadOnlyField, Loading, ErrorMessage } from '../../../utils/FieldUtils'
+import { formatDate } from "../../../utils/Dateutils";
+import { renderStatusIcon, formatPrice, formatPhoneNumber, } from "../../../utils/utils";
 //Style
-import { styles } from "../../style/TableStyle";
+import { styles } from "../../../style/TableStyle";
 
 const ViewProduct = () => {
   const { id } = useParams();

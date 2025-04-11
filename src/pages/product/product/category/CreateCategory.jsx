@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Paper, Container, TextField, Button, FormControlLabel, Checkbox, Grid2 } from '@mui/material';
 //Service
-import CategoryService from '../../../services/CategoryService';
+import CategoryService from '../../../../services/CategoryService';
 //Utils
-import { validateRequired, validateLength } from '../../../utils/Validations';
+import { validateRequired, validateLength } from '../../../../utils/Validations';
 
 const CreateCategory = () => {
 

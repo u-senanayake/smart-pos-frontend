@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Paper, Container, TextField, Button, FormControlLabel, Checkbox, Grid2 } from '@mui/material';
 //Service
-import BrandService from '../../../services/BrandService';
+import BrandService from '../../../../services/BrandService';
 //Utils
-import { validateRequired, validateLength } from '../../../utils/Validations';
+import { validateRequired, validateLength } from '../../../../utils/Validations';
 
 const CreateBrand = () => {
     const [name, setName] = useState('');

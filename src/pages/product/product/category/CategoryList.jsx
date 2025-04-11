@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton, Typography, Pagination, Box } from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton, Typography, Pagination, Box} from "@mui/material";
 import { Delete, Edit, Add, Preview } from "@mui/icons-material";
+
 //Service
-import DistributorService from "../../../services/DistributorService";
+import CategoryService from "../../../../services/CategoryService";
 //Utils
-import { renderStatusIcon } from "../../../utils/utils";
-import { formatDate } from '../../../utils/Dateutils';
-import { SkeletonLoading, ErrorMessage, ConfirmationDialog, ActiveStatusFilter } from '../../../utils/FieldUtils'
-import { getSortedData, toggleSortDirection } from "../../../utils/SortUtils";
+import { renderStatusIcon } from "../../../../utils/utils";
+import { SkeletonLoading, ErrorMessage, ConfirmationDialog, ActiveStatusFilter } from '../../../../utils/FieldUtils'
+import { getSortedData, toggleSortDirection } from "../../../../utils/SortUtils";
 //Style
-import { styles } from "../../../style/TableStyle";
+import { styles } from "../../../../style/TableStyle";
 
-const DistributorList = () => {
+const CategoryList = () => {
 
-  const [distributors, setDistributors] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -23,28 +23,27 @@ const DistributorList = () => {
   const [paginationLoading, setPaginationLoading] = useState(false);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" }); // Sorting state
   const [statusFilter, setStatusFilter] = useState(""); // Account status filter state
-
   const itemsPerPage = 10;
 
   useEffect(() => {
-    DistributorService.getDistributors()
+    CategoryService.getCategories()
       .then((res) => {
-        setDistributors(res.data);
+        setCategories(res.data);
         setLoading(false);
       })
       .catch((error) => {
-        console.error("Error fetching distributors:", error);
-        setError("Failed to fetch distributors. Please try again later.");
+        console.error("Error fetching categories:", error);
+        setError("Failed to fetch categories. Please try again later.");
         setLoading(false);
       });
   }, []);
 
-  const deleteDistributor = (id) => {
-    DistributorService.deleteDistributor(id)
-      .then(() => setDistributors(distributors.filter((distributor) => distributor.distributorId !== id)))
+  const deleteCategory = (id) => {
+    CategoryService.deleteCategory(id)
+      .then(() => setCategories(categories.filter((category) => category.categoryId !== id)))
       .catch((error) => {
-        console.error("Error deleting distributor:", error);
-        setError("Failed to delete distributor. Please try again later.");
+        console.error("Error deleting category:", error);
+        setError("Failed to delete category. Please try again later.");
       });
   };
 
@@ -55,7 +54,7 @@ const DistributorList = () => {
 
   const handleDialogConfirm = () => {
     if (selectedId) {
-      deleteDistributor(selectedId);
+      deleteCategory(selectedId);
     }
     setDialogOpen(false);
     setSelectedId(null);
@@ -66,18 +65,6 @@ const DistributorList = () => {
     setSelectedId(null);
   };
 
-  const handleSort = (key) => {
-    setSortConfig((currentConfig) => toggleSortDirection(currentConfig, key));
-  };
-
-  const applyFilters = () => {
-    return distributors.filter((distributor) => {
-      const matchesStatus = statusFilter ? String(distributor.enabled) === statusFilter : true;
-
-      return matchesStatus;
-    });
-  };
-
   const handlePageChange = (event, value) => {
     setPaginationLoading(true);
     setTimeout(() => {
@@ -86,15 +73,24 @@ const DistributorList = () => {
     }, 500); // Simulate a delay (replace this with actual fetching logic if needed)
   };
 
-  const filteredDistributor = applyFilters();
+  const handleSort = (key) => {
+    setSortConfig((currentConfig) => toggleSortDirection(currentConfig, key));
+  };
 
-  const sortedDistributor = getSortedData(filteredDistributor, sortConfig);
+  const applyFilters = () => {
+    return categories.filter((category) => {
+      const matchesStatus = statusFilter ? String(category.enabled) === statusFilter : true;
+      return matchesStatus;
+    });
+  };
 
-  const paginatedDistributor = sortedDistributor.slice(
+  const filteredCategories = applyFilters();
+  const sortedCategories = getSortedData(filteredCategories, sortConfig);
+
+  const paginatedCategory = sortedCategories.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-
 
   if (loading || paginationLoading) {
     return <SkeletonLoading />;
@@ -110,40 +106,40 @@ const DistributorList = () => {
     );
   }
 
-  if (distributors.length === 0) {
+  if (categories.length === 0) {
     return (
       <div style={{ textAlign: "center", marginTop: "20px" }}>
-        <Typography variant="h6">No distributors found. Add some distributor to see them here.</Typography>
+        <Typography variant="h6">No categories found. Add some category to see them here.</Typography>
         <Button
           component={Link}
-          to="/productmanagement/distributor/createdistributor"
+          to="/product/category/createcategory"
           variant="contained"
           color="primary"
           startIcon={<Add />}
           style={{ marginTop: "10px" }}
         >
-          Add Distributor
+          Add Category
         </Button>
       </div>
     );
-  };
-
+  }
 
   return (
     <div style={styles.mainContainer}>
       <Typography variant="h4" style={styles.title}>
-        Distributor List
+        Category List
       </Typography>
+
       <div style={styles.filterContainer}>
         <Button
           component={Link}
-          to="/productmanagement/distributor/createdistributor"
+          to="/product/category/createcategory"
           variant="contained"
           color="primary"
           startIcon={<Add />}
           style={{ marginBottom: "20px" }}
         >
-          Add Distributor
+          Add Category
         </Button>
         <Paper sx={{ p: 1, mt: 1, mb: 1 }}>
           <Typography variant="h6" style={styles.filterTitle}>
@@ -156,39 +152,39 @@ const DistributorList = () => {
           />
         </Paper>
       </div>
-
       {paginationLoading ? (
         <SkeletonLoading />
       ) : (
         <TableContainer component={Paper} sx={{ width: '100%', overflowX: 'auto' }}>
           <Box sx={{ overflowX: 'auto' }}>
-            <Table sx={{ minWidth: '1300px' }}>
+            <Table sx={{ minWidth: '1000px' }}>
               <TableHead>
                 <TableRow style={styles.tableHeaderCell}>
-                  <TableCell onClick={() => handleSort("companyName")}>Company Name {sortConfig.key === "companyName" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell onClick={() => handleSort("email")}>Email {sortConfig.key === "email" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell>Phone Number</TableCell>
-                  <TableCell onClick={() => handleSort("address")}>Address {sortConfig.key === "address" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell onClick={() => handleSort("name")}>Name {sortConfig.key === "name" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
+                  <TableCell>Description</TableCell>
+                  <TableCell onClick={() => handleSort("catPrefix")}>Category Prefix {sortConfig.key === "catPrefix" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
                   <TableCell onClick={() => handleSort("enabled")}>Enabled {sortConfig.key === "enabled" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
                   <TableCell>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {paginatedDistributor.map((distributor, index) => (
-                  <TableRow key={distributor.distributorId} sx={styles.zebraStripe(index)}>
-                    <TableCell style={styles.tableCell}>{distributor.companyName}</TableCell>
-                    <TableCell style={styles.tableCell}>{distributor.email}</TableCell>
-                    <TableCell style={styles.tableCell}>{`${distributor.phoneNo1} / ${distributor.phoneNo2} `}</TableCell>
-                    <TableCell style={styles.tableCell}>{distributor.address}</TableCell>
-                    <TableCell style={styles.tableCell}>{renderStatusIcon(distributor.enabled)}</TableCell>
+                {paginatedCategory.map((category, index) => (
+                  <TableRow key={category.categoryId} sx={styles.zebraStripe(index)}>
+                    <TableCell style={styles.tableCell}>{category.name}</TableCell>
+                    <TableCell style={styles.tableCell}>{category.description}</TableCell>
+                    <TableCell style={styles.tableCell}>{category.catPrefix}</TableCell>
+                    <TableCell style={styles.tableCell}>{renderStatusIcon(category.enabled)}</TableCell>
                     <TableCell style={styles.tableCell}>
-                      <IconButton component={Link} to={`/productmanagement/distributor/updatedistributor/${distributor.distributorId}`}>
+                      <IconButton component={Link} to={`/product/category/updatecategory/${category.categoryId}`}
+                        aria-label="Edit">
                         <Edit color="primary" />
                       </IconButton>
-                      <IconButton onClick={() => confirmDelete(distributor.distributorId)}>
+                      <IconButton onClick={() => confirmDelete(category.categoryId)}
+                        aria-label="Delete">
                         <Delete color="error" />
                       </IconButton>
-                      <IconButton component={Link} to={`/productmanagement/distributor/viewdistributor/${distributor.distributorId}`}>
+                      <IconButton component={Link} to={`/product/category/viewcategory/${category.categoryId}`}
+                        aria-label="Update">
                         <Preview color="primary" />
                       </IconButton>
                     </TableCell>
@@ -200,7 +196,7 @@ const DistributorList = () => {
         </TableContainer>
       )}
       <Pagination
-        count={Math.ceil(distributors.length / itemsPerPage)} // Total pages
+        count={Math.ceil(categories.length / itemsPerPage)} // Total pages
         page={currentPage}
         onChange={handlePageChange}
         color="primary"
@@ -217,4 +213,4 @@ const DistributorList = () => {
   );
 };
 
-export default DistributorList;
+export default CategoryList;

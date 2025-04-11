@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
 import { Edit, Delete, Preview } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import SaleService from '../../services/SaleService';
+import SaleService from '../../../services/SaleService';
 
 const SalesHistory = () => {
     const [sales, setSales] = useState([]);

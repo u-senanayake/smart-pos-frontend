@@ -54,8 +54,22 @@ const NAVIGATION = [
             { segment: 'saleshistory', title: 'Sales History', icon: <HistoryIcon /> },
             { segment: 'salesreturn', title: 'Sales Return', icon: <ReceiptIcon /> },
             { segment: 'listreturn', title: 'List Return', icon: <ReceiptIcon /> },
+        ],
+    },
+    {
+        segment: 'quotation',
+        title: 'Quotation',
+        icon: <ShoppingCartIcon />,
+        children: [
             { segment: 'addquotation', title: 'Add Quotation', icon: <AttachMoneyIcon /> },
             { segment: 'listquotation', title: 'List Quotation', icon: <AttachMoneyIcon /> },
+        ],
+    },
+    {
+        segment: 'delivery',
+        title: 'Delevery',
+        icon: <ShoppingCartIcon />,
+        children: [
             { segment: 'shipments', title: 'Shipments', icon: <LocalShippingIcon /> },
         ],
     },
@@ -65,8 +79,8 @@ const NAVIGATION = [
         icon: <ShoppingCartIcon />,
         children: [
             { segment: 'listpurchase', title: 'List Purchase', icon: <DescriptionIcon /> },
-            { segment: 'addpurchase', title: 'Add Purchase', icon: <AttachMoneyIcon /> },
-            { segment: 'listpurchasereturn', title: 'List Purchase Return', icon: <ReceiptIcon /> },
+            { segment: 'createpurchase', title: 'Create Purchase', icon: <AttachMoneyIcon /> },
+            { segment: 'listpurchasereturns', title: 'List Purchase Returns', icon: <ReceiptIcon /> },
         ],
     },
     {
@@ -75,7 +89,7 @@ const NAVIGATION = [
         icon: <AttachMoneyIcon />,
         children: [
             { segment: 'listexpenses', title: 'List Expenses', icon: <DescriptionIcon /> },
-            { segment: 'addexpenses', title: 'Add Expenses', icon: <AttachMoneyIcon /> },
+            { segment: 'createexpense', title: 'Create Expenses', icon: <AttachMoneyIcon /> },
             { segment: 'expensecategory', title: 'Expense Category', icon: <CategoryIcon /> },
         ],
     },
@@ -87,21 +101,29 @@ const NAVIGATION = [
         title: 'Product Management',
     },
     {
-        segment: 'productmanagement',
+        segment: 'product',
         title: 'Product Management',
         icon: <InventoryIcon />,
         children: [
-            { segment: 'inventorylist', title: 'Inventory List', icon: <InventoryIcon /> },
             { segment: 'productlist', title: 'Product List', icon: <CategoryIcon /> },
-            { segment: 'stockalert', title: 'Stock Alert', icon: <TrendingUpIcon /> },
-            { segment: 'stocktransfer', title: 'Stock Transfer', icon: <LocalShippingIcon /> },
-            { segment: 'stockadjustment', title: 'Stock Adjustment', icon: <AssessmentIcon /> },
-            { segment: 'sellingpricegroup', title: 'Selling Price Group', icon: <AttachMoneyIcon /> },
-            { segment: 'units', title: 'Units', icon: <CategoryIcon /> },
             { segment: 'categorylist', title: 'Category List', icon: <CategoryIcon /> },
             { segment: 'brandlist', title: 'Brand List', icon: <CategoryIcon /> },
             { segment: 'distributorlist', title: 'Distributor List', icon: <PeopleIcon /> },
+
+            { segment: 'sellingpricegroup', title: 'Selling Price Group', icon: <AttachMoneyIcon /> },
+            { segment: 'units', title: 'Units', icon: <CategoryIcon /> },
             { segment: 'warranties', title: 'Warranties', icon: <DescriptionIcon /> },
+        ],
+    },
+    {
+        segment: 'inventory',
+        title: 'Inventory Management',
+        icon: <InventoryIcon />,
+        children: [
+            { segment: 'inventorylist', title: 'Inventory List', icon: <InventoryIcon /> },
+            { segment: 'stockalert', title: 'Stock Alert', icon: <TrendingUpIcon /> },
+            { segment: 'stocktransfer', title: 'Stock Transfer', icon: <LocalShippingIcon /> },
+            { segment: 'stockadjustment', title: 'Stock Adjustment', icon: <AssessmentIcon /> },
         ],
     },
     {

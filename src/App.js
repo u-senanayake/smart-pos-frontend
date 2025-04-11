@@ -14,14 +14,25 @@ import Test from "./utils/TestPage"
 import Home from "./pages/home/Home";
 
 //Sale Pages
-import SalesScreen from './pages/sale/pos';
-import ListDrafts from './pages/sale/ListDrafts';
-import SalesHistory from './pages/sale/SalesHistory';
-import SalesReturn from './pages/sale/SalesReturn';
-import ListReturn from './pages/sale/ListReturn';
-import AddQuotation from './pages/sale/AddQuotation';
-import ListQuotation from './pages/sale/ListQuotation';
-import Shipments from './pages/sale/Shipments';
+import SalesScreen from './pages/sales/sale/pos';
+import ListDrafts from './pages/sales/sale/ListDrafts';
+import SalesHistory from './pages/sales/sale/SalesHistory';
+import SalesReturn from './pages/sales/sale/SalesReturn';
+import ListReturn from './pages/sales/sale/ListReturn';
+
+import AddQuotation from './pages/sales/quotation/AddQuotation';
+import ListQuotation from './pages/sales/quotation/ListQuotation';
+
+import Shipments from './pages/sales/delivery/Shipments';
+
+import ListPurchase from './pages/sales/purchase/ListPurchase';
+import CreatePurchase from './pages/sales/purchase/CreatePurchase';
+import ListPurchaseReturns from './pages/sales/purchase/ListPurchaseReturns';
+
+import ListExpenses from './pages/sales/expenses/ListExpenses';
+import CreateExpense from './pages/sales/expenses/CreateExpense';
+import ExpenseCategory from './pages/sales/expenses/ExpenseCategory';
+
 
 //Purchase Pages
 
@@ -29,34 +40,34 @@ import Shipments from './pages/sale/Shipments';
 
 //Product Pages
 //Category
-import CategoryList from "./pages/product/category/CategoryList"
-import ViewCategory from "./pages/product/category/ViewCategory"
-import CreateCategory from "./pages/product/category/CreateCategory"
-import UpdateCategory from "./pages/product/category/UpdateCategory"
+import CategoryList from "./pages/product/product/category/CategoryList";
+import ViewCategory from "./pages/product/product/category/ViewCategory";
+import CreateCategory from "./pages/product/product/category/CreateCategory";
+import UpdateCategory from "./pages/product/product/category/UpdateCategory";
 //Brand
-import Brandlist from "./pages/product/brand/BrandList"
-import ViewBrand from "./pages/product/brand/ViewBrand"
-import CreateBrand from "./pages/product/brand/CreateBrand"
-import UpdateBrand from "./pages/product/brand/Updatebrand"
+import Brandlist from "./pages/product/product/brand/BrandList";
+import ViewBrand from "./pages/product/product/brand/ViewBrand";
+import CreateBrand from "./pages/product/product/brand/CreateBrand";
+import UpdateBrand from "./pages/product/product/brand/Updatebrand";
 //Distributor
-import DistributorList from "./pages/product/distributor/DistributorList"
-import ViewDistributor from "./pages/product/distributor/ViewDistributor"
-import CreateDistributor from "./pages/product/distributor/CreateDistributor"
-import UpdateDistributor from "./pages/product/distributor/UpdateDistributor"
+import DistributorList from "./pages/product/product/distributor/DistributorList";
+import ViewDistributor from "./pages/product/product/distributor/ViewDistributor";
+import CreateDistributor from "./pages/product/product/distributor/CreateDistributor";
+import UpdateDistributor from "./pages/product/product/distributor/UpdateDistributor";
 //Product
-import ProductList from "./pages/product/ProductList"
-import ViewProduct from "./pages/product/ViewProduct"
-import CreateProduct from "./pages/product/CreateProduct"
-import UpdateProduct from "./pages/product/UpdateProduct"
+import ProductList from "./pages/product/product/ProductList";
+import ViewProduct from "./pages/product/product/ViewProduct";
+import CreateProduct from "./pages/product/product/CreateProduct";
+import UpdateProduct from "./pages/product/product/UpdateProduct";
 //Inventory
-import InventoryList from './pages/product/inventory/InventoryList'
+import InventoryList from './pages/product/inventory/InventoryList';
 
 //Customer Pages
 //Customer Group
-import CustomerGroupList from './pages/customer/customergroup/CustomerGroupList'
-import ViewCustomerGroup from './pages/customer/customergroup/ViewCustomerGroup'
-import CreateCustomerGroup from './pages/customer/customergroup/CreateCustomerGroup'
-import UpdateCustomerGroup from './pages/customer/customergroup/UpdateCustomerGroup'
+import CustomerGroupList from './pages/customer/customergroup/CustomerGroupList';
+import ViewCustomerGroup from './pages/customer/customergroup/ViewCustomerGroup';
+import CreateCustomerGroup from './pages/customer/customergroup/CreateCustomerGroup';
+import UpdateCustomerGroup from './pages/customer/customergroup/UpdateCustomerGroup';
 //Customer
 import CustomerList from './pages/customer/CustomerList';
 import ViewCustomer from './pages/customer/ViewCustomer';
@@ -123,9 +134,19 @@ const App = () => {
                     <Route path="/sale/saleshistory" element={<SalesHistory />} />
                     <Route path="/sale/salesreturn" element={<SalesReturn />} />
                     <Route path="/sale/listreturn" element={<ListReturn />} />
-                    <Route path="/sale/addquotation" element={<AddQuotation />} />
-                    <Route path="/sale/listquotation" element={<ListQuotation />} />
-                    <Route path="/sale/shipments" element={<Shipments />} />
+
+                    <Route path="/quotation/addquotation" element={<AddQuotation />} />
+                    <Route path="/quotation/listquotation" element={<ListQuotation />} />
+                    
+                    <Route path="/delivery/shipments" element={<Shipments />} />
+
+                    <Route path="/purchase/listpurchase" element={<ListPurchase />} />
+                    <Route path="/purchase/createpurchase" element={<CreatePurchase />} />
+                    <Route path="/purchase/listpurchasereturns" element={<ListPurchaseReturns />} />
+
+                    <Route path="/expenses/listexpenses" element={<ListExpenses />} />
+                    <Route path="/expenses/createexpense" element={<CreateExpense />} />
+                    <Route path="/expenses/expensecategory" element={<ExpenseCategory />} />
 
                     {/* User Management */}
                     {/* Role Routes */}
@@ -141,27 +162,27 @@ const App = () => {
 
                     {/* Product Management */}
                     {/* Category Routes */}
-                    <Route path="/productmanagement/categorylist" element={<CategoryList />} />
-                    <Route path="/productmanagement/category/createcategory" element={<CreateCategory />} />
-                    <Route path="/productmanagement/category/updatecategory/:categoryId" element={<UpdateCategory />} />
-                    <Route path="/productmanagement/category/viewcategory/:categoryId" element={<ViewCategory />} />
+                    <Route path="/product/categorylist" element={<CategoryList />} />
+                    <Route path="/product/category/createcategory" element={<CreateCategory />} />
+                    <Route path="/product/category/updatecategory/:categoryId" element={<UpdateCategory />} />
+                    <Route path="/product/category/viewcategory/:categoryId" element={<ViewCategory />} />
                     {/* Brand */}
-                    <Route path="/productmanagement/brandlist" element={<Brandlist />} />
-                    <Route path="/productmanagement/brand/createbrand" element={<CreateBrand />} />
-                    <Route path="/productmanagement/brand/updatebrand/:brandId" element={<UpdateBrand />} />
-                    <Route path="/productmanagement/brand/viewbrand/:brandId" element={<ViewBrand />} />
+                    <Route path="/product/brandlist" element={<Brandlist />} />
+                    <Route path="/product/brand/createbrand" element={<CreateBrand />} />
+                    <Route path="/product/brand/updatebrand/:brandId" element={<UpdateBrand />} />
+                    <Route path="/product/brand/viewbrand/:brandId" element={<ViewBrand />} />
                     {/* Distributor */}
-                    <Route path="/productmanagement/distributorlist" element={<DistributorList />} />
-                    <Route path="/productmanagement/distributor/createdistributor" element={<CreateDistributor />} />
-                    <Route path="/productmanagement/distributor/updatedistributor/:distributorId" element={<UpdateDistributor />} />
-                    <Route path="/productmanagement/distributor/viewdistributor/:distributorId" element={<ViewDistributor />} />
+                    <Route path="/product/distributorlist" element={<DistributorList />} />
+                    <Route path="/product/distributor/createdistributor" element={<CreateDistributor />} />
+                    <Route path="/product/distributor/updatedistributor/:distributorId" element={<UpdateDistributor />} />
+                    <Route path="/product/distributor/viewdistributor/:distributorId" element={<ViewDistributor />} />
                     {/* Product */}
-                    <Route path="/productmanagement/productlist" element={<ProductList />} />
-                    <Route path="/productmanagement/product/createproduct" element={<CreateProduct />} />
-                    <Route path="/productmanagement/product/updateproduct/:id" element={<UpdateProduct />} />
-                    <Route path="/productmanagement/product/viewproduct/:id" element={<ViewProduct />} />
+                    <Route path="/product/productlist" element={<ProductList />} />
+                    <Route path="/product/createproduct" element={<CreateProduct />} />
+                    <Route path="/product/updateproduct/:id" element={<UpdateProduct />} />
+                    <Route path="/product/viewproduct/:id" element={<ViewProduct />} />
                     {/* Inventory */}
-                    <Route path="/productmanagement/inventorylist" element={<InventoryList />} />
+                    <Route path="/inventory/inventorylist" element={<InventoryList />} />
                     {/* Customer management */}
                     {/* Customer group */}
                     <Route path="/customermanagement/customergrouplist" element={<CustomerGroupList />} />

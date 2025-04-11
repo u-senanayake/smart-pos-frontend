@@ -5,12 +5,12 @@ import {
     CardMedia, CardContent, Card, Paper, TextField, MenuItem, Autocomplete, Button
 } from '@mui/material';
 //Service
-import ProductService from "../../services/ProductService";
-import CustomerService from "../../services/CustomerService";
-import SaleService from "../../services/SaleService";
-import POSHeader from './POSHeader';
+import ProductService from "../../../../services/ProductService";
+import CustomerService from "../../../../services/CustomerService";
+import SaleService from "../../../../services/SaleService";
+import POSHeader from '../POSHeader';
 //Style
-import { POSStyle } from "../../style/POSStyle";
+import { POSStyle } from "../../../style/POSStyle";
 
 const PosPage = () => {
 
