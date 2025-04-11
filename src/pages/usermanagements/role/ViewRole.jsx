@@ -39,9 +39,9 @@ const ViewRole = () => {
 
   }, [roleId]);
 
-  const cancel = () => navigate('/usermanagement/rolelist');
+  const cancel = () => navigate('/user/rolelist');
 
-  const handleUpdate = () => { navigate(`/usermanagement/role/updaterole/${roleId}`); };
+  const handleUpdate = () => { navigate(`/user/role/updaterole/${roleId}`); };
 
   if (loading) {
     return <Loading />;

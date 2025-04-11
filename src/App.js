@@ -78,15 +78,15 @@ import UpdateCustomer from './pages/customermanagements/customer/UpdateCustomer'
 
 // User Management Pages
 // Role Pages
-import CreateRole from "./pages/user/role/CreateRole";
-import RoleList from "./pages/user/role/RoleList";
-import UpdateRole from './pages/user/role/UpdateRole';
-import ViewRole from './pages/user/role/ViewRole';
+import CreateRole from "./pages/usermanagements/role/CreateRole";
+import RoleList from "./pages/usermanagements/role/RoleList";
+import UpdateRole from './pages/usermanagements/role/UpdateRole';
+import ViewRole from './pages/usermanagements/role/ViewRole';
 //User Pages
-import CreateUser from './pages/user/CreateUser';
-import UpdateUser from './pages/user/UpdateUser';
-import ViewUser from './pages/user/ViewUser';
-import UserList from './pages/user/UserList';
+import CreateUser from './pages/usermanagements/user/CreateUser';
+import UpdateUser from './pages/usermanagements/user/UpdateUser';
+import ViewUser from './pages/usermanagements/user/ViewUser';
+import UserList from './pages/usermanagements/user/UserList';
 
 //Report Pages
 
@@ -150,15 +150,15 @@ const App = () => {
 
                     {/* User Management */}
                     {/* Role Routes */}
-                    <Route path="/usermanagement/rolelist" element={<RoleList />} />
-                    <Route path="/usermanagement/role/createrole" element={<CreateRole />} />
-                    <Route path="/usermanagement/role/updaterole/:roleId" element={<UpdateRole />} />
-                    <Route path="/usermanagement/role/viewrole/:roleId" element={<ViewRole />} />
+                    <Route path="/user/rolelist" element={<RoleList />} />
+                    <Route path="/user/role/createrole" element={<CreateRole />} />
+                    <Route path="/user/role/updaterole/:roleId" element={<UpdateRole />} />
+                    <Route path="/user/role/viewrole/:roleId" element={<ViewRole />} />
                     {/* User Routes */}
-                    <Route path="/usermanagement/userlist" element={<UserList />} />
-                    <Route path="/usermanagement/user/createuser" element={<CreateUser />} />
-                    <Route path="/usermanagement/user/updateuser/:userId" element={<UpdateUser />} />
-                    <Route path="/usermanagement/user/viewuser/:userId" element={<ViewUser />} />
+                    <Route path="/user/userlist" element={<UserList />} />
+                    <Route path="/user/createuser" element={<CreateUser />} />
+                    <Route path="/user/updateuser/:userId" element={<UpdateUser />} />
+                    <Route path="/user/viewuser/:userId" element={<ViewUser />} />
 
                     {/* Product Management */}
                     {/* Category Routes */}

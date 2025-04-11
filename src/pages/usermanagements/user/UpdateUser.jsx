@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Container, TextField, Button, MenuItem, FormControlLabel, Checkbox, Grid2 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 //Service
-import UserService from '../../services/UserService';
-import RoleService from '../../services/RoleService';
+import UserService from '../../../services/UserService';
+import RoleService from '../../../services/RoleService';
 //Utils
-import { validateEmail, validateRequired, validateLength } from '../../utils/Validations';
-import { Loading, ErrorMessage, ReadOnlyField } from "../../utils/FieldUtils";
+import { validateEmail, validateRequired, validateLength } from '../../../utils/Validations';
+import { Loading, ErrorMessage, ReadOnlyField } from "../../../utils/FieldUtils";
 
 const UpdateUser = () => {
   const { userId } = useParams();
@@ -115,7 +115,7 @@ const UpdateUser = () => {
       delete requestData.role; // Remove the role object
       UserService.updateUser(userId, requestData)
         .then(() => {
-          navigate('/usermanagement/userlist');
+          navigate('/user/userlist');
         })
         .catch((error) => {
           if (error.response && error.response.data) {
@@ -128,7 +128,7 @@ const UpdateUser = () => {
     }
   };
 
-  const handleCancel = () => { navigate('/usermanagement/userlist'); };
+  const handleCancel = () => { navigate('/user/userlist'); };
 
   if (loading) {
     return <Loading />;

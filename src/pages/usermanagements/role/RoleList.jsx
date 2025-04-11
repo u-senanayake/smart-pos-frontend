@@ -104,14 +104,14 @@ const RoleList = () => {
         };
         return (
           <Stack direction="row" spacing={2}>
-            <EditIcon url={`/usermanagement/role/updaterole/${params.row.roleId}`} />
+            <EditIcon url={`/user/role/updaterole/${params.row.roleId}`} />
             <DeleteIcon
               onClick={() => {
                 setSelectedId(params.row.roleId);
                 setDialogOpen(true);
               }}
             />
-            <PreviewIcon url={`/usermanagement/role/viewrole/${params.row.roleId}`} />
+            <PreviewIcon url={`/user/role/viewrole/${params.row.roleId}`} />
           </Stack>
         );
       },
@@ -132,7 +132,7 @@ const RoleList = () => {
     return (
       <div className={classes.errorTitle}>
         <Typography variant="h6">No roles found. Add some roles to see them here.</Typography>
-        <AddNewButton url="/usermanagement/role/createrole" />
+        <AddNewButton url="/user/role/createrole" />
       </div>
     );
   }
@@ -147,7 +147,7 @@ const RoleList = () => {
       </div>
       <PageTitle title={LABEL.PAGE_TITLE_ROLE_LIST} />
       <div style={{ marginBottom: "10px" }}>
-        <AddNewButton url="/usermanagement/role/createrole" />
+        <AddNewButton url="/user/role/createrole" />
       </div >
       <DataTable rows={roles} columns={columns} />
       <DeleteConfirmDialog open={dialogOpen} onDelete={deleteRole} onCancel={() => setDialogOpen(false)} id={selectedId} />

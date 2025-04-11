@@ -1,49 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Container, Typography, Box, Paper, FormControlLabel, Checkbox, Grid2, Breadcrumbs } from '@mui/material';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Container, Typography, Box, Paper, FormControlLabel, Checkbox, Grid2, Breadcrumbs, Alert } from '@mui/material';
 
 import RoleService from '../../../services/RoleService';
 
-import { Loading, } from '../../../components/PageElements/Loading';
 import { validateRequired, validateLength, } from '../../../utils/Validations';
+import { EditableTextField, PageTitle } from "../../../components/PageElements/CommonElements";
+import { SaveButton, CancelButton } from "../../../components/PageElements/Buttons";
 import { Home, RoleList } from "../../../components/PageElements/BreadcrumbsLinks";
-import { UpdateButton, CancelButton } from "../../../components/PageElements/Buttons";
-import { EditableTextField, PageTitle, ReadOnlyField } from "../../../components/PageElements/CommonElements";
 import { SuccessAlert, ErrorAlert, } from '../../../components/DialogBox/Alerts';
+
+import * as LABEL from '../../../utils/const/FieldLabels';
+import * as MESSAGE from '../../../utils/const/Message';
+import * as PROPERTY from '../../../utils/const/FieldProperty';
 
 import { useStyles } from "../../../style/makeStyle";
 
-import * as MESSAGE from '../../../utils/const/Message';
-import * as PROPERTY from '../../../utils/const/FieldProperty';
-import * as LABEL from '../../../utils/const/FieldLabels';
-
-const UpdateRole = () => {
+const CreateRole = () => {
 
     const classes = useStyles();
-    const { roleId } = useParams();
     const [roleName, setRoleName] = useState('');
     const [description, setDescription] = useState('');
     const [enabled, setEnabled] = useState(false);
-    const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
-    const [errorMessage, setErrorMessage] = useState(null);//Error message for user
     const [formError, setFormError] = useState({});//Form validation error
+    const [errorMessage, setErrorMessage] = useState('');//Server error
     const [successMessage, setSuccessMessage] = useState(''); // State for success message
     const navigate = useNavigate();
-
-    useEffect(() => {
-        RoleService.getRoleById(roleId)
-            .then((res) => {
-                const role = res.data;
-                setRoleName(role.roleName);
-                setDescription(role.description);
-                setEnabled(role.enabled);
-            })
-            .catch((error) => {
-                console.error(MESSAGE.ROLE_FEATCHING_ERROR, error.response.data);
-                setErrorMessage(MESSAGE.ROLE_FEATCHING_ERROR_MSG);
-            }).finally(() => setLoading(false));
-    }, [roleId]);
 
     const validateForm = (role) => {
         const formError = {};
@@ -62,26 +45,22 @@ const UpdateRole = () => {
             setFormError(validationErrors);
         } else {
             setIsSaving(true);
-            RoleService.updateRole(role, roleId)
+            RoleService.createRole(role)
                 .then(() => {
-                    setSuccessMessage(MESSAGE.ROLE_UPDATE_SUCCESS); // Set success message
-                    setTimeout(() => navigate('/usermanagement/rolelist'), 2000); // Delay navigation
+                    setSuccessMessage(MESSAGE.ROLE_CREATE_SUCCESS); // Set success message
+                    setTimeout(() => navigate('/user/rolelist'), 2000); // Delay navigation
                 })
                 .catch((error) => {
-                    setErrorMessage(MESSAGE.ROLE_UPDATE_ERROR_MSG);
-                    console.error(MESSAGE.ROLE_UPDATE_ERROR, error.response.data);
-                }).finally(() => setIsSaving(false));;
+                    setErrorMessage(MESSAGE.ROLE_CREATE_ERROR_MSG);
+                    console.error(MESSAGE.ROLE_CREATE_ERROR, error.response.data);
+                }).finally(() => setIsSaving(false));
         }
     };
 
-    const handleCancel = () => navigate('/usermanagement/rolelist');
+    const handleCancel = () => navigate('/user/rolelist');
 
     function handleClick(event) {
         navigate(event.target.href);
-    }
-
-    if (loading) {
-        return <Loading />;
     }
 
     return (
@@ -95,17 +74,16 @@ const UpdateRole = () => {
                 </Breadcrumbs>
             </div>
 
-            <PageTitle title={LABEL.PAGE_TITLE_ROLE_UPDATE + roleName} />
+            <PageTitle title={LABEL.PAGE_TITLE_ROLE_CREATE} />
 
             <Paper elevation={4} className={classes.formContainer}>
-                <form>
+
+                <form onSubmit={handleSubmit}>
+
                     <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
                     <ErrorAlert message={errorMessage} />
 
                     <Grid2 container spacing={2}>
-                        <Grid2 size={4}>
-                            <ReadOnlyField label={LABEL.ID} value={roleId} />
-                        </Grid2>
                         <Grid2 size={8}>
                             <EditableTextField
                                 label={LABEL.NAME}
@@ -114,7 +92,7 @@ const UpdateRole = () => {
                                 onChange={(e) => setRoleName(e.target.value)}
                                 error={!!formError.roleName}
                                 helperText={formError.roleName}
-                                required={true}
+
                             />
                         </Grid2>
                         <Grid2 size={12}>
@@ -127,7 +105,6 @@ const UpdateRole = () => {
                                 helperText={formError.description}
                                 required={true}
                             />
-
                         </Grid2>
                         <Grid2 size={6}>
                             <FormControlLabel
@@ -142,10 +119,9 @@ const UpdateRole = () => {
                                 label={LABEL.ENABLED}
                             />
                         </Grid2>
-                        <Grid2 size={6}></Grid2>
                     </Grid2>
                     <Box className={classes.formButtonsContainer}>
-                        <UpdateButton onClick={handleSubmit} isSaving={isSaving} />
+                        <SaveButton onClick={handleSubmit} isSaving={isSaving} />
                         <CancelButton onClick={handleCancel} />
                     </Box>
                 </form>
@@ -154,4 +130,4 @@ const UpdateRole = () => {
     );
 };
 
-export default UpdateRole;
+export default CreateRole;

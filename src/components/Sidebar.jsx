@@ -162,8 +162,8 @@ const NAVIGATION = [
         title: 'User Management',
     },
     {
-        segment: 'usermanagement',
-        title: 'User Management',
+        segment: 'user',
+        title: 'User',
         icon: <PeopleIcon />,
         children: [
             { segment: 'userlist', title: 'User List', icon: <PeopleIcon /> },

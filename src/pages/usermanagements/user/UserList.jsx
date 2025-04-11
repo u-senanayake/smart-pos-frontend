@@ -5,12 +5,12 @@ import { Delete, Edit, Add, Preview } from "@mui/icons-material";
 import { DataGrid } from '@mui/x-data-grid';
 
 //Service
-import UserService from "../../services/UserService";
+import UserService from "../../../services/UserService";
 //Utils
-import { formatPhoneNumber, renderStatusIcon, renderLockIcon, } from "../../utils/utils";
-import { ConfirmationDialog, SkeletonLoading, ErrorMessage, } from "./../../utils/FieldUtils";
+import { formatPhoneNumber, renderStatusIcon, renderLockIcon, } from "../../../utils/utils";
+import { ConfirmationDialog, SkeletonLoading, ErrorMessage, } from "../../../utils/FieldUtils";
 //Style
-import { styles } from "../../style/TableStyle";
+import { styles } from "../../../style/TableStyle";
 
 const UserList = () => {
 
@@ -98,7 +98,7 @@ const UserList = () => {
         };
         return (
           <Stack direction="row" spacing={2}>
-            <IconButton component={Link} to={`/usermanagement/user/updateuser/${params.row.userId}`}
+            <IconButton component={Link} to={`/user/updateuser/${params.row.userId}`}
               aria-label="Edit User">
               <Edit color="primary" />
             </IconButton>
@@ -106,7 +106,7 @@ const UserList = () => {
               aria-label="Delete User">
               <Delete color="error" />
             </IconButton>
-            <IconButton component={Link} to={`/usermanagement/user/viewuser/${params.row.userId}`}
+            <IconButton component={Link} to={`/user/viewuser/${params.row.userId}`}
               aria-label="Update User">
               <Preview color="primary" />
             </IconButton>
@@ -152,7 +152,7 @@ const UserList = () => {
         <Typography variant="h6">No users found. Add user to see them here.</Typography>
         <Button
           component={Link}
-          to="/usermanagement/user/createuser"
+          to="/user/createuser"
           variant="contained"
           color="primary"
           startIcon={<Add />}
@@ -172,7 +172,7 @@ const UserList = () => {
       <div style={styles.filterContainer}>
         <Button
           component={Link}
-          to="/usermanagement/user/createuser"
+          to="/user/createuser"
           variant="contained"
           color="primary"
           startIcon={<Add />}

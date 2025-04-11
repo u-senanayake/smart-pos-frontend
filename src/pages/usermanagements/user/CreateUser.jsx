@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Container, TextField, Button, MenuItem, FormControlLabel, Checkbox, Grid2 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 //Service
-import UserService from '../../services/UserService';
-import RoleService from '../../services/RoleService';
+import UserService from '../../../services/UserService';
+import RoleService from '../../../services/RoleService';
 //Utils
-import { validateEmail, validatePassword, validateRequired, validateLength } from '../../utils/Validations';
-import { Loading } from "../../utils/FieldUtils";
+import { validateEmail, validatePassword, validateRequired, validateLength } from '../../../utils/Validations';
+import { Loading } from "../../../utils/FieldUtils";
 
 const CreateUser = () => {
   const [user, setUser] = useState({
@@ -111,7 +111,7 @@ const CreateUser = () => {
       delete requestData.role; // Remove the role object
       UserService.createUser(requestData)
         .then(() => {
-          navigate('/usermanagement/userlist');
+          navigate('/user/userlist');
         })
         .catch((error) => {
           if (error.response && error.response.data) {
@@ -124,7 +124,7 @@ const CreateUser = () => {
     }
   };
 
-  const handleCancel = () => { navigate('/usermanagement/userlist'); };
+  const handleCancel = () => { navigate('/user/userlist'); };
 
   if (loading) {
     return <Loading />;
