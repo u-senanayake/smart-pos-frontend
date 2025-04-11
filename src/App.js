@@ -87,25 +87,18 @@ import UserList from './pages/user/UserList';
 
 // Layout Component for Conditional Sidebar/Footer
 const Layout = ({ children }) => {
-    const location = useLocation();
-    const isSalesScreen = location.pathname.startsWith('/sale/pos'); // Adjust route to include /sale/pos/:saleId
-
     return (
         <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
             {/* Header */}
             {/* <Header /> */}
 
             {/* Main Content */}
-            <Box sx={{ display: "flex", flex: 1 }}>
-                {/* Conditionally Render Sidebar */}
-                {!isSalesScreen && <Sidebar />}
-                <Box sx={{ flexGrow: 1, p: 2 }}>
-                    {children}
-                </Box>
-            </Box>
+            {/* <Box sx={{ display: "flex", flex: 1 }}> */}
+                {<Sidebar children={children} />}
+            {/* </Box> */}
 
             {/* Conditionally Render Footer */}
-            {!isSalesScreen && <Footer />}
+            {/* <Footer /> */}
         </Box>
     );
 };

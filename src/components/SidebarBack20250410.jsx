@@ -18,7 +18,7 @@ import {
     , SdCardAlert, Report, CircleNotifications, Settings, Help, VerifiedUser
 } from "@mui/icons-material";
 
-//import Header from './Header';
+import Header from './Header';
 
 const drawerWidth = 300;
 
@@ -146,11 +146,11 @@ export default function PersistentDrawerLeft() {
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
-            {/* <Header
+            <Header
                 open={open}
                 handleDrawerOpen={handleDrawerOpen}
                 drawerWidth={drawerWidth}
-            /> */}
+            />
             <Drawer
                 sx={{
                     width: drawerWidth,

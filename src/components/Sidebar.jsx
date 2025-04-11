@@ -1,270 +1,272 @@
 import * as React from 'react';
-import { styled, useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
-import CssBaseline from '@mui/material/CssBaseline';
-import List from '@mui/material/List';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import { Collapse, Link } from "@mui/material";
+import PropTypes from 'prop-types';
+import { createTheme } from '@mui/material/styles';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import DescriptionIcon from '@mui/icons-material/Description';
+import LayersIcon from '@mui/icons-material/Layers';
+import SettingsIcon from '@mui/icons-material/Settings';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import PaymentIcon from '@mui/icons-material/Payment';
+import CategoryIcon from '@mui/icons-material/Category';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import PeopleIcon from '@mui/icons-material/People';
+import LoyaltyIcon from '@mui/icons-material/Loyalty';
+import FeedbackIcon from '@mui/icons-material/Feedback';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import HistoryIcon from '@mui/icons-material/History';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import ReceiptIcon from '@mui/icons-material/Receipt';
+import StoreIcon from '@mui/icons-material/Store';
+import GroupIcon from '@mui/icons-material/Group';
+import SecurityIcon from '@mui/icons-material/Security';
+import { AppProvider } from '@toolpad/core/AppProvider';
+import { DashboardLayout } from '@toolpad/core/DashboardLayout';
+import { Typography, } from "@mui/material";
 
-import {
-    ExpandLess, ExpandMore, Home, PointOfSale, AttachMoney, Money, ProductionQuantityLimits, NaturePeople
-    , SdCardAlert, Report, CircleNotifications, Settings, Help, VerifiedUser
-} from "@mui/icons-material";
-
-import Header from './Header';
-
-const drawerWidth = 300;
-
-const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
-    ({ theme }) => ({
-        flexGrow: 1,
-        padding: theme.spacing(3),
-        transition: theme.transitions.create('margin', {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
-        marginLeft: `-${drawerWidth}px`,
-        variants: [
-            {
-                props: ({ open }) => open,
-                style: {
-                    transition: theme.transitions.create('margin', {
-                        easing: theme.transitions.easing.easeOut,
-                        duration: theme.transitions.duration.enteringScreen,
-                    }),
-                    marginLeft: 0,
-                },
-            },
+const NAVIGATION = [
+    {
+        kind: 'header',
+        title: 'Main items',
+    },
+    {
+        segment: '',
+        title: 'Dashboard',
+        icon: <DashboardIcon />,
+    },
+    {
+        kind: 'divider',
+    },
+    {
+        kind: 'header',
+        title: 'Sales',
+    },
+    {
+        segment: 'sale',
+        title: 'Sale',
+        icon: <ShoppingCartIcon />,
+        children: [
+            { segment: 'pos', title: 'POS', icon: <StoreIcon /> },
+            { segment: 'listdrafts', title: 'List Drafts', icon: <DescriptionIcon /> },
+            { segment: 'saleshistory', title: 'Sales History', icon: <HistoryIcon /> },
+            { segment: 'salesreturn', title: 'Sales Return', icon: <ReceiptIcon /> },
+            { segment: 'listreturn', title: 'List Return', icon: <ReceiptIcon /> },
+            { segment: 'addquotation', title: 'Add Quotation', icon: <AttachMoneyIcon /> },
+            { segment: 'listquotation', title: 'List Quotation', icon: <AttachMoneyIcon /> },
+            { segment: 'shipments', title: 'Shipments', icon: <LocalShippingIcon /> },
         ],
-    }),
-);
+    },
+    {
+        segment: 'purchase',
+        title: 'Purchase',
+        icon: <ShoppingCartIcon />,
+        children: [
+            { segment: 'listpurchase', title: 'List Purchase', icon: <DescriptionIcon /> },
+            { segment: 'addpurchase', title: 'Add Purchase', icon: <AttachMoneyIcon /> },
+            { segment: 'listpurchasereturn', title: 'List Purchase Return', icon: <ReceiptIcon /> },
+        ],
+    },
+    {
+        segment: 'expenses',
+        title: 'Expenses',
+        icon: <AttachMoneyIcon />,
+        children: [
+            { segment: 'listexpenses', title: 'List Expenses', icon: <DescriptionIcon /> },
+            { segment: 'addexpenses', title: 'Add Expenses', icon: <AttachMoneyIcon /> },
+            { segment: 'expensecategory', title: 'Expense Category', icon: <CategoryIcon /> },
+        ],
+    },
+    {
+        kind: 'divider',
+    },
+    {
+        kind: 'header',
+        title: 'Product Management',
+    },
+    {
+        segment: 'productmanagement',
+        title: 'Product Management',
+        icon: <InventoryIcon />,
+        children: [
+            { segment: 'inventorylist', title: 'Inventory List', icon: <InventoryIcon /> },
+            { segment: 'productlist', title: 'Product List', icon: <CategoryIcon /> },
+            { segment: 'stockalert', title: 'Stock Alert', icon: <TrendingUpIcon /> },
+            { segment: 'stocktransfer', title: 'Stock Transfer', icon: <LocalShippingIcon /> },
+            { segment: 'stockadjustment', title: 'Stock Adjustment', icon: <AssessmentIcon /> },
+            { segment: 'sellingpricegroup', title: 'Selling Price Group', icon: <AttachMoneyIcon /> },
+            { segment: 'units', title: 'Units', icon: <CategoryIcon /> },
+            { segment: 'categorylist', title: 'Category List', icon: <CategoryIcon /> },
+            { segment: 'brandlist', title: 'Brand List', icon: <CategoryIcon /> },
+            { segment: 'distributorlist', title: 'Distributor List', icon: <PeopleIcon /> },
+            { segment: 'warranties', title: 'Warranties', icon: <DescriptionIcon /> },
+        ],
+    },
+    {
+        kind: 'divider',
+    },
+    {
+        kind: 'header',
+        title: 'Customer Management',
+    },
+    {
+        segment: 'customermanagement',
+        title: 'Customer Management',
+        icon: <PeopleIcon />,
+        children: [
+            { segment: 'customergrouplistrylist', title: 'Customer Group List', icon: <GroupIcon /> },
+            { segment: 'customerlist', title: 'Customer List', icon: <PeopleIcon /> },
+            { segment: 'loyaltypoint', title: 'Loyalty Point', icon: <LoyaltyIcon /> },
+            { segment: 'feedback', title: 'Feedback', icon: <FeedbackIcon /> },
+        ],
+    },
+    {
+        segment: 'promotiondiscount',
+        title: 'Promotion/Discount',
+        icon: <LoyaltyIcon />,
+        children: [
+            { segment: 'activepromotion', title: 'Active Promotion', icon: <TrendingUpIcon /> },
+            { segment: 'createnewpromotion', title: 'Create new Promotion', icon: <AttachMoneyIcon /> },
+            { segment: 'promotionhistory', title: 'Promotion History', icon: <HistoryIcon /> },
+        ],
+    },
+    {
+        kind: 'divider',
+    },
+    {
+        kind: 'header',
+        title: 'User Management',
+    },
+    {
+        segment: 'usermanagement',
+        title: 'User Management',
+        icon: <PeopleIcon />,
+        children: [
+            { segment: 'userlist', title: 'User List', icon: <PeopleIcon /> },
+            { segment: 'rolelist', title: 'Role List', icon: <SecurityIcon /> },
+            { segment: 'permission', title: 'Permission', icon: <SecurityIcon /> },
+            { segment: 'salescommission', title: 'Sales Commission', icon: <AttachMoneyIcon /> },
+        ],
+    },
+    {
+        kind: 'divider',
+    },
+    {
+        kind: 'header',
+        title: 'Report Management',
+    },
+    {
+        segment: 'reportmanagement',
+        title: 'Report Management',
+        icon: <BarChartIcon />,
+        children: [
+            { segment: 'profitlossreport', title: 'Profit/Loss Report', icon: <AssessmentIcon /> },
+            { segment: 'productpurchasereport', title: 'Product Purchase Report', icon: <AssessmentIcon /> },
+            { segment: 'salesrepresentativereport', title: 'Sales Representative Report', icon: <PeopleIcon /> },
+            { segment: 'registerreport', title: 'Register Report', icon: <ReceiptIcon /> },
+            { segment: 'expensereport', title: 'Expense Report', icon: <AttachMoneyIcon /> },
+            { segment: 'sellpaymentreport', title: 'Sell Payment Report', icon: <PaymentIcon /> },
+            { segment: 'purchasepaymentreport', title: 'Purchase Payment Report', icon: <PaymentIcon /> },
+            { segment: 'productsellreport', title: 'Product Sell Report', icon: <TrendingUpIcon /> },
+            { segment: 'itemreport', title: 'Item Report', icon: <CategoryIcon /> },
+            { segment: 'purchaseandsell', title: 'Purchase & Sell', icon: <AssessmentIcon /> },
+            { segment: 'trendingproduct', title: 'Trending Product', icon: <TrendingUpIcon /> },
+            { segment: 'stockadjustmentreport', title: 'Stock Adjustment Report', icon: <AssessmentIcon /> },
+            { segment: 'stockreport', title: 'Stock Report', icon: <InventoryIcon /> },
+            { segment: 'customergroupreport', title: 'Customer Group Report', icon: <GroupIcon /> },
+            { segment: 'suppliercustomerreport', title: 'Supplier & Customer Report', icon: <PeopleIcon /> },
+            { segment: 'taxreport', title: 'Tax Report', icon: <AttachMoneyIcon /> },
+            { segment: 'activitylog', title: 'Activity Log', icon: <HistoryIcon /> },
+        ],
+    },
+    {
+        kind: 'divider',
+    },
+    {
+        kind: 'header',
+        title: 'Settings',
+    },
+    {
+        segment: 'settings',
+        title: 'Settings',
+        icon: <SettingsIcon />,
+        children: [
+            { segment: 'notification', title: 'Notification', icon: <NotificationsIcon /> },
+            { segment: 'generalsettings', title: 'General Settings', icon: <SettingsIcon /> },
+            { segment: 'paymentsettings', title: 'Payment Settings', icon: <PaymentIcon /> },
+            { segment: 'notificationsettings', title: 'Notification Settings', icon: <NotificationsIcon /> },
+        ],
+    },
+];
 
-const DrawerHeader = styled('div')(({ theme }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
-    ...theme.mixins.toolbar,
-    justifyContent: 'flex-end',
-}));
+const demoTheme = createTheme({
+    cssVariables: {
+        colorSchemeSelector: 'data-toolpad-color-scheme',
+    },
+    colorSchemes: { light: true, dark: true },
+    breakpoints: {
+        values: {
+            xs: 0,
+            sm: 600,
+            md: 600,
+            lg: 1200,
+            xl: 1536,
+        },
+    },
+});
 
-export default function PersistentDrawerLeft() {
-    const theme = useTheme();
-    const [open, setOpen] = React.useState(false);
+function DashboardLayoutBasic({ children }) {
+    const [session, setSession] = React.useState({
+        user: {
+            name: 'Bharat Kashyap',
+            email: 'bharatkashyap@outlook.com',
+            image: 'https://avatars.githubusercontent.com/u/19550456',
+        },
+    });
 
-    const handleDrawerOpen = () => {
-        setOpen(true);
-    };
-
-    const handleDrawerClose = () => {
-        setOpen(false);
-    };
-
-    const saleMenuItems = [
-        {
-            name: "Sale",
-            icon: <PointOfSale />,
-            subMenus: ["POS", "List Drafts", "Sales History", "Sales Return", "List Return",
-                "Add Quotation", "List Quotation", "Shipments"]
-        },
-        {
-            name: "Purchase",
-            icon: <AttachMoney />,
-            subMenus: ["List Purchase", "Add Purchase", "List Purchase Return"]
-        },
-        {
-            name: "Expenses",
-            icon: <Money />,
-            subMenus: ["List Expenses", "Add Expenses", "Expense Category"]
-        },
-    ];
-
-    const productMenuItems = [
-        {
-            name: "Product Management",
-            icon: <ProductionQuantityLimits />,
-            subMenus: ["Inventory List", "Product List", "Stock Alert", "Stock Transfer",
-                "Stock Adjustment", "Selling Price Group", "Units", "Category List", "Brand List", "Distributor List", "Warranties"]
-        },
-    ]
-
-    const customerMenuItems = [
-        {
-            name: "Customer Management",
-            icon: <NaturePeople />,
-            subMenus: ["Customer Group List", "Customer List", "Loyalty Point", "Feedback"]
-        },
-        {
-            name: "Promotion/Discount",
-            icon: <SdCardAlert />,
-            subMenus: ["Active Promotion", "Create new Promotion", "Promotion History"]
-        },
-    ]
-
-    const systemMenuItems = [
-        {
-            name: "User Management",
-            icon: <VerifiedUser />,
-            subMenus: ["User List", "Role List", "Permission", "Sales Commission"]
-        },
-        {
-            name: "Report Management",
-            icon: <Report />,
-            subMenus: ["Profit/Loss Report", "Product Purchase Report", "Sales Representative Report",
-                "Register Report", "Expense Report", "Sell Payment Report", "Purchase Payment Report", "Product Sell Report", "Item Report",
-                "Purchase & Sell", "Trending Product", "Stock Adjustment Report", "Stock Report", "Customer Group Report", "Supplier & Customer Report",
-                "Tax Report", "Activity Log"]
-        },
-        {
-            name: "Notification",
-            icon: <CircleNotifications />,
-            subMenus: ["Notification"]
-        },
-        {
-            name: "Settings",
-            icon: <Settings />,
-            subMenus: ["General Settings", "Payment Settings", "Notification Settings"]
-        },
-        {
-            name: "Help/Support",
-            icon: <Help />,
-            subMenus: ["FAQ", "Contact Support", "User Guide"]
-        }
-    ];
-
-    const handleToggle = (menu) => {
-        setOpen((prevState) => ({ ...prevState, [menu]: !prevState[menu] }));
-    };
-
-    return (
-        <Box sx={{ display: 'flex' }}>
-            <CssBaseline />
-            <Header
-                open={open}
-                handleDrawerOpen={handleDrawerOpen}
-                drawerWidth={drawerWidth}
-            />
-            <Drawer
-                sx={{
-                    width: drawerWidth,
-                    flexShrink: 0,
-                    '& .MuiDrawer-paper': {
-                        width: drawerWidth,
-                        boxSizing: 'border-box',
+    const authentication = React.useMemo(() => {
+        return {
+            signIn: () => {
+                setSession({
+                    user: {
+                        name: 'Bharat Kashyap',
+                        email: 'bharatkashyap@outlook.com',
+                        image: 'https://avatars.githubusercontent.com/u/19550456',
                     },
-                }}
-                variant="persistent"
-                anchor="left"
-                open={open}
-            >
-                <DrawerHeader>
-                    <List>
-                        <ListItemButton component={Link} to="/">
-                            <ListItemIcon>
-                                <Home />
-                            </ListItemIcon>
-                            <ListItemText primary="Home" />
-                        </ListItemButton>
-                    </List>
-                    <IconButton onClick={handleDrawerClose}>
-                        {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-                    </IconButton>
-                </DrawerHeader>
-                <Divider />
-                <List>
-                    {saleMenuItems.map((menu) => (
-                        <Box key={menu.name}>
-                            <ListItemButton onClick={() => handleToggle(menu.name)}>
-                                <IconButton>{menu.icon}</IconButton>
-                                <ListItemText primary={menu.name} />
-                                {open[menu.name] ? <ExpandLess /> : <ExpandMore />}
-                            </ListItemButton>
-                            <Collapse in={open[menu.name]} timeout="auto" unmountOnExit>
-                                <List component="div" disablePadding>
-                                    {menu.subMenus.map((sub) => (
-                                        <ListItemButton key={sub} sx={{ pl: 4 }} component={Link} to={`/${menu.name.toLowerCase().replace(" ", "")}/${sub.toLowerCase().replaceAll(" ", "")}`}>
-                                            <ListItemText primary={sub} />
-                                        </ListItemButton>
-                                    ))}
-                                </List>
-                            </Collapse>
-                        </Box>
-                    ))}
-                </List>
-                <Divider />
-                <List>
-                    {productMenuItems.map((menu) => (
-                        <Box key={menu.name}>
-                            <ListItemButton onClick={() => handleToggle(menu.name)}>
-                                <IconButton>{menu.icon}</IconButton>
-                                <ListItemText primary={menu.name} />
-                                {open[menu.name] ? <ExpandLess /> : <ExpandMore />}
-                            </ListItemButton>
-                            <Collapse in={open[menu.name]} timeout="auto" unmountOnExit>
-                                <List component="div" disablePadding>
-                                    {menu.subMenus.map((sub) => (
-                                        <ListItemButton key={sub} sx={{ pl: 4 }} component={Link} to={`/${menu.name.toLowerCase().replace(" ", "")}/${sub.toLowerCase().replaceAll(" ", "")}`}>
-                                            <ListItemText primary={sub} />
-                                        </ListItemButton>
-                                    ))}
-                                </List>
-                            </Collapse>
-                        </Box>
-                    ))}
-                </List>
-                <Divider />
-                <List>
-                    {customerMenuItems.map((menu) => (
-                        <Box key={menu.name}>
-                            <ListItemButton onClick={() => handleToggle(menu.name)}>
-                                <IconButton>{menu.icon}</IconButton>
-                                <ListItemText primary={menu.name} />
-                                {open[menu.name] ? <ExpandLess /> : <ExpandMore />}
-                            </ListItemButton>
-                            <Collapse in={open[menu.name]} timeout="auto" unmountOnExit>
-                                <List component="div" disablePadding>
-                                    {menu.subMenus.map((sub) => (
-                                        <ListItemButton key={sub} sx={{ pl: 4 }} component={Link} to={`/${menu.name.toLowerCase().replace(" ", "")}/${sub.toLowerCase().replaceAll(" ", "")}`}>
-                                            <ListItemText primary={sub} />
-                                        </ListItemButton>
-                                    ))}
-                                </List>
-                            </Collapse>
-                        </Box>
-                    ))}
-                </List>
-                <Divider />
-                <List>
-                    {systemMenuItems.map((menu) => (
-                        <Box key={menu.name}>
-                            <ListItemButton onClick={() => handleToggle(menu.name)}>
-                                <IconButton>{menu.icon}</IconButton>
-                                <ListItemText primary={menu.name} />
-                                {open[menu.name] ? <ExpandLess /> : <ExpandMore />}
-                            </ListItemButton>
-                            <Collapse in={open[menu.name]} timeout="auto" unmountOnExit>
-                                <List component="div" disablePadding>
-                                    {menu.subMenus.map((sub) => (
-                                        <ListItemButton key={sub} sx={{ pl: 4 }} component={Link} to={`/${menu.name.toLowerCase().replace(" ", "")}/${sub.toLowerCase().replaceAll(" ", "")}`}>
-                                            <ListItemText primary={sub} />
-                                        </ListItemButton>
-                                    ))}
-                                </List>
-                            </Collapse>
-                        </Box>
-                    ))}
-                </List>
-            </Drawer>
-            <Main open={open}>
-                <DrawerHeader />
-            </Main>
-        </Box>
+                });
+            },
+            signOut: () => {
+                setSession(null);
+            },
+        };
+    }, []);
+    return (
+        <AppProvider
+            session={session}
+            authentication={authentication}
+            navigation={NAVIGATION}
+            theme={demoTheme}
+            branding={{
+                title: (
+                    <Typography variant="h6" className="!font-bold font-sans">
+                        Your Title
+                    </Typography>
+                ),
+                //logo: <img src="/logo.png" alt="logo" />,
+            }}
+
+        >
+            <DashboardLayout>
+                {children}
+            </DashboardLayout>
+        </AppProvider>
     );
 }
+
+DashboardLayoutBasic.propTypes = {
+    children: PropTypes.node,
+};
+
+export default DashboardLayoutBasic;

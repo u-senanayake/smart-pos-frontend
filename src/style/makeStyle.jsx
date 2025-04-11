@@ -4,7 +4,7 @@ export const useStyles = makeStyles((theme) => ({
   mainContainer: {
     padding: theme.spacing(3),
     backgroundColor: theme.palette.background.default,
-    marginTop: theme.spacing(10),
+    marginTop: theme.spacing(1),
   },
   errorTitle: {
     fontWeight: "bold",
