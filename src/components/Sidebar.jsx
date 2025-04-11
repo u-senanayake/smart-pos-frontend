@@ -42,7 +42,7 @@ const NAVIGATION = [
     },
     {
         kind: 'header',
-        title: 'Sales',
+        title: 'Sales Management',
     },
     {
         segment: 'sale',
@@ -59,16 +59,16 @@ const NAVIGATION = [
     {
         segment: 'quotation',
         title: 'Quotation',
-        icon: <ShoppingCartIcon />,
+        icon: <AttachMoneyIcon />,
         children: [
             { segment: 'addquotation', title: 'Add Quotation', icon: <AttachMoneyIcon /> },
-            { segment: 'listquotation', title: 'List Quotation', icon: <AttachMoneyIcon /> },
+            { segment: 'listquotation', title: 'List Quotation', icon: <DescriptionIcon /> },
         ],
     },
     {
         segment: 'delivery',
-        title: 'Delevery',
-        icon: <ShoppingCartIcon />,
+        title: 'Delivery',
+        icon: <LocalShippingIcon />,
         children: [
             { segment: 'shipments', title: 'Shipments', icon: <LocalShippingIcon /> },
         ],
@@ -102,14 +102,13 @@ const NAVIGATION = [
     },
     {
         segment: 'product',
-        title: 'Product Management',
+        title: 'Product',
         icon: <InventoryIcon />,
         children: [
             { segment: 'productlist', title: 'Product List', icon: <CategoryIcon /> },
             { segment: 'categorylist', title: 'Category List', icon: <CategoryIcon /> },
             { segment: 'brandlist', title: 'Brand List', icon: <CategoryIcon /> },
             { segment: 'distributorlist', title: 'Distributor List', icon: <PeopleIcon /> },
-
             { segment: 'sellingpricegroup', title: 'Selling Price Group', icon: <AttachMoneyIcon /> },
             { segment: 'units', title: 'Units', icon: <CategoryIcon /> },
             { segment: 'warranties', title: 'Warranties', icon: <DescriptionIcon /> },
@@ -117,7 +116,7 @@ const NAVIGATION = [
     },
     {
         segment: 'inventory',
-        title: 'Inventory Management',
+        title: 'Inventory',
         icon: <InventoryIcon />,
         children: [
             { segment: 'inventorylist', title: 'Inventory List', icon: <InventoryIcon /> },
@@ -135,7 +134,7 @@ const NAVIGATION = [
     },
     {
         segment: 'customer',
-        title: 'Customer Management',
+        title: 'Customer',
         icon: <PeopleIcon />,
         children: [
             { segment: 'customergrouplist', title: 'Customer Group List', icon: <GroupIcon /> },
@@ -181,7 +180,7 @@ const NAVIGATION = [
     },
     {
         segment: 'reportmanagement',
-        title: 'Report Management',
+        title: 'Report',
         icon: <BarChartIcon />,
         children: [
             { segment: 'profitlossreport', title: 'Profit/Loss Report', icon: <AssessmentIcon /> },
