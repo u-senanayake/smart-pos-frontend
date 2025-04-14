@@ -3,7 +3,6 @@ import { makeStyles } from "@mui/styles";
 export const useStyles = makeStyles((theme) => ({
   mainContainer: {
     padding: theme.spacing(3),
-    backgroundColor: theme.palette.background.default,
     marginTop: theme.spacing(1),
   },
   errorTitle: {
@@ -13,7 +12,7 @@ export const useStyles = makeStyles((theme) => ({
   },
   formContainer: {
     padding: theme.spacing(3),
-    marginTop: theme.spacing(3),
+    marginTop: theme.spacing(3),    
   },
   formButtonsContainer: {
     display: "flex",

@@ -99,7 +99,7 @@ const UpdateRole = () => {
 
             <PageTitle title={LABEL.PAGE_TITLE_ROLE_UPDATE + roleName} />
             <Container maxWidth="sm" >
-                <Paper elevation={4} className={classes.formContainer}>
+                <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
                     <form>
                         <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
                         <ErrorAlert message={errorMessage} />
