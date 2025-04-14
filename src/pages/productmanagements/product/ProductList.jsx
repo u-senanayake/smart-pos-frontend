@@ -1,41 +1,37 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import {
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton,
-  Typography, Pagination, FormControl, InputLabel, Select, MenuItem, Box
-} from "@mui/material";
-import { Delete, Edit, Add, Preview } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { Typography, Stack, Container, Breadcrumbs } from "@mui/material";
+
+import DataTable from "../../../components/PageElements/DataTable";
+import { AddNewButton } from "../../../components/PageElements/Buttons";
+import { PageTitle } from "../../../components/PageElements/CommonElements";
+import { SkeletonLoading } from "../../../components/PageElements/Loading";
+import { EditIcon, DeleteIcon, PreviewIcon } from "../../../components/PageElements/IconButtons";
+import { Home } from "../../../components/PageElements/BreadcrumbsLinks";
+import ErrorMessage from "../../../components/DialogBox/ErrorMessage";
+import DeleteConfirmDialog from "../../../components/DialogBox/DeleteConfirmDialog";
+
 //Service
 import ProductService from "../../../services/ProductService";
-import CategoryService from "../../../services/CategoryService";
-import DistributorService from "../../../services/DistributorService";
 //Utils
-import { renderStatusIcon, formatPrice } from "../../../utils/utils";
-import { formatDate } from '../../../utils/Dateutils';
-import { SkeletonLoading, ErrorMessage, ConfirmationDialog, ActiveStatusFilter } from "../../../utils/FieldUtils";
-import { getSortedData, toggleSortDirection } from "../../../utils/SortUtils";
+import { renderStatusIcon, } from "../../../utils/utils";
 //Style
-import { styles } from "../../../style/TableStyle";
+import { useStyles } from "../../../style/makeStyle";
+
+import * as LABEL from '../../../utils/const/FieldLabels';
+import * as MESSAGE from '../../../utils/const/Message';
+import * as ROUTES from '../../../utils/const/RouteProperty';
 
 const ProductList = () => {
 
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [distributors, setDistributors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [paginationLoading, setPaginationLoading] = useState(false);
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" }); // Sorting state
-  const [categoryFilter, setCategoryFilter] = useState(""); // Role filter state
-  const [distributorFilter, setDistributorFilter] = useState(""); // Role filter state
-  const [statusFilter, setStatusFilter] = useState(""); // Account status filter state
-  const [lockFilter, setLockFilter] = useState(""); // Account lock filter state
+  const navigate = useNavigate();
 
-
-  const itemsPerPage = 10;
+  const classes = useStyles();
 
   useEffect(() => {
     ProductService.getProducts()
@@ -44,34 +40,8 @@ const ProductList = () => {
         setLoading(false);
       })
       .catch((error) => {
-        console.error("Error fetching products:", error);
-        setError("Failed to fetch products. Please try again later.");
-        setLoading(false);
-      });
-  }, []);
-
-  useEffect(() => {
-    CategoryService.getCategories()
-      .then((res) => {
-        setCategories(res.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching categories:", error);
-        setError("Failed to fetch categories. Please try again later.");
-        setLoading(false);
-      });
-  }, []);
-
-  useEffect(() => {
-    DistributorService.getDistributors()
-      .then((res) => {
-        setDistributors(res.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching distributors:", error);
-        setError("Failed to fetch distributors. Please try again later.");
+        console.error(MESSAGE.PRODUCT_FEATCHING_ERROR, error);
+        setError(MESSAGE.PRODUCT_FEATCHING_ERROR_MSG);
         setLoading(false);
       });
   }, []);
@@ -80,224 +50,113 @@ const ProductList = () => {
     ProductService.deleteProduct(id)
       .then(() => setProducts(products.filter((product) => product.productId !== id)))
       .catch((error) => {
-        console.error("Error deleting product:", error);
-        setError("Failed to delete product. Please try again later.");
+        console.error(MESSAGE.PRODUCT_DELETE_ERROR, error);
+        setError(MESSAGE.PRODUCT_DELETE_ERROR_MSG);
       });
   }
-  const confirmDelete = (id) => {
-    setSelectedId(id);
-    setDialogOpen(true);
-  };
 
-  const handleDialogConfirm = () => {
-    if (selectedId) {
-      deleteProduct(selectedId);
-    }
-    setDialogOpen(false);
-    setSelectedId(null);
-  };
+  function handleClick(event) {
+    navigate(event.target.href);
+  }
 
-  const handleDialogCancel = () => {
-    setDialogOpen(false);
-    setSelectedId(null);
-  };
+  const columns = [
+    {
+      field: 'productId',
+      headerName: LABEL.ID,
+      flex: 0.5,
+      headerClassName: 'super-app-theme--header',
+    },
+    {
+      field: 'productName',
+      headerName: LABEL.NAME,
+      flex: 2,
+      headerClassName: 'super-app-theme--header',
+    },
+    {
+      field: 'category',
+      headerName: LABEL.TABLE_CATEGORY,
+      flex: 1.5,
+      headerClassName: 'super-app-theme--header',
+      valueGetter: (value, row) => `${row.category.name}`,
+    },
+    {
+      field: 'price',
+      headerName: LABEL.TABLE_PRICE,
+      flex: 1,
+      headerClassName: 'super-app-theme--header',
+    },
+    {
+      field: 'active',
+      headerName: LABEL.TABLE_STATUS,
+      flex: 0.8,
+      filterable: false,
+      headerClassName: 'super-app-theme--header',
+      renderCell: (params) => renderStatusIcon(params.row.enabled),
+    },
+    {
+      field: 'action',
+      headerName: LABEL.TABLE_ACTION,
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      headerClassName: 'super-app-theme--header',
+      disableClickEventBubbling: true,
+      renderCell: (params) => {
+        const onClick = (e) => {
+          const currentRow = params.row;
+          return alert(JSON.stringify(currentRow, null, 4));
+        };
+        return (
+          <Stack direction="row" spacing={2}>
+            <EditIcon url={ROUTES.PRODUCT_UPDATE.replace(':id', params.row.id)} />
+            <DeleteIcon
+              onClick={() => {
+                setSelectedId(params.row.id);
+                setDialogOpen(true);
+              }}
+            />
+            <PreviewIcon url={ROUTES.PRODUCT_VIEW.replace(':id', params.row.id)} />
+          </Stack>
+        );
+      },
+    },
+  ];
 
-  const handlePageChange = (event, value) => {
-    setPaginationLoading(true);
-    setTimeout(() => {
-      setCurrentPage(value);
-      setPaginationLoading(false);
-    }, 500); // Simulate a delay (replace this with actual fetching logic if needed)
-  };
-
-  const handleSort = (key) => {
-    setSortConfig((currentConfig) => toggleSortDirection(currentConfig, key));
-  };
-
-  const applyFilters = () => {
-    return products.filter((product) => {
-      const matchesCategory = categoryFilter ? product.category.name === categoryFilter : true;
-      const matchesDistributor = distributorFilter ? product.distributor.name === distributorFilter : true;
-      const matchesStatus = statusFilter ? String(product.enabled) === statusFilter : true;
-
-      return matchesCategory && matchesDistributor && matchesStatus;
-    });
-  };
-  const filteredProduct = applyFilters();
-  const sortedProduct = getSortedData(filteredProduct, sortConfig);
-
-  const paginatedProduct = sortedProduct.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-
-  if (loading || paginationLoading) {
+  if (loading) {
     return <SkeletonLoading />;
   }
 
   if (error) {
     return (
-      <ErrorMessage
-        message={error}
-        actionText="Retry"
-        onAction={() => window.location.reload()}
-      />
+      <ErrorMessage message={error} actionText="Retry" onAction={() => window.location.reload()} />
     );
   }
 
 
   if (products.length === 0) {
     return (
-      <div style={{ textAlign: "center", marginTop: "20px" }}>
-        <Typography variant="h6">No products found. Add some product to see them here.</Typography>
-        <Button
-          component={Link}
-          to="/product/createproduct"
-          variant="contained"
-          color="primary"
-          startIcon={<Add />}
-          style={{ marginTop: "10px" }}
-        >
-          Add Product
-        </Button>
+      <div className={classes.errorTitle}>
+        <Typography variant="h6">{MESSAGE.PRODUCT_LIST_EMPTY}</Typography>
+        <AddNewButton url={ROUTES.PRODUCT_CREATE} />
       </div>
     );
   }
 
   return (
-    <div style={styles.mainContainer}>
-      <div style={styles.titleContainer}>
-        <Typography variant="h4" style={styles.title}>
-          Product List
-        </Typography>
+    <Container className={classes.mainContainer}>
+      <div role="presentation" onClick={handleClick}>
+        <Breadcrumbs aria-label="breadcrumb">
+          <Home />
+          <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Product List</Typography>
+        </Breadcrumbs>
       </div>
-      <div style={styles.filterContainer}>
-        <Button
-          component={Link}
-          to="/product/createproduct"
-          variant="contained"
-          color="primary"
-          startIcon={<Add />}
-          style={{ marginBottom: "20px" }}
-        >
-          Add Product
-        </Button>
-        <Paper sx={{ p: 1, mt: 1, mb: 1 }}>
-          <Typography variant="h6" style={styles.filterTitle}>
-            Filter data
-          </Typography>
-          <FormControl style={styles.filterFormController}>
-            <InputLabel>Category</InputLabel>
-            <Select
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-            >
-              <MenuItem value="">All</MenuItem>
-              {categories.map((category) => (
-                <MenuItem key={category.categoryId} value={category.name}>
-                  {category.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl style={styles.filterFormController}>
-            <InputLabel>Distributor</InputLabel>
-            <Select
-              value={distributorFilter}
-              onChange={(e) => setDistributorFilter(e.target.value)}
-            >
-              <MenuItem value="">All</MenuItem>
-              {distributors.map((distributor) => (
-                <MenuItem key={distributor.distributorId} value={distributor.companyName}>
-                  {distributor.companyName}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <ActiveStatusFilter
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            style={styles.filterFormController}
-          />
-        </Paper>
-      </div>
-      {paginationLoading ? (
-        <SkeletonLoading />
-      ) : (
-        <TableContainer component={Paper} >
-          <Table  sx={{ minWidth: '700px' }}>
-            <TableHead>
-              <TableRow style={styles.tableHeaderCell}>
-                <TableCell onClick={() => handleSort("productId")}>Product ID {sortConfig.key === "productId" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                <TableCell onClick={() => handleSort("productName")}>Name {sortConfig.key === "productName" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                <TableCell onClick={() => handleSort("category.name")}>Category {sortConfig.key === "category.name" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                <TableCell onClick={() => handleSort("distributor.name")}>Distributor {sortConfig.key === "distributor.name" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                <TableCell onClick={() => handleSort("price")}>Price {sortConfig.key === "price" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                <TableCell onClick={() => handleSort("enabled")}>Enabled {sortConfig.key === "enabled" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                <TableCell onClick={() => handleSort("manufactureDate")}>Manufacture Date {sortConfig.key === "manufactureDate" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                <TableCell onClick={() => handleSort("expireDate")}>Expiry Date {sortConfig.key === "expireDate" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {paginatedProduct.map((product, index) => (
-                <TableRow key={product.id} sx={styles.zebraStripe(index)}>
-                  <TableCell style={styles.tableCell}>{product.productId}</TableCell>
-                  <TableCell style={styles.tableCell}>{product.productName}</TableCell>
-                  <TableCell style={styles.tableCell}>{product.category.name}</TableCell>
-                  <TableCell style={styles.tableCell}>{product.distributor.name}</TableCell>
-                  <TableCell style={styles.tableCell}>{formatPrice(product.price)}</TableCell>
-                  <TableCell style={styles.tableCell}>{renderStatusIcon(product.enabled)}</TableCell>
-                  <TableCell style={styles.tableCell}>{formatDate(product.manufactureDate)}</TableCell>
-                  <TableCell style={styles.tableCell}>{formatDate(product.expireDate)}</TableCell>
-                  <TableCell style={styles.tableCell}>
-                    <FormControl>
-                      <Select
-                        value=""
-                        onChange={(e) => {
-                          const action = e.target.value;
-                          if (action === "edit") {
-                            window.location.href = `/product/updateproduct/${product.id}`;
-                          } else if (action === "delete") {
-                            confirmDelete(product.id);
-                          } else if (action === "view") {
-                            window.location.href = `/product/viewproduct/${product.id}`;
-                          }
-                        }}
-                        displayEmpty
-                      >
-                        <MenuItem value="" disabled>
-                          Actions
-                        </MenuItem>
-                        <MenuItem value="edit">Edit</MenuItem>
-                        <MenuItem value="delete">Delete</MenuItem>
-                        <MenuItem value="view">View</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <Pagination
-            count={Math.ceil(products.length / itemsPerPage)} // Total pages
-            page={currentPage}
-            onChange={handlePageChange}
-            color="primary"
-            style={styles.pagination}
-          />
-        </TableContainer>
-      )}
-
-      <ConfirmationDialog
-        open={dialogOpen}
-        title="Delete Product"
-        message="Are you sure you want to delete this product?"
-        onConfirm={handleDialogConfirm}
-        onCancel={handleDialogCancel}
-      />
-    </div>
+      <PageTitle title={LABEL.PAGE_TITLE_PRODUCT_LIST} />
+      <div style={{ marginBottom: "10px" }}>
+        <AddNewButton url={ROUTES.PRODUCT_CREATE} />
+      </div >
+      <DataTable rows={products} columns={columns} getRowId={(row) => row.id} />
+      <DeleteConfirmDialog open={dialogOpen} onDelete={deleteProduct} onCancel={() => setDialogOpen(false)} id={selectedId} />
+    </Container>
   );
 };
 

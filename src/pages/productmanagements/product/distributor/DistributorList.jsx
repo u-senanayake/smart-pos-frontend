@@ -1,16 +1,27 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton, Typography, Pagination, Box } from "@mui/material";
-import { Delete, Edit, Add, Preview } from "@mui/icons-material";
+import React, { useState, useEffect, } from "react";
+import { useNavigate, } from "react-router-dom";
+import { Breadcrumbs, Container, Typography, Stack, } from "@mui/material";
+
+import DataTable from "../../../../components/PageElements/DataTable";
+import { AddNewButton } from "../../../../components/PageElements/Buttons";
+import { PageTitle } from "../../../../components/PageElements/CommonElements";
+import { SkeletonLoading } from "../../../../components/PageElements/Loading";
+import { EditIcon, DeleteIcon, PreviewIcon } from "../../../../components/PageElements/IconButtons";
+import { Home } from "../../../../components/PageElements/BreadcrumbsLinks";
+import ErrorMessage from "../../../../components/DialogBox/ErrorMessage";
+import DeleteConfirmDialog from "../../../../components/DialogBox/DeleteConfirmDialog";
+
 //Service
 import DistributorService from "../../../../services/DistributorService";
 //Utils
 import { renderStatusIcon } from "../../../../utils/utils";
-import { formatDate } from '../../../../utils/Dateutils';
-import { SkeletonLoading, ErrorMessage, ConfirmationDialog, ActiveStatusFilter } from '../../../../utils/FieldUtils'
-import { getSortedData, toggleSortDirection } from "../../../../utils/SortUtils";
+
+import * as LABEL from '../../../../utils/const/FieldLabels';
+import * as MESSAGE from '../../../../utils/const/Message';
+import * as ROUTES from '../../../../utils/const/RouteProperty';
+
 //Style
-import { styles } from "../../../../style/TableStyle";
+import { useStyles } from "../../../../style/makeStyle";
 
 const DistributorList = () => {
 
@@ -19,12 +30,9 @@ const DistributorList = () => {
   const [error, setError] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [paginationLoading, setPaginationLoading] = useState(false);
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" }); // Sorting state
-  const [statusFilter, setStatusFilter] = useState(""); // Account status filter state
+  const navigate = useNavigate();
 
-  const itemsPerPage = 10;
+  const classes = useStyles();
 
   useEffect(() => {
     DistributorService.getDistributors()
@@ -33,8 +41,8 @@ const DistributorList = () => {
         setLoading(false);
       })
       .catch((error) => {
-        console.error("Error fetching distributors:", error);
-        setError("Failed to fetch distributors. Please try again later.");
+        console.error(MESSAGE.DISTRIBUTOR_FEATCHING_ERROR, error);
+        setError(MESSAGE.DISTRIBUTOR_FEATCHING_ERROR_MSG);
         setLoading(false);
       });
   }, []);
@@ -43,177 +51,106 @@ const DistributorList = () => {
     DistributorService.deleteDistributor(id)
       .then(() => setDistributors(distributors.filter((distributor) => distributor.distributorId !== id)))
       .catch((error) => {
-        console.error("Error deleting distributor:", error);
-        setError("Failed to delete distributor. Please try again later.");
+        console.error(MESSAGE.DISTRIBUTOR_DELETE_ERROR, error);
+        setError(MESSAGE.DISTRIBUTOR_DELETE_ERROR_MSG);
       });
   };
 
-  const confirmDelete = (id) => {
-    setSelectedId(id);
-    setDialogOpen(true);
-  };
+  function handleClick(event) {
+    navigate(event.target.href);
+  }
+  const columns = [
+    {
+      field: 'companyName',
+      headerName: LABEL.TABLE_COM_NAME,
+      flex: 1,
+      headerClassName: 'super-app-theme--header',
+    },
+    {
+      field: 'email',
+      headerName: LABEL.TABLE_EMAIL,
+      flex: 1.2,
+      headerClassName: 'super-app-theme--header',
+    },
+    {
+      field: 'phoneNo1',
+      headerName: LABEL.TABLE_PHONE,
+      flex: 0.8,
+      filterable: false,
+      headerClassName: 'super-app-theme--header',
+    },
+    {
+      field: 'active',
+      headerName: LABEL.TABLE_STATUS,
+      flex: 0.8,
+      filterable: false,
+      headerClassName: 'super-app-theme--header',
+      renderCell: (params) => renderStatusIcon(params.row.enabled),
+    },
+    {
+      field: 'action',
+      headerName: LABEL.TABLE_ACTION,
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      headerClassName: 'super-app-theme--header',
+      disableClickEventBubbling: true,
+      renderCell: (params) => {
+        const onClick = (e) => {
+          const currentRow = params.row;
+          return alert(JSON.stringify(currentRow, null, 4));
+        };
+        return (
+          <Stack direction="row" spacing={2}>
+            <EditIcon url={ROUTES.DISTRIBUTOR_UPDATE.replace(':distributorId', params.row.distributorId)} />
+            <DeleteIcon
+              onClick={() => {
+                setSelectedId(params.row.distributorId);
+                setDialogOpen(true);
+              }}
+            />
+            <PreviewIcon url={ROUTES.DISTRIBUTOR_VIEW.replace(':distributorId', params.row.distributorId)} />
+          </Stack>
+        );
+      },
+    },
+  ];
 
-  const handleDialogConfirm = () => {
-    if (selectedId) {
-      deleteDistributor(selectedId);
-    }
-    setDialogOpen(false);
-    setSelectedId(null);
-  };
 
-  const handleDialogCancel = () => {
-    setDialogOpen(false);
-    setSelectedId(null);
-  };
-
-  const handleSort = (key) => {
-    setSortConfig((currentConfig) => toggleSortDirection(currentConfig, key));
-  };
-
-  const applyFilters = () => {
-    return distributors.filter((distributor) => {
-      const matchesStatus = statusFilter ? String(distributor.enabled) === statusFilter : true;
-
-      return matchesStatus;
-    });
-  };
-
-  const handlePageChange = (event, value) => {
-    setPaginationLoading(true);
-    setTimeout(() => {
-      setCurrentPage(value);
-      setPaginationLoading(false);
-    }, 500); // Simulate a delay (replace this with actual fetching logic if needed)
-  };
-
-  const filteredDistributor = applyFilters();
-
-  const sortedDistributor = getSortedData(filteredDistributor, sortConfig);
-
-  const paginatedDistributor = sortedDistributor.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-
-  if (loading || paginationLoading) {
+  if (loading) {
     return <SkeletonLoading />;
   }
 
   if (error) {
     return (
-      <ErrorMessage
-        message={error}
-        actionText="Retry"
-        onAction={() => window.location.reload()}
-      />
+      <ErrorMessage message={error} actionText="Retry" onAction={() => window.location.reload()} />
     );
   }
 
   if (distributors.length === 0) {
     return (
-      <div style={{ textAlign: "center", marginTop: "20px" }}>
-        <Typography variant="h6">No distributors found. Add some distributor to see them here.</Typography>
-        <Button
-          component={Link}
-          to="/product/distributor/createdistributor"
-          variant="contained"
-          color="primary"
-          startIcon={<Add />}
-          style={{ marginTop: "10px" }}
-        >
-          Add Distributor
-        </Button>
+      <div className={classes.errorTitle}>
+        <Typography variant="h6">{MESSAGE.DISTRIBUTOR_LIST_EMPTY}</Typography>
+        <AddNewButton url={ROUTES.DISTRIBUTOR_CREATE} />
       </div>
     );
   };
 
-
   return (
-    <div style={styles.mainContainer}>
-      <Typography variant="h4" style={styles.title}>
-        Distributor List
-      </Typography>
-      <div style={styles.filterContainer}>
-        <Button
-          component={Link}
-          to="/product/distributor/createdistributor"
-          variant="contained"
-          color="primary"
-          startIcon={<Add />}
-          style={{ marginBottom: "20px" }}
-        >
-          Add Distributor
-        </Button>
-        <Paper sx={{ p: 1, mt: 1, mb: 1 }}>
-          <Typography variant="h6" style={styles.filterTitle}>
-            Filter data
-          </Typography>
-          <ActiveStatusFilter
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            style={styles.filterFormController}
-          />
-        </Paper>
+    <Container className={classes.mainContainer}>
+      <div role="presentation" onClick={handleClick}>
+        <Breadcrumbs aria-label="breadcrumb">
+          <Home />
+          <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Distributor List</Typography>
+        </Breadcrumbs>
       </div>
-
-      {paginationLoading ? (
-        <SkeletonLoading />
-      ) : (
-        <TableContainer component={Paper} sx={{ width: '100%', overflowX: 'auto' }}>
-          <Box sx={{ overflowX: 'auto' }}>
-            <Table sx={{ minWidth: '1300px' }}>
-              <TableHead>
-                <TableRow style={styles.tableHeaderCell}>
-                  <TableCell onClick={() => handleSort("companyName")}>Company Name {sortConfig.key === "companyName" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell onClick={() => handleSort("email")}>Email {sortConfig.key === "email" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell>Phone Number</TableCell>
-                  <TableCell onClick={() => handleSort("address")}>Address {sortConfig.key === "address" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell onClick={() => handleSort("enabled")}>Enabled {sortConfig.key === "enabled" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {paginatedDistributor.map((distributor, index) => (
-                  <TableRow key={distributor.distributorId} sx={styles.zebraStripe(index)}>
-                    <TableCell style={styles.tableCell}>{distributor.companyName}</TableCell>
-                    <TableCell style={styles.tableCell}>{distributor.email}</TableCell>
-                    <TableCell style={styles.tableCell}>{`${distributor.phoneNo1} / ${distributor.phoneNo2} `}</TableCell>
-                    <TableCell style={styles.tableCell}>{distributor.address}</TableCell>
-                    <TableCell style={styles.tableCell}>{renderStatusIcon(distributor.enabled)}</TableCell>
-                    <TableCell style={styles.tableCell}>
-                      <IconButton component={Link} to={`/product/distributor/updatedistributor/${distributor.distributorId}`}>
-                        <Edit color="primary" />
-                      </IconButton>
-                      <IconButton onClick={() => confirmDelete(distributor.distributorId)}>
-                        <Delete color="error" />
-                      </IconButton>
-                      <IconButton component={Link} to={`/product/distributor/viewdistributor/${distributor.distributorId}`}>
-                        <Preview color="primary" />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Box>
-        </TableContainer>
-      )}
-      <Pagination
-        count={Math.ceil(distributors.length / itemsPerPage)} // Total pages
-        page={currentPage}
-        onChange={handlePageChange}
-        color="primary"
-        style={styles.pagination}
-      />
-      <ConfirmationDialog
-        open={dialogOpen}
-        title="Delete Role"
-        message="Are you sure you want to delete this category?"
-        onConfirm={handleDialogConfirm}
-        onCancel={handleDialogCancel}
-      />
-    </div>
+      <PageTitle title={LABEL.PAGE_TITLE_DISTRIBUTOR_LIST} />
+      <div style={{ marginBottom: "10px" }}>
+        <AddNewButton url={ROUTES.DISTRIBUTOR_CREATE} />
+      </div >
+      <DataTable rows={distributors} columns={columns} getRowId={(row) => row.distributorId} />
+      <DeleteConfirmDialog open={dialogOpen} onDelete={deleteDistributor} onCancel={() => setDialogOpen(false)} id={selectedId} />
+    </Container>
   );
 };
 

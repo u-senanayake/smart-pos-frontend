@@ -1,93 +1,103 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Paper, Button, IconButton, Typography, Stack } from "@mui/material";
-import { Delete, Edit, Add, Preview } from "@mui/icons-material";
-import { DataGrid } from '@mui/x-data-grid';
+import { useNavigate } from "react-router-dom";
+import { Typography, Stack, Container, Breadcrumbs } from "@mui/material";
+
+import DataTable from "../../../components/PageElements/DataTable";
+import { AddNewButton } from "../../../components/PageElements/Buttons";
+import { PageTitle } from "../../../components/PageElements/CommonElements";
+import { SkeletonLoading } from "../../../components/PageElements/Loading";
+import { EditIcon, DeleteIcon, PreviewIcon } from "../../../components/PageElements/IconButtons";
+import { Home } from "../../../components/PageElements/BreadcrumbsLinks";
+import ErrorMessage from "../../../components/DialogBox/ErrorMessage";
+import DeleteConfirmDialog from "../../../components/DialogBox/DeleteConfirmDialog";
 
 //Service
 import UserService from "../../../services/UserService";
 //Utils
 import { formatPhoneNumber, renderStatusIcon, renderLockIcon, } from "../../../utils/utils";
-import { ConfirmationDialog, SkeletonLoading, ErrorMessage, } from "../../../utils/FieldUtils";
+
+import * as LABEL from '../../../utils/const/FieldLabels';
+import * as MESSAGE from '../../../utils/const/Message';
+import * as ROUTES from '../../../utils/const/RouteProperty';
+
 //Style
-import { styles } from "../../../style/TableStyle";
+import { useStyles } from "../../../style/makeStyle";
 
 const UserList = () => {
 
   const [users, setUsers] = useState([]);
-  const [selectedId, setSelectedId] = useState(null);
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+  const navigate = useNavigate();
+
+  const classes = useStyles();
+
+  useEffect(() => {
+    UserService.getUsers()
+      .then((res) => {
+        setUsers(res.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error(MESSAGE.USER_FEATCHING_ERROR, error);
+        setError(MESSAGE.USER_FEATCHING_ERROR_MSG);
+        setLoading(false);
+      });
+  }, []);
 
   const deleteUser = (id) => {
     UserService.deleteUser(id)
       .then(() => setUsers(users.filter((user) => user.userId !== id)))
       .catch((error) => {
-        console.error("Error deleting user:", error);
-        setError("Failed to delete user. Please try again later.");
+        console.error(MESSAGE.USER_DELETE_ERROR, error);
+        setError(MESSAGE.USER_DELETE_ERROR_MSG);
       });
   };
 
-  const confirmDelete = (id) => {
-    setSelectedId(id);
-    setDialogOpen(true);
-  };
-
-  const handleDialogConfirm = () => {
-    if (selectedId) {
-      deleteUser(selectedId);
-    }
-    setDialogOpen(false);
-    setSelectedId(null);
-  };
-
-  const handleDialogCancel = () => {
-    setDialogOpen(false);
-    setSelectedId(null);
-  };
+  function handleClick(event) {
+    navigate(event.target.href);
+  }
 
   const columns = [
-    { field: 'userId', headerName: 'User ID', width: 70 },
-    { field: 'username', headerName: 'Username', width: 130 },
     {
       field: 'name',
-      headerName: 'Name',
-      width: 130,
+      headerName: LABEL.TABLE_NAME,
+      flex: 1,
       valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
     },
-    { field: 'email', headerName: 'Email', width: 130 },
+    { field: 'email', headerName: LABEL.TABLE_EMAIL, flex: 1.5, },
     {
       field: 'phone',
-      headerName: 'Phone',
-      width: 130,
+      headerName: LABEL.TABLE_PHONE,
+      flex: 1,
       valueGetter: (value, row) => formatPhoneNumber(row.phoneNo1),
     },
     {
       field: 'role',
-      headerName: 'Role',
-      width: 130,
+      headerName: LABEL.TABLE_ROLE,
+      flex: 1,
       valueGetter: (value, row) => `${row.role.roleName}`,
     },
     {
       field: 'active',
-      headerName: 'Active Status',
-      width: 130,
+      headerName: LABEL.TABLE_STATUS,
+      flex: 0.5,
       filterable: false,
       renderCell: (params) => renderStatusIcon(params.row.enabled),
     },
     {
       field: 'lock',
-      headerName: 'Lock Status',
-      width: 130,
+      headerName: LABEL.TABLE_LOCK_STATUS,
+      flex: 0.5,
       filterable: false,
       renderCell: (params) => renderLockIcon(params.row.locked),
     },
     {
       field: 'action',
-      headerName: 'Actions',
-      width: 160,
+      headerName: LABEL.TABLE_ACTION,
+      flex: 1,
       sortable: false,
       filterable: false,
       disableClickEventBubbling: true,
@@ -98,39 +108,19 @@ const UserList = () => {
         };
         return (
           <Stack direction="row" spacing={2}>
-            <IconButton component={Link} to={`/user/updateuser/${params.row.userId}`}
-              aria-label="Edit User">
-              <Edit color="primary" />
-            </IconButton>
-            <IconButton onClick={() => confirmDelete(params.row.userId)}
-              aria-label="Delete User">
-              <Delete color="error" />
-            </IconButton>
-            <IconButton component={Link} to={`/user/viewuser/${params.row.userId}`}
-              aria-label="Update User">
-              <Preview color="primary" />
-            </IconButton>
+            <EditIcon url={ROUTES.USER_UPDATE.replace(':userId', params.row.userId)} />
+            <DeleteIcon
+              onClick={() => {
+                setSelectedId(params.row.userId);
+                setDialogOpen(true);
+              }}
+            />
+            <PreviewIcon url={ROUTES.USER_VIEW.replace(':userId', params.row.userId)} />
           </Stack>
         );
       },
     },
   ];
-  const rows = users;
-
-  const paginationModel = { page: 0, pageSize: 5 };
-
-  useEffect(() => {
-    UserService.getUsers()
-      .then((res) => {
-        setUsers(res.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setError("Failed to fetch users.");
-        console.error("Error fetching users:", error);
-        setLoading(false);
-      });
-  }, []);
 
   if (loading) {
     return <SkeletonLoading />;
@@ -138,67 +128,34 @@ const UserList = () => {
 
   if (error) {
     return (
-      <ErrorMessage
-        message={error}
-        actionText="Retry"
-        onAction={() => window.location.reload()}
-      />
+      <ErrorMessage message={error} actionText="Retry" onAction={() => window.location.reload()} />
     );
   }
 
   if (users.length === 0) {
     return (
-      <div style={{ textAlign: "center", marginTop: "20px" }}>
-        <Typography variant="h6">No users found. Add user to see them here.</Typography>
-        <Button
-          component={Link}
-          to="/user/createuser"
-          variant="contained"
-          color="primary"
-          startIcon={<Add />}
-          style={{ marginTop: "10px" }}
-        >
-          Add User
-        </Button>
+      <div className={classes.errorTitle}>
+        <Typography variant="h6">{MESSAGE.USER_LIST_EMPTY}</Typography>
+        <AddNewButton url={ROUTES.USER_CREATE} />
       </div>
     );
   }
 
   return (
-    <div style={styles.mainContainer}>
-      <Typography variant="h4" style={styles.title}>
-        User List
-      </Typography>
-      <div style={styles.filterContainer}>
-        <Button
-          component={Link}
-          to="/user/createuser"
-          variant="contained"
-          color="primary"
-          startIcon={<Add />}
-          style={styles.filterButton}
-        >
-          Add User
-        </Button>
+    <Container className={classes.mainContainer}>
+      <div role="presentation" onClick={handleClick}>
+        <Breadcrumbs aria-label="breadcrumb">
+          <Home />
+          <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>User List</Typography>
+        </Breadcrumbs>
       </div>
-      <Paper sx={{ height: 400, width: '100%' }}>
-        <DataGrid
-          getRowId={(row) => row.userId}
-          rows={rows}
-          columns={columns}
-          initialState={{ pagination: { paginationModel } }}
-          pageSizeOptions={[5, 10]}
-          sx={{ border: 0 }}
-        />
-      </Paper>
-      <ConfirmationDialog
-        open={dialogOpen}
-        title="Delete User"
-        message="Are you sure you want to delete this user?"
-        onConfirm={handleDialogConfirm}
-        onCancel={handleDialogCancel}
-      />
-    </div>
+      <PageTitle title={LABEL.PAGE_TITLE_USER_LIST} />
+      <div style={{ marginBottom: "10px" }}>
+        <AddNewButton url={ROUTES.USER_CREATE} />
+      </div >
+      <DataTable rows={users} columns={columns} getRowId={(row) => row.userId} />
+      <DeleteConfirmDialog open={dialogOpen} onDelete={deleteUser} onCancel={() => setDialogOpen(false)} id={selectedId} />
+    </Container>
   );
 };
 

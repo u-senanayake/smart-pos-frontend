@@ -3,7 +3,7 @@ import { Paper } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useState, useEffect } from "react";
 
-const RoleDataGrid = ({ rows, columns }) => {
+const RoleDataGrid = ({ rows, columns, getRowId }) => {
 
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
   //Set window height
@@ -22,7 +22,7 @@ const RoleDataGrid = ({ rows, columns }) => {
   return (
     <Paper sx={{ height: tableheight, width: "100%"}}>
       <DataGrid
-        getRowId={(row) => row.roleId}
+        getRowId={getRowId}
         rows={rows}
         columns={columns}
         initialState={{ pagination: { paginationModel } }}

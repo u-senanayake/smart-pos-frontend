@@ -1,16 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton, Typography, Pagination, Box} from "@mui/material";
-import { Delete, Edit, Add, Preview } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { Typography, Stack, Container, Breadcrumbs } from "@mui/material";
+
+import DataTable from "../../../../components/PageElements/DataTable";
+import { AddNewButton } from "../../../../components/PageElements/Buttons";
+import { PageTitle } from "../../../../components/PageElements/CommonElements";
+import { SkeletonLoading } from "../../../../components/PageElements/Loading";
+import { EditIcon, DeleteIcon, PreviewIcon } from "../../../../components/PageElements/IconButtons";
+import { Home } from "../../../../components/PageElements/BreadcrumbsLinks";
+import ErrorMessage from "../../../../components/DialogBox/ErrorMessage";
+import DeleteConfirmDialog from "../../../../components/DialogBox/DeleteConfirmDialog";
 
 //Service
 import CategoryService from "../../../../services/CategoryService";
 //Utils
 import { renderStatusIcon } from "../../../../utils/utils";
-import { SkeletonLoading, ErrorMessage, ConfirmationDialog, ActiveStatusFilter } from '../../../../utils/FieldUtils'
-import { getSortedData, toggleSortDirection } from "../../../../utils/SortUtils";
+
+import * as LABEL from '../../../../utils/const/FieldLabels';
+import * as MESSAGE from '../../../../utils/const/Message';
+import * as ROUTES from '../../../../utils/const/RouteProperty';
+
 //Style
-import { styles } from "../../../../style/TableStyle";
+import { useStyles } from "../../../../style/makeStyle";
 
 const CategoryList = () => {
 
@@ -19,11 +30,9 @@ const CategoryList = () => {
   const [error, setError] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [paginationLoading, setPaginationLoading] = useState(false);
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" }); // Sorting state
-  const [statusFilter, setStatusFilter] = useState(""); // Account status filter state
-  const itemsPerPage = 10;
+  const navigate = useNavigate();
+
+  const classes = useStyles();
 
   useEffect(() => {
     CategoryService.getCategories()
@@ -32,8 +41,8 @@ const CategoryList = () => {
         setLoading(false);
       })
       .catch((error) => {
-        console.error("Error fetching categories:", error);
-        setError("Failed to fetch categories. Please try again later.");
+        console.error(MESSAGE.CATEGORY_FEATCHING_ERROR, error);
+        setError(MESSAGE.CATEGORY_FEATCHING_ERROR_MSG);
         setLoading(false);
       });
   }, []);
@@ -42,174 +51,105 @@ const CategoryList = () => {
     CategoryService.deleteCategory(id)
       .then(() => setCategories(categories.filter((category) => category.categoryId !== id)))
       .catch((error) => {
-        console.error("Error deleting category:", error);
-        setError("Failed to delete category. Please try again later.");
+        console.error(MESSAGE.CATEGORY_DELETE_ERROR, error);
+        setError(MESSAGE.CATEGORY_DELETE_ERROR_MSG);
       });
   };
 
-  const confirmDelete = (id) => {
-    setSelectedId(id);
-    setDialogOpen(true);
-  };
+  function handleClick(event) {
+    navigate(event.target.href);
+  }
 
-  const handleDialogConfirm = () => {
-    if (selectedId) {
-      deleteCategory(selectedId);
-    }
-    setDialogOpen(false);
-    setSelectedId(null);
-  };
+  const columns = [
+    {
+      field: 'name',
+      headerName: LABEL.TABLE_NAME,
+      flex: 1,
+      headerClassName: 'super-app-theme--header',
+    },
+    {
+      field: 'description',
+      headerName: LABEL.TABLE_DESCRIPTION,
+      flex: 2,
+      headerClassName: 'super-app-theme--header',
+    },
+    {
+      field: 'catPrefix',
+      headerName: LABEL.TABLE_CAT_PRFX,
+      flex: 0.7,
+      headerClassName: 'super-app-theme--header',
+    },
+    {
+      field: 'active',
+      headerName: LABEL.TABLE_STATUS,
+      flex: 0.5,
+      filterable: false,
+      headerClassName: 'super-app-theme--header',
+      renderCell: (params) => renderStatusIcon(params.row.enabled),
+    },
+    {
+      field: 'action',
+      headerName: LABEL.TABLE_ACTION,
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      headerClassName: 'super-app-theme--header',
+      disableClickEventBubbling: true,
+      renderCell: (params) => {
+        const onClick = (e) => {
+          const currentRow = params.row;
+          return alert(JSON.stringify(currentRow, null, 4));
+        };
+        return (
+          <Stack direction="row" spacing={2}>
+            <EditIcon url={ROUTES.CATEGORY_UPDATE.replace(':categoryId', params.row.categoryId)} />
+            <DeleteIcon
+              onClick={() => {
+                setSelectedId(params.row.categoryId);
+                setDialogOpen(true);
+              }}
+            />
+            <PreviewIcon url={ROUTES.CATEGORY_VIEW.replace(':categoryId', params.row.categoryId)} />
+          </Stack>
+        );
+      },
+    },
+  ];
 
-  const handleDialogCancel = () => {
-    setDialogOpen(false);
-    setSelectedId(null);
-  };
-
-  const handlePageChange = (event, value) => {
-    setPaginationLoading(true);
-    setTimeout(() => {
-      setCurrentPage(value);
-      setPaginationLoading(false);
-    }, 500); // Simulate a delay (replace this with actual fetching logic if needed)
-  };
-
-  const handleSort = (key) => {
-    setSortConfig((currentConfig) => toggleSortDirection(currentConfig, key));
-  };
-
-  const applyFilters = () => {
-    return categories.filter((category) => {
-      const matchesStatus = statusFilter ? String(category.enabled) === statusFilter : true;
-      return matchesStatus;
-    });
-  };
-
-  const filteredCategories = applyFilters();
-  const sortedCategories = getSortedData(filteredCategories, sortConfig);
-
-  const paginatedCategory = sortedCategories.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  if (loading || paginationLoading) {
+  if (loading) {
     return <SkeletonLoading />;
   }
 
   if (error) {
     return (
-      <ErrorMessage
-        message={error}
-        actionText="Retry"
-        onAction={() => window.location.reload()}
-      />
+      <ErrorMessage message={error} actionText="Retry" onAction={() => window.location.reload()} />
     );
   }
 
   if (categories.length === 0) {
     return (
-      <div style={{ textAlign: "center", marginTop: "20px" }}>
-        <Typography variant="h6">No categories found. Add some category to see them here.</Typography>
-        <Button
-          component={Link}
-          to="/product/category/createcategory"
-          variant="contained"
-          color="primary"
-          startIcon={<Add />}
-          style={{ marginTop: "10px" }}
-        >
-          Add Category
-        </Button>
+      <div className={classes.errorTitle}>
+        <Typography variant="h6">{MESSAGE.CATEGORY_LIST_EMPTY}</Typography>
+        <AddNewButton url={ROUTES.CATEGORY_CREATE} />
       </div>
     );
   }
 
   return (
-    <div style={styles.mainContainer}>
-      <Typography variant="h4" style={styles.title}>
-        Category List
-      </Typography>
-
-      <div style={styles.filterContainer}>
-        <Button
-          component={Link}
-          to="/product/category/createcategory"
-          variant="contained"
-          color="primary"
-          startIcon={<Add />}
-          style={{ marginBottom: "20px" }}
-        >
-          Add Category
-        </Button>
-        <Paper sx={{ p: 1, mt: 1, mb: 1 }}>
-          <Typography variant="h6" style={styles.filterTitle}>
-            Filter data
-          </Typography>
-          <ActiveStatusFilter
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            style={styles.filterFormController}
-          />
-        </Paper>
+    <Container className={classes.mainContainer}>
+      <div role="presentation" onClick={handleClick}>
+        <Breadcrumbs aria-label="breadcrumb">
+          <Home />
+          <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Category List</Typography>
+        </Breadcrumbs>
       </div>
-      {paginationLoading ? (
-        <SkeletonLoading />
-      ) : (
-        <TableContainer component={Paper} sx={{ width: '100%', overflowX: 'auto' }}>
-          <Box sx={{ overflowX: 'auto' }}>
-            <Table sx={{ minWidth: '1000px' }}>
-              <TableHead>
-                <TableRow style={styles.tableHeaderCell}>
-                  <TableCell onClick={() => handleSort("name")}>Name {sortConfig.key === "name" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell>Description</TableCell>
-                  <TableCell onClick={() => handleSort("catPrefix")}>Category Prefix {sortConfig.key === "catPrefix" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell onClick={() => handleSort("enabled")}>Enabled {sortConfig.key === "enabled" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                  <TableCell>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {paginatedCategory.map((category, index) => (
-                  <TableRow key={category.categoryId} sx={styles.zebraStripe(index)}>
-                    <TableCell style={styles.tableCell}>{category.name}</TableCell>
-                    <TableCell style={styles.tableCell}>{category.description}</TableCell>
-                    <TableCell style={styles.tableCell}>{category.catPrefix}</TableCell>
-                    <TableCell style={styles.tableCell}>{renderStatusIcon(category.enabled)}</TableCell>
-                    <TableCell style={styles.tableCell}>
-                      <IconButton component={Link} to={`/product/category/updatecategory/${category.categoryId}`}
-                        aria-label="Edit">
-                        <Edit color="primary" />
-                      </IconButton>
-                      <IconButton onClick={() => confirmDelete(category.categoryId)}
-                        aria-label="Delete">
-                        <Delete color="error" />
-                      </IconButton>
-                      <IconButton component={Link} to={`/product/category/viewcategory/${category.categoryId}`}
-                        aria-label="Update">
-                        <Preview color="primary" />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Box>
-        </TableContainer>
-      )}
-      <Pagination
-        count={Math.ceil(categories.length / itemsPerPage)} // Total pages
-        page={currentPage}
-        onChange={handlePageChange}
-        color="primary"
-        style={styles.pagination}
-      />
-      <ConfirmationDialog
-        open={dialogOpen}
-        title="Delete Role"
-        message="Are you sure you want to delete this category?"
-        onConfirm={handleDialogConfirm}
-        onCancel={handleDialogCancel}
-      />
-    </div>
+      <PageTitle title={LABEL.PAGE_TITLE_CATEGORY_LIST} />
+      <div style={{ marginBottom: "10px" }}>
+        <AddNewButton url={ROUTES.CATEGORY_CREATE} />
+      </div >
+      <DataTable rows={categories} columns={columns} getRowId={(row) => row.categoryId} />
+      <DeleteConfirmDialog open={dialogOpen} onDelete={deleteCategory} onCancel={() => setDialogOpen(false)} id={selectedId} />
+    </Container>
   );
 };
 

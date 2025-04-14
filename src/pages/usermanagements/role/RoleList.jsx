@@ -56,9 +56,11 @@ const RoleList = () => {
         setError(MESSAGE.ROLE_DELETE_ERROR_MSG);
       });
   };
+
   function handleClick(event) {
     navigate(event.target.href);
   }
+
   const columns = [
     {
       field: 'roleName',
@@ -132,7 +134,7 @@ const RoleList = () => {
   if (roles.length === 0) {
     return (
       <div className={classes.errorTitle}>
-        <Typography variant="h6">No roles found. Add some roles to see them here.</Typography>
+        <Typography variant="h6">{MESSAGE.ROLE_LIST_EMPTY}</Typography>
         <AddNewButton url={ROUTES.ROLE_CREATE} />
       </div>
     );
@@ -143,14 +145,14 @@ const RoleList = () => {
       <div role="presentation" onClick={handleClick}>
         <Breadcrumbs aria-label="breadcrumb">
           <Home />
-          <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Role List</Typography>
+          <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Category List</Typography>
         </Breadcrumbs>
       </div>
       <PageTitle title={LABEL.PAGE_TITLE_ROLE_LIST} />
       <div style={{ marginBottom: "10px" }}>
         <AddNewButton url={ROUTES.ROLE_CREATE} />
       </div >
-      <DataTable rows={roles} columns={columns} />
+      <DataTable rows={roles} columns={columns} getRowId={(row) => row.roleId} />
       <DeleteConfirmDialog open={dialogOpen} onDelete={deleteRole} onCancel={() => setDialogOpen(false)} id={selectedId} />
     </Container>
   );
