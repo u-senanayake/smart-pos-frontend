@@ -57,10 +57,6 @@ const RoleList = () => {
       });
   };
 
-  function handleClick(event) {
-    navigate(event.target.href);
-  }
-
   const columns = [
     {
       field: 'roleName',
@@ -142,12 +138,10 @@ const RoleList = () => {
 
   return (
     <Container className={classes.mainContainer}>
-      <div role="presentation" onClick={handleClick}>
-        <Breadcrumbs aria-label="breadcrumb">
-          <Home />
-          <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Category List</Typography>
-        </Breadcrumbs>
-      </div>
+      <Breadcrumbs aria-label="breadcrumb">
+        <Home />
+        <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Category List</Typography>
+      </Breadcrumbs>
       <PageTitle title={LABEL.PAGE_TITLE_LIST.replace(':type', LABEL.ROLE)} />
       <div style={{ marginBottom: "10px" }}>
         <AddNewButton url={ROUTES.ROLE_CREATE} />

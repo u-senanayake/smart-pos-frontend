@@ -1,3 +1,6 @@
+//Home
+export const HOME = '/';
+
 //Role
 export const ROLE_LIST = '/user/rolelist';
 export const ROLE_CREATE = '/user/role/createrole';

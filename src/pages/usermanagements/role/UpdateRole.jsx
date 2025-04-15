@@ -78,10 +78,6 @@ const UpdateRole = () => {
 
     const handleCancel = () => navigate(ROUTES.ROLE_LIST);
 
-    function handleClick(event) {
-        navigate(event.target.href);
-    }
-
     if (loading) {
         return <Loading />;
     }
@@ -89,13 +85,11 @@ const UpdateRole = () => {
     return (
         <Container className={classes.mainContainer}>
 
-            <div role="presentation" onClick={handleClick}>
-                <Breadcrumbs aria-label="breadcrumb">
-                    <Home />
-                    <RoleList />
-                    <Typography sx={{ color: 'text.primary' }}>Edit Role</Typography>
-                </Breadcrumbs>
-            </div>
+            <Breadcrumbs aria-label="breadcrumb">
+                <Home />
+                <RoleList />
+                <Typography sx={{ color: 'text.primary' }}>Edit Role</Typography>
+            </Breadcrumbs>
 
             <PageTitle title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.ROLE) + roleName} />
             <Container maxWidth="sm" >
@@ -113,7 +107,13 @@ const UpdateRole = () => {
                                     label={LABEL.ROLE_NAME}
                                     name="roleName"
                                     value={roleName}
-                                    onChange={(e) => setRoleName(e.target.value)}
+                                    onChange={(e) => {
+                                        setRoleName(e.target.value);
+                                        setFormError((prevErrors) => ({
+                                            ...prevErrors,
+                                            roleName: undefined
+                                        }));
+                                    }}
                                     error={!!formError.roleName}
                                     helperText={formError.roleName}
                                     required={true}
@@ -124,7 +124,13 @@ const UpdateRole = () => {
                                     label={LABEL.ROLE_DESC}
                                     name="description"
                                     value={description}
-                                    onChange={(e) => setDescription(e.target.value)}
+                                    onChange={(e) => {
+                                        setDescription(e.target.value);
+                                        setFormError((prevErrors) => ({
+                                            ...prevErrors,
+                                            description: undefined
+                                        }));
+                                    }}
                                     error={!!formError.description}
                                     helperText={formError.description}
                                     required={true}

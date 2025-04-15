@@ -8,7 +8,13 @@ export const validatePassword = (password, minLength = 6) => {
 };
 
 export const validateRequired = (value) => {
-  return typeof value === 'string' && value.trim() !== '';
+  if (typeof value === 'string') {
+    return value.trim() !== '';
+  }
+  if (typeof value === 'object' && value !== null) {
+    return Object.keys(value).length > 0;
+  }
+  return false;
 };
 
 export const validateLength = (value, minLength, maxLength) => {

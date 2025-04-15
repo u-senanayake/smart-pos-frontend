@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Typography, Box, Paper, FormControlLabel, Checkbox, Grid2, Breadcrumbs, Alert } from '@mui/material';
+import { Container, Typography, Box, Paper, FormControlLabel, Checkbox, Grid2, Breadcrumbs, } from '@mui/material';
 
 import RoleService from '../../../services/RoleService';
 
 import { validateRequired, validateLength, } from '../../../utils/Validations';
+
 import { EditableTextField, PageTitle } from "../../../components/PageElements/CommonElements";
 import { SaveButton, CancelButton } from "../../../components/PageElements/Buttons";
 import { Home, RoleList } from "../../../components/PageElements/BreadcrumbsLinks";
@@ -53,28 +54,26 @@ const CreateRole = () => {
                     setTimeout(() => navigate(ROUTES.ROLE_LIST), APP_PROPERTY.ALERT_TIMEOUT); // Delay navigation
                 })
                 .catch((error) => {
-                    setErrorMessage(MESSAGE.CREATE_ERROR_MSG.replace(':type', LABEL.ROLE));
-                    console.error(MESSAGE.CREATE_ERROR.replace(':type', LABEL.ROLE), error.response.data);
+                    if (error.response && error.response.data) {
+                        setErrorMessage(error.response.data);
+                    } else {
+                        setErrorMessage(MESSAGE.CREATE_ERROR_MSG.replace(':type', LABEL.ROLE));
+                    }
+                    console.error(MESSAGE.CREATE_ERROR.replace(':type', LABEL.ROLE), error.response);
                 }).finally(() => setIsSaving(false));
         }
     };
 
     const handleCancel = () => navigate(ROUTES.ROLE_LIST);
 
-    function handleClick(event) {
-        navigate(event.target.href);
-    }
-
     return (
         <Container className={classes.mainContainer}>
 
-            <div role="presentation" onClick={handleClick}>
-                <Breadcrumbs aria-label="breadcrumb">
-                    <Home />
-                    <RoleList />
-                    <Typography sx={{ color: 'text.primary' }}>Create Role</Typography>
-                </Breadcrumbs>
-            </div>
+            <Breadcrumbs aria-label="breadcrumb">
+                <Home />
+                <RoleList />
+                <Typography sx={{ color: 'text.primary' }}>Create Role</Typography>
+            </Breadcrumbs>
 
             <PageTitle title={LABEL.PAGE_TITLE_CREATE.replace(':type', LABEL.ROLE)} />
             <Container maxWidth="md">
@@ -91,7 +90,13 @@ const CreateRole = () => {
                                     label={LABEL.ROLE_NAME}
                                     name="roleName"
                                     value={roleName}
-                                    onChange={(e) => setRoleName(e.target.value)}
+                                    onChange={(e) => {
+                                        setRoleName(e.target.value);
+                                        setFormError((prevErrors) => ({
+                                            ...prevErrors,
+                                            roleName: undefined
+                                        }));
+                                    }}
                                     error={!!formError.roleName}
                                     helperText={formError.roleName}
 
@@ -102,7 +107,13 @@ const CreateRole = () => {
                                     label={LABEL.ROLE_DESC}
                                     name="description"
                                     value={description}
-                                    onChange={(e) => setDescription(e.target.value)}
+                                    onChange={(e) => {
+                                        setDescription(e.target.value);
+                                        setFormError((prevErrors) => ({
+                                            ...prevErrors,
+                                            description: undefined
+                                        }));
+                                    }}
                                     error={!!formError.description}
                                     helperText={formError.description}
                                     required={true}
@@ -113,7 +124,13 @@ const CreateRole = () => {
                                     control={
                                         <Checkbox
                                             checked={enabled}
-                                            onChange={(e) => setEnabled(e.target.checked)}
+                                            onChange={(e) => {
+                                                setEnabled(e.target.checked);
+                                                setFormError((prevErrors) => ({
+                                                    ...prevErrors,
+                                                    enabled: undefined // Clear the error for enabled if any
+                                                }));
+                                            }}
                                             name="enabled"
                                             color="primary"
                                         />

@@ -25,7 +25,7 @@ const ViewRole = () => {
   const { roleId } = useParams();
   const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,12 +35,12 @@ const ViewRole = () => {
       })
       .catch((error) => {
         console.error(MESSAGE.FEATCHING_ERROR.replace(':type', LABEL.ROLE), error);
-        setError(MESSAGE.FEATCHING_ERROR.replace(':type', LABEL.ROLE));
+        setErrorMessage(MESSAGE.FEATCHING_ERROR.replace(':type', LABEL.ROLE));
       }).finally(() => setLoading(false));
 
   }, [roleId]);
 
-  const cancel = () => navigate(ROUTES.ROLE_LIST);
+  const handleCancel = () => navigate(ROUTES.ROLE_LIST);
 
   const handleUpdate = () => { navigate(ROUTES.ROLE_UPDATE.replace(':roleId', roleId)); };
 
@@ -48,30 +48,24 @@ const ViewRole = () => {
     return <Loading />;
   }
 
-  if (error) {
+  if (errorMessage) {
     return (
       <ErrorMessage
-        message={error}
+        message={errorMessage}
         actionText="Retry"
         onAction={() => window.location.reload()}
       />
     );
   }
 
-  function handleClick(event) {
-    navigate(event.target.href);
-  }
-
   return (
     <Container className={classes.mainContainer}>
 
-      <div role="presentation" onClick={handleClick}>
-        <Breadcrumbs aria-label="breadcrumb">
-          <Home />
-          <RoleList />
-          <Typography sx={{ color: 'text.primary' }}>View Role</Typography>
-        </Breadcrumbs>
-      </div>
+      <Breadcrumbs aria-label="breadcrumb">
+        <Home />
+        <RoleList />
+        <Typography sx={{ color: 'text.primary' }}>View Role</Typography>
+      </Breadcrumbs>
       <PageTitle title={LABEL.PAGE_TITLE_VIEW.replace(':type', LABEL.ROLE) + role.roleName} />
       <Container maxWidth="md">
         <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
@@ -98,7 +92,7 @@ const ViewRole = () => {
 
           <Box className={classes.formButtonsContainer}>
             <EditButton onClick={handleUpdate} />
-            <CancelButton onClick={cancel} />
+            <CancelButton onClick={handleCancel} />
           </Box>
 
         </Paper>
