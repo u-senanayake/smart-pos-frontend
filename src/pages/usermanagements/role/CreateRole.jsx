@@ -32,10 +32,10 @@ const CreateRole = () => {
 
     const validateForm = (role) => {
         const formError = {};
-        if (!validateRequired(role.roleName)) formError.roleName = MESSAGE.ROLE_NAME_REQUIRED;
-        if (!validateLength(role.roleName, PROPERTY.ROLE_NAME_MIN, PROPERTY.ROLE_NAME_MAX)) formError.roleName = MESSAGE.ROLE_NAME_MIN_MAX_LENGTH;
-        if (!validateRequired(role.description)) formError.description = MESSAGE.ROLE_DESCRIPTION_REQUIRED;
-        if (!validateLength(role.description, PROPERTY.ROLE_DESCRIPTION_MIN, PROPERTY.ROLE_DESCRIPTION_MAX)) formError.description = MESSAGE.ROLE_DESCRIPTION_MIN_MAX_LENGTH;
+        if (!validateRequired(role.roleName)) formError.roleName = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.ROLE_NAME);
+        if (!validateLength(role.roleName, PROPERTY.ROLE_NAME_MIN, PROPERTY.ROLE_NAME_MAX)) formError.roleName = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.ROLE_NAME).replace(':min', PROPERTY.ROLE_NAME_MIN).replace(':max', PROPERTY.ROLE_NAME_MAX);
+        if (!validateRequired(role.description)) formError.description = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.ROLE_DESC);
+        if (!validateLength(role.description, PROPERTY.ROLE_DESC_MIN, PROPERTY.ROLE_DESC_MAX)) formError.description = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.ROLE_DESC).replace(':min', PROPERTY.ROLE_DESC_MIN).replace(':max', PROPERTY.ROLE_DESC_MAX);
         return formError;
     };
 
@@ -49,12 +49,12 @@ const CreateRole = () => {
             setIsSaving(true);
             RoleService.createRole(role)
                 .then(() => {
-                    setSuccessMessage(MESSAGE.ROLE_CREATE_SUCCESS); // Set success message
+                    setSuccessMessage(MESSAGE.CREATE_SUCCESS.replace(':type', LABEL.ROLE)); // Set success message
                     setTimeout(() => navigate(ROUTES.ROLE_LIST), APP_PROPERTY.ALERT_TIMEOUT); // Delay navigation
                 })
                 .catch((error) => {
-                    setErrorMessage(MESSAGE.ROLE_CREATE_ERROR_MSG);
-                    console.error(MESSAGE.ROLE_CREATE_ERROR, error.response.data);
+                    setErrorMessage(MESSAGE.CREATE_ERROR_MSG.replace(':type', LABEL.ROLE));
+                    console.error(MESSAGE.CREATE_ERROR.replace(':type', LABEL.ROLE), error.response.data);
                 }).finally(() => setIsSaving(false));
         }
     };
@@ -76,7 +76,7 @@ const CreateRole = () => {
                 </Breadcrumbs>
             </div>
 
-            <PageTitle title={LABEL.PAGE_TITLE_ROLE_CREATE} />
+            <PageTitle title={LABEL.PAGE_TITLE_CREATE.replace(':type', LABEL.ROLE)} />
             <Container maxWidth="md">
                 <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
 
@@ -88,7 +88,7 @@ const CreateRole = () => {
                         <Grid2 container spacing={2}>
                             <Grid2 size={8}>
                                 <EditableTextField
-                                    label={LABEL.NAME}
+                                    label={LABEL.ROLE_NAME}
                                     name="roleName"
                                     value={roleName}
                                     onChange={(e) => setRoleName(e.target.value)}
@@ -99,7 +99,7 @@ const CreateRole = () => {
                             </Grid2>
                             <Grid2 size={12}>
                                 <EditableTextField
-                                    label={LABEL.DESCRIPTION}
+                                    label={LABEL.ROLE_DESC}
                                     name="description"
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
@@ -118,7 +118,7 @@ const CreateRole = () => {
                                             color="primary"
                                         />
                                     }
-                                    label={LABEL.ENABLED}
+                                    label={LABEL.ROLE_ENABLED}
                                 />
                             </Grid2>
                         </Grid2>

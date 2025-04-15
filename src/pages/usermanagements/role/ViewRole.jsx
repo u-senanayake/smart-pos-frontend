@@ -34,8 +34,8 @@ const ViewRole = () => {
         setRole(res.data);
       })
       .catch((error) => {
-        console.error(MESSAGE.ROLE_FEATCHING_ERROR, error);
-        setError(MESSAGE.ROLE_FEATCHING_ERROR_MSG);
+        console.error(MESSAGE.FEATCHING_ERROR.replace(':type', LABEL.ROLE), error);
+        setError(MESSAGE.FEATCHING_ERROR.replace(':type', LABEL.ROLE));
       }).finally(() => setLoading(false));
 
   }, [roleId]);
@@ -72,27 +72,27 @@ const ViewRole = () => {
           <Typography sx={{ color: 'text.primary' }}>View Role</Typography>
         </Breadcrumbs>
       </div>
-      <PageTitle title={LABEL.PAGE_TITLE_ROLE_VIEW + role.roleName} />
+      <PageTitle title={LABEL.PAGE_TITLE_VIEW.replace(':type', LABEL.ROLE) + role.roleName} />
       <Container maxWidth="md">
         <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
 
           <Grid2 container spacing={2}>
             <Grid2 size={4}>
-              <ReadOnlyField label={LABEL.ID} value={role.roleId} />
+              <ReadOnlyField label={LABEL.ROLE_ID} value={role.roleId} />
             </Grid2>
             <Grid2 size={8}>
-              <ReadOnlyField label={LABEL.NAME} value={role.roleName} />
+              <ReadOnlyField label={LABEL.ROLE_NAME} value={role.roleName} />
             </Grid2>
             <Grid2 size={12}>
-              <ReadOnlyField label={LABEL.DESCRIPTION} value={role.description} />
+              <ReadOnlyField label={LABEL.ROLE_DESC} value={role.description} />
             </Grid2>
-            <Grid2 size={6}><Typography variant="h5">{LABEL.ENABLED} {renderStatusIcon(role.enabled)}</Typography></Grid2>
+            <Grid2 size={6}><Typography variant="h5">{LABEL.ROLE_ENABLED} {renderStatusIcon(role.enabled)}</Typography></Grid2>
             <Grid2 size={6}></Grid2>
             <Grid2 size={6}>
-              <ReadOnlyField label={LABEL.CREATED_AT} value={formatDate(role.createdAt)} />
+              <ReadOnlyField label={LABEL.ROLE_CREATED_AT} value={formatDate(role.createdAt)} />
             </Grid2>
             <Grid2 size={6}>
-              <ReadOnlyField label={LABEL.UPDATED_AT} value={formatDate(role.updatedAt)} />
+              <ReadOnlyField label={LABEL.ROLE_UPDATED_AT} value={formatDate(role.updatedAt)} />
             </Grid2>
           </Grid2>
 

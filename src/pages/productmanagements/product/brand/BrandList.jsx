@@ -42,8 +42,8 @@ const BrandList = () => {
         setLoading(false);
       })
       .catch((error) => {
-        console.error(MESSAGE.BRAND_FEATCHING_ERROR, error);
-        setError(MESSAGE.BRAND_FEATCHING_ERROR_MSG);
+        console.error(MESSAGE.FEATCHING_ERROR.replace('type', LABEL.BRAND), error);
+        setError(MESSAGE.FEATCHING_ERROR_MSG.replace('type', LABEL.BRAND));
         setLoading(false);
       });
   }, []);
@@ -52,8 +52,8 @@ const BrandList = () => {
     BrandService.deleteBrand(id)
       .then(() => setBrands(brands.filter((brand) => brand.brandId !== id)))
       .catch((error) => {
-        console.error(MESSAGE.BRAND_DELETE_ERROR, error);
-        setError(MESSAGE.BRAND_DELETE_ERROR_MSG);
+        console.error(MESSAGE.DELETE_ERROR.replace('type', LABEL.BRAND), error);
+        setError(MESSAGE.DELETE_ERROR_MSG.replace('type', LABEL.BRAND));
       });
   };
 
@@ -70,7 +70,7 @@ const BrandList = () => {
     },
     {
       field: 'description',
-      headerName: LABEL.DESCRIPTION,
+      headerName: LABEL.TABLE_DESCRIPTION,
       flex: 2,
       headerClassName: 'super-app-theme--header',
     },
@@ -124,7 +124,7 @@ const BrandList = () => {
   if (brands.length === 0) {
     return (
       <div className={classes.errorTitle}>
-        <Typography variant="h6">{MESSAGE.BRAND_LIST_EMPTY}</Typography>
+        <Typography variant="h6">{MESSAGE.LIST_EMPTY.replace('type', LABEL.BRAND)}</Typography>
         <AddNewButton url={ROUTES.BRAND_CREATE} />
       </div>
     );
@@ -138,7 +138,7 @@ const BrandList = () => {
           <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Brand List</Typography>
         </Breadcrumbs>
       </div>
-      <PageTitle title={LABEL.PAGE_TITLE_BRAND_LIST} />
+      <PageTitle title={LABEL.PAGE_TITLE_LIST.replace(':type', LABEL.BRAND)} />
       <div style={{ marginBottom: "10px" }}>
         <AddNewButton url={ROUTES.BRAND_CREATE} />
       </div >

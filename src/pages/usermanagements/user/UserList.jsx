@@ -41,8 +41,8 @@ const UserList = () => {
         setLoading(false);
       })
       .catch((error) => {
-        console.error(MESSAGE.USER_FEATCHING_ERROR, error);
-        setError(MESSAGE.USER_FEATCHING_ERROR_MSG);
+        console.error(MESSAGE.FEATCHING_ERROR.replace(':type', LABEL.USER), error);
+        setError(MESSAGE.FEATCHING_ERROR_MSG.replace(':type', LABEL.USER));
         setLoading(false);
       });
   }, []);
@@ -51,8 +51,8 @@ const UserList = () => {
     UserService.deleteUser(id)
       .then(() => setUsers(users.filter((user) => user.userId !== id)))
       .catch((error) => {
-        console.error(MESSAGE.USER_DELETE_ERROR, error);
-        setError(MESSAGE.USER_DELETE_ERROR_MSG);
+        console.error(MESSAGE.DELETE_ERROR.replace(':type', LABEL.USER), error);
+        setError(MESSAGE.DELETE_ERROR_MSG.replace(':type', LABEL.USER), error);
       });
   };
 
@@ -135,7 +135,7 @@ const UserList = () => {
   if (users.length === 0) {
     return (
       <div className={classes.errorTitle}>
-        <Typography variant="h6">{MESSAGE.USER_LIST_EMPTY}</Typography>
+        <Typography variant="h6">{MESSAGE.LIST_EMPTY.replace(':type', LABEL.USER)}</Typography>
         <AddNewButton url={ROUTES.USER_CREATE} />
       </div>
     );
@@ -149,7 +149,7 @@ const UserList = () => {
           <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>User List</Typography>
         </Breadcrumbs>
       </div>
-      <PageTitle title={LABEL.PAGE_TITLE_USER_LIST} />
+      <PageTitle title={LABEL.PAGE_TITLE_LIST.replace(':type', LABEL.USER)} />
       <div style={{ marginBottom: "10px" }}>
         <AddNewButton url={ROUTES.USER_CREATE} />
       </div >

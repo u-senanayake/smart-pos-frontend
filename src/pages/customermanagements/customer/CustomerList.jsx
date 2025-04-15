@@ -39,8 +39,8 @@ const CustomerList = () => {
                 setLoading(false);
             })
             .catch((error) => {
-                console.error(MESSAGE.CUSTOMER_FEATCHING_ERROR, error);
-                setError(MESSAGE.CUSTOMER_FEATCHING_ERROR_MSG);
+                console.error(MESSAGE.FEATCHING_ERROR.replace('type', LABEL.CUSTOMER), error);
+                setError(MESSAGE.FEATCHING_ERROR_MSG.replace('type', LABEL.CUSTOMER));
                 setLoading(false);
             });
     }, []);
@@ -50,8 +50,8 @@ const CustomerList = () => {
         CustomerService.deleteCustomer(id)
             .then(() => setCustomers(customers.filter((customer) => customer.customerId !== id)))
             .catch((error) => {
-                console.error(MESSAGE.CUSTOMER_DELETE_ERROR, error);
-                setError(MESSAGE.CUSTOMER_CREATE_ERROR_MSG);
+                console.error(MESSAGE.DELETE_ERROR.replace('type', LABEL.CUSTOMER), error);
+                setError(MESSAGE.CREATE_ERROR_MSG.replace('type', LABEL.CUSTOMER));
             });
     };
 
@@ -131,7 +131,7 @@ const CustomerList = () => {
     if (customers.length === 0) {
         return (
             <div className={classes.errorTitle}>
-                <Typography variant="h6">{MESSAGE.CUSTOMER_LIST_EMPTY}</Typography>
+                <Typography variant="h6">{MESSAGE.LIST_EMPTY.replace('type', LABEL.CUSTOMER)}</Typography>
                 <AddNewButton url={ROUTES.CUSTOMER_CREATE} />
             </div>
         );
@@ -145,7 +145,7 @@ const CustomerList = () => {
                     <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Customer List</Typography>
                 </Breadcrumbs>
             </div>
-            <PageTitle title={LABEL.PAGE_TITLE_CUSTOMER_LIST} />
+            <PageTitle title={LABEL.PAGE_TITLE_LIST.replace(':type', LABEL.CUSTOMER)} />
             <div style={{ marginBottom: "10px" }}>
                 <AddNewButton url={ROUTES.CUSTOMER_CREATE} />
             </div >

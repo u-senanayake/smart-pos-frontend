@@ -42,17 +42,17 @@ const UpdateRole = () => {
                 setEnabled(role.enabled);
             })
             .catch((error) => {
-                console.error(MESSAGE.ROLE_FEATCHING_ERROR, error.response.data);
-                setErrorMessage(MESSAGE.ROLE_FEATCHING_ERROR_MSG);
+                console.error(MESSAGE.FEATCHING_ERROR.replace(':type', LABEL.ROLE), error.response.data);
+                setErrorMessage(MESSAGE.FEATCHING_ERROR_MSG.replace(':type', LABEL.ROLE));
             }).finally(() => setLoading(false));
     }, [roleId]);
 
     const validateForm = (role) => {
         const formError = {};
-        if (!validateRequired(role.roleName)) formError.roleName = MESSAGE.ROLE_NAME_REQUIRED;
-        if (!validateLength(role.roleName, PROPERTY.ROLE_NAME_MIN, PROPERTY.ROLE_NAME_MAX)) formError.roleName = MESSAGE.ROLE_NAME_MIN_MAX_LENGTH;
-        if (!validateRequired(role.description)) formError.description = MESSAGE.ROLE_DESCRIPTION_REQUIRED;
-        if (!validateLength(role.description, PROPERTY.ROLE_DESCRIPTION_MIN, PROPERTY.ROLE_DESCRIPTION_MAX)) formError.description = MESSAGE.ROLE_DESCRIPTION_MIN_MAX_LENGTH;
+        if (!validateRequired(role.roleName)) formError.roleName = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.ROLE_NAME);
+        if (!validateLength(role.roleName, PROPERTY.ROLE_NAME_MIN, PROPERTY.ROLE_NAME_MAX)) formError.roleName = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.ROLE_NAME).replace(':min', PROPERTY.ROLE_NAME_MIN).replace(':max', PROPERTY.ROLE_NAME_MAX);
+        if (!validateRequired(role.description)) formError.description = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.ROLE_DESC);
+        if (!validateLength(role.description, PROPERTY.ROLE_DESC_MIN, PROPERTY.ROLE_DESC_MAX)) formError.description = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.ROLE_DESC).replace(':min', PROPERTY.ROLE_DESC_MIN).replace(':max', PROPERTY.ROLE_DESC_MAX);
         return formError;
     };
 
@@ -66,12 +66,12 @@ const UpdateRole = () => {
             setIsSaving(true);
             RoleService.updateRole(role, roleId)
                 .then(() => {
-                    setSuccessMessage(MESSAGE.ROLE_UPDATE_SUCCESS); // Set success message
+                    setSuccessMessage(MESSAGE.UPDATE_SUCCESS.replace(':type', LABEL.ROLE)); // Set success message
                     setTimeout(() => navigate(ROUTES.ROLE_LIST), APP_PROPERTY.ALERT_TIMEOUT); // Delay navigation
                 })
                 .catch((error) => {
-                    setErrorMessage(MESSAGE.ROLE_UPDATE_ERROR_MSG);
-                    console.error(MESSAGE.ROLE_UPDATE_ERROR, error.response.data);
+                    setErrorMessage(MESSAGE.UPDATE_ERROR_MSG.replace('type', LABEL.ROLE));
+                    console.error(MESSAGE.UPDATE_ERROR.replace('type', LABEL.ROLE), error.response.data);
                 }).finally(() => setIsSaving(false));;
         }
     };
@@ -97,7 +97,7 @@ const UpdateRole = () => {
                 </Breadcrumbs>
             </div>
 
-            <PageTitle title={LABEL.PAGE_TITLE_ROLE_UPDATE + roleName} />
+            <PageTitle title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.ROLE) + roleName} />
             <Container maxWidth="sm" >
                 <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
                     <form>
@@ -106,11 +106,11 @@ const UpdateRole = () => {
 
                         <Grid2 container spacing={2}>
                             <Grid2 size={4}>
-                                <ReadOnlyField label={LABEL.ID} value={roleId} />
+                                <ReadOnlyField label={LABEL.ROLE_ID} value={roleId} />
                             </Grid2>
                             <Grid2 size={8}>
                                 <EditableTextField
-                                    label={LABEL.NAME}
+                                    label={LABEL.ROLE_NAME}
                                     name="roleName"
                                     value={roleName}
                                     onChange={(e) => setRoleName(e.target.value)}
@@ -121,7 +121,7 @@ const UpdateRole = () => {
                             </Grid2>
                             <Grid2 size={12}>
                                 <EditableTextField
-                                    label={LABEL.DESCRIPTION}
+                                    label={LABEL.ROLE_DESC}
                                     name="description"
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
@@ -141,7 +141,7 @@ const UpdateRole = () => {
                                             color="primary"
                                         />
                                     }
-                                    label={LABEL.ENABLED}
+                                    label={LABEL.ROLE_ENABLED}
                                 />
                             </Grid2>
                             <Grid2 size={6}></Grid2>

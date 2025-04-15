@@ -42,8 +42,8 @@ const RoleList = () => {
         setLoading(false);
       })
       .catch((error) => {
-        console.error(MESSAGE.ROLE_FEATCHING_ERROR, error);
-        setError(MESSAGE.ROLE_FEATCHING_ERROR_MSG);
+        console.error(MESSAGE.FEATCHING_ERROR.replace(':type', LABEL.ROLE), error);
+        setError(MESSAGE.FEATCHING_ERROR_MSG.replace(':type', LABEL.ROLE));
         setLoading(false);
       });
   }, []);
@@ -52,8 +52,8 @@ const RoleList = () => {
     RoleService.deleteRole(id)
       .then(() => setRoles(roles.filter((role) => role.roleId !== id)))
       .catch((error) => {
-        console.error(MESSAGE.ROLE_DELETE_ERROR, error);
-        setError(MESSAGE.ROLE_DELETE_ERROR_MSG);
+        console.error(MESSAGE.DELETE_ERROR.replace('type', LABEL.ROLE), error);
+        setError(MESSAGE.DELETE_ERROR_MSG.replace(':type', LABEL.ROLE));
       });
   };
 
@@ -134,7 +134,7 @@ const RoleList = () => {
   if (roles.length === 0) {
     return (
       <div className={classes.errorTitle}>
-        <Typography variant="h6">{MESSAGE.ROLE_LIST_EMPTY}</Typography>
+        <Typography variant="h6">{MESSAGE.LIST_EMPTY.replace('type', LABEL.ROLE)}</Typography>
         <AddNewButton url={ROUTES.ROLE_CREATE} />
       </div>
     );
@@ -148,7 +148,7 @@ const RoleList = () => {
           <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Category List</Typography>
         </Breadcrumbs>
       </div>
-      <PageTitle title={LABEL.PAGE_TITLE_ROLE_LIST} />
+      <PageTitle title={LABEL.PAGE_TITLE_LIST.replace(':type', LABEL.ROLE)} />
       <div style={{ marginBottom: "10px" }}>
         <AddNewButton url={ROUTES.ROLE_CREATE} />
       </div >

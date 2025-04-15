@@ -41,8 +41,8 @@ const CategoryList = () => {
         setLoading(false);
       })
       .catch((error) => {
-        console.error(MESSAGE.CATEGORY_FEATCHING_ERROR, error);
-        setError(MESSAGE.CATEGORY_FEATCHING_ERROR_MSG);
+        console.error(MESSAGE.FEATCHING_ERROR.replace('type', LABEL.CATEGORY), error);
+        setError(MESSAGE.FEATCHING_ERROR_MSG.replace('type', LABEL.CATEGORY));
         setLoading(false);
       });
   }, []);
@@ -51,8 +51,8 @@ const CategoryList = () => {
     CategoryService.deleteCategory(id)
       .then(() => setCategories(categories.filter((category) => category.categoryId !== id)))
       .catch((error) => {
-        console.error(MESSAGE.CATEGORY_DELETE_ERROR, error);
-        setError(MESSAGE.CATEGORY_DELETE_ERROR_MSG);
+        console.error(MESSAGE.DELETE_ERROR.replace('type', LABEL.CATEGORY), error);
+        setError(MESSAGE.DELETE_ERROR_MSG.replace('type', LABEL.CATEGORY));
       });
   };
 
@@ -129,7 +129,7 @@ const CategoryList = () => {
   if (categories.length === 0) {
     return (
       <div className={classes.errorTitle}>
-        <Typography variant="h6">{MESSAGE.CATEGORY_LIST_EMPTY}</Typography>
+        <Typography variant="h6">{MESSAGE.LIST_EMPTY.replace('type', LABEL.CATEGORY)}</Typography>
         <AddNewButton url={ROUTES.CATEGORY_CREATE} />
       </div>
     );
@@ -143,7 +143,7 @@ const CategoryList = () => {
           <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Category List</Typography>
         </Breadcrumbs>
       </div>
-      <PageTitle title={LABEL.PAGE_TITLE_CATEGORY_LIST} />
+      <PageTitle title={LABEL.PAGE_TITLE_LIST.replace(':type', LABEL.CATEGORY)} />
       <div style={{ marginBottom: "10px" }}>
         <AddNewButton url={ROUTES.CATEGORY_CREATE} />
       </div >

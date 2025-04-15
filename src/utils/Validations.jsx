@@ -16,3 +16,8 @@ export const validateLength = (value, minLength, maxLength) => {
   const length = value.trim().length;
   return length >= minLength && length <= maxLength;
 };
+
+export const validateExactLength = (value, exactLength) => {
+  if (typeof value !== 'string') return false;
+  return value.trim().length === exactLength;
+};

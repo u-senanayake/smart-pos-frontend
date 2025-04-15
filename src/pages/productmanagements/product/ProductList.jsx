@@ -40,8 +40,8 @@ const ProductList = () => {
         setLoading(false);
       })
       .catch((error) => {
-        console.error(MESSAGE.PRODUCT_FEATCHING_ERROR, error);
-        setError(MESSAGE.PRODUCT_FEATCHING_ERROR_MSG);
+        console.error(MESSAGE.FEATCHING_ERROR.replace('type', LABEL.PRODUCT), error);
+        setError(MESSAGE.FEATCHING_ERROR_MSG.replace('type', LABEL.PRODUCT));
         setLoading(false);
       });
   }, []);
@@ -50,8 +50,8 @@ const ProductList = () => {
     ProductService.deleteProduct(id)
       .then(() => setProducts(products.filter((product) => product.productId !== id)))
       .catch((error) => {
-        console.error(MESSAGE.PRODUCT_DELETE_ERROR, error);
-        setError(MESSAGE.PRODUCT_DELETE_ERROR_MSG);
+        console.error(MESSAGE.DELETE_ERROR.replace('type', LABEL.PRODUCT), error);
+        setError(MESSAGE.DELETE_ERROR_MSG.replace('type', LABEL.PRODUCT));
       });
   }
 
@@ -62,13 +62,13 @@ const ProductList = () => {
   const columns = [
     {
       field: 'productId',
-      headerName: LABEL.ID,
+      headerName: LABEL.TABLE_ID,
       flex: 0.5,
       headerClassName: 'super-app-theme--header',
     },
     {
       field: 'productName',
-      headerName: LABEL.NAME,
+      headerName: LABEL.TABLE_NAME,
       flex: 2,
       headerClassName: 'super-app-theme--header',
     },
@@ -136,7 +136,7 @@ const ProductList = () => {
   if (products.length === 0) {
     return (
       <div className={classes.errorTitle}>
-        <Typography variant="h6">{MESSAGE.PRODUCT_LIST_EMPTY}</Typography>
+        <Typography variant="h6">{MESSAGE.LIST_EMPTY.replace('type', LABEL.PRODUCT)}</Typography>
         <AddNewButton url={ROUTES.PRODUCT_CREATE} />
       </div>
     );
@@ -150,7 +150,7 @@ const ProductList = () => {
           <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Product List</Typography>
         </Breadcrumbs>
       </div>
-      <PageTitle title={LABEL.PAGE_TITLE_PRODUCT_LIST} />
+      <PageTitle title={LABEL.PAGE_TITLE_LIST.replace(':type', LABEL.PRODUCT)} />
       <div style={{ marginBottom: "10px" }}>
         <AddNewButton url={ROUTES.PRODUCT_CREATE} />
       </div >

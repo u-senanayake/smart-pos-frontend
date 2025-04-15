@@ -1,5 +1,13 @@
 //Role
 export const ROLE_NAME_MIN = 5;
 export const ROLE_NAME_MAX = 25;
-export const ROLE_DESCRIPTION_MIN = 10;
-export const ROLE_DESCRIPTION_MAX = 100;
+export const ROLE_DESC_MIN = 10;
+export const ROLE_DESC_MAX = 100;
+
+//User
+export const USER_USERNAME_MIN = 5;
+export const USER_NAME_MIN = 1;
+export const USER_NAME_MAX = 50;
+export const USER_ADDRESS_MIN = 1;
+export const USER_ADDRESS_MAX = 255;
+export const USER_PHONE = 10

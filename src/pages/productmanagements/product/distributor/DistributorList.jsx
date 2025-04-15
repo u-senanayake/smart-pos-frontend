@@ -41,8 +41,8 @@ const DistributorList = () => {
         setLoading(false);
       })
       .catch((error) => {
-        console.error(MESSAGE.DISTRIBUTOR_FEATCHING_ERROR, error);
-        setError(MESSAGE.DISTRIBUTOR_FEATCHING_ERROR_MSG);
+        console.error(MESSAGE.FEATCHING_ERROR.replace('type', LABEL.DISTRIBUTOR), error);
+        setError(MESSAGE.FEATCHING_ERROR_MSG.replace('type', LABEL.DISTRIBUTOR));
         setLoading(false);
       });
   }, []);
@@ -51,8 +51,8 @@ const DistributorList = () => {
     DistributorService.deleteDistributor(id)
       .then(() => setDistributors(distributors.filter((distributor) => distributor.distributorId !== id)))
       .catch((error) => {
-        console.error(MESSAGE.DISTRIBUTOR_DELETE_ERROR, error);
-        setError(MESSAGE.DISTRIBUTOR_DELETE_ERROR_MSG);
+        console.error(MESSAGE.DELETE_ERROR.replace('type', LABEL.DISTRIBUTOR), error);
+        setError(MESSAGE.DELETE_ERROR_MSG.replace('type', LABEL.DISTRIBUTOR));
       });
   };
 
@@ -130,7 +130,7 @@ const DistributorList = () => {
   if (distributors.length === 0) {
     return (
       <div className={classes.errorTitle}>
-        <Typography variant="h6">{MESSAGE.DISTRIBUTOR_LIST_EMPTY}</Typography>
+        <Typography variant="h6">{MESSAGE.LIST_EMPTY.replace('type', LABEL.DISTRIBUTOR)}</Typography>
         <AddNewButton url={ROUTES.DISTRIBUTOR_CREATE} />
       </div>
     );
@@ -144,7 +144,7 @@ const DistributorList = () => {
           <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Distributor List</Typography>
         </Breadcrumbs>
       </div>
-      <PageTitle title={LABEL.PAGE_TITLE_DISTRIBUTOR_LIST} />
+      <PageTitle title={LABEL.PAGE_TITLE_LIST.replace(':type', LABEL.DISTRIBUTOR)} />
       <div style={{ marginBottom: "10px" }}>
         <AddNewButton url={ROUTES.DISTRIBUTOR_CREATE} />
       </div >

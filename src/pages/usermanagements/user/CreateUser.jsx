@@ -5,8 +5,14 @@ import { useNavigate } from 'react-router-dom';
 import UserService from '../../../services/UserService';
 import RoleService from '../../../services/RoleService';
 //Utils
-import { validateEmail, validatePassword, validateRequired, validateLength } from '../../../utils/Validations';
+import { validateEmail, validatePassword, validateRequired, validateLength, validateExactLength } from '../../../utils/Validations';
 import { Loading } from "../../../utils/FieldUtils";
+
+import * as LABEL from '../../../utils/const/FieldLabels';
+import * as MESSAGE from '../../../utils/const/Message';
+import * as PROPERTY from '../../../utils/const/FieldProperty';
+import * as APP_PROPERTY from '../../../utils/const/AppProperty';
+import * as ROUTES from '../../../utils/const/RouteProperty';
 
 const CreateUser = () => {
   const [user, setUser] = useState({
@@ -70,23 +76,23 @@ const CreateUser = () => {
   const validateForm = (user) => {
     const errors = {};
     //Username
-    if (!validateRequired(user.username)) errors.username = 'Userame is required';
-    if (!validateLength(user.username, 5, 50)) errors.username = 'Username must be between 5 and 50 characters';
+    if (!validateRequired(user.username)) errors.username = MESSAGE.FIELD_REQUIRED.replace('fieldName', LABEL.USER_USERNAME);
+    if (!validateLength(user.username, PROPERTY.USER_USERNAME_MIN, PROPERTY.USER_NAME_MAX)) errors.username = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.USER_USERNAME).replace(':min', PROPERTY.USER_USERNAME_MIN).replace(':max', PROPERTY.USER_NAME_MAX);
     //First name
     if (!validateRequired(user.firstName)) errors.firstName = 'First Name is required';
-    if (!validateLength(user.firstName, 1, 50)) errors.firstName = 'First name must be between 1 and 50 characters';
+    if (!validateLength(user.firstName, PROPERTY.USER_NAME_MIN, PROPERTY.USER_NAME_MAX)) errors.firstName = 'First name must be between 1 and 50 characters';
     //Last name
     if (!validateRequired(user.lastName)) errors.lastName = 'Last Name is required';
-    if (!validateLength(user.lastName, 1, 50)) errors.lastName = 'Last name must be between 1 and 50 characters';
+    if (!validateLength(user.lastName, PROPERTY.USER_NAME_MIN, PROPERTY.USER_NAME_MAX)) errors.lastName = 'Last name must be between 1 and 50 characters';
     //Email
     if (!validateRequired(user.email)) errors.email = 'Email is required';
     if (!validateEmail(user.email)) errors.email = 'Invalid email address';
     //Address
     if (!validateRequired(user.address)) errors.address = 'Address is required';
-    if (!validateLength(user.address, 1, 255)) errors.address = 'Address must be less than 255 characters';
+    if (!validateLength(user.address, PROPERTY.USER_ADDRESS_MIN, PROPERTY.USER_ADDRESS_MAX)) errors.address = 'Address must be less than 255 characters';
     //Phone number 1
     if (!validateRequired(user.phoneNo1)) errors.phoneNo1 = 'Phone number 1 cannot be blank';
-    if (!validateLength(user.phoneNo1, 10, 10)) errors.phoneNo1 = 'Phone number should be 10 characters';
+    if (!validateExactLength(user.phoneNo1, PROPERTY.USER_PHONE)) errors.phoneNo1 = 'Phone number should be 10 characters';
     //Role
     //if (!validateRequired(user.role.roleId)) errors.role = 'Role is required';
     //Password
