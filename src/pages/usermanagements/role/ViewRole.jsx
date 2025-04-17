@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Container, Typography, Box, Paper, Grid2, Breadcrumbs } from "@mui/material";
-
+import { Container, Typography, Box, Paper, Grid2, Breadcrumbs, } from "@mui/material";
 import RoleService from '../../../services/RoleService';
 
-import { renderStatusIcon, } from "../../../utils/utils";
 import { formatDate } from "../../../utils/Dateutils";
 
 import { Loading, } from "../../../components/PageElements/Loading";
@@ -12,6 +10,7 @@ import ErrorMessage from "../../../components/DialogBox/ErrorMessage";
 import { ReadOnlyField, PageTitle } from "../../../components/PageElements/CommonElements";
 import { Home, RoleList } from "../../../components/PageElements/BreadcrumbsLinks";
 import { EditButton, CancelButton } from "../../../components/PageElements/Buttons";
+import { EnabledIcon,} from "../../../components/PageElements/IconButtons";
 
 import { useStyles } from "../../../style/makeStyle";
 
@@ -80,7 +79,10 @@ const ViewRole = () => {
             <Grid2 size={12}>
               <ReadOnlyField label={LABEL.ROLE_DESC} value={role.description} />
             </Grid2>
-            <Grid2 size={6}><Typography variant="h5">{LABEL.ROLE_ENABLED} {renderStatusIcon(role.enabled)}</Typography></Grid2>
+            <Grid2 size={6}>
+              {/*<Typography variant="h5">{LABEL.ROLE_ENABLED} {renderStatusIcon(role.enabled)}</Typography>*/}
+              <EnabledIcon enabled={role.enabled}/>
+            </Grid2>
             <Grid2 size={6}></Grid2>
             <Grid2 size={6}>
               <ReadOnlyField label={LABEL.ROLE_CREATED_AT} value={formatDate(role.createdAt)} />
