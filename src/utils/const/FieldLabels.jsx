@@ -52,7 +52,17 @@ export const CATEGORY_DELETED_BY = "Deleted By"
 
 
 //Brand
-export const BRAND = "Brand"
+export const BRAND = 'Brand'
+export const BRAND_ID ='Brand ID'
+export const BRAND_NAME ='Brand Name'
+export const BRAND_DESC ='Brand Description'
+export const BRAND_ENABLED ='Enabled'
+export const BRAND_CREATED_AT = "Created At"
+export const BRAND_CREATED_BY = "Created By"
+export const BRAND_UPDATED_AT = "Updated At"
+export const BRAND_UPDATED_BY = "Updated By"
+export const BRAND_DELETED_AT = "Deleted At"
+export const BRAND_DELETED_BY = "Deleted By"
 
 //Distributor
 export const DISTRIBUTOR = "Distributor"

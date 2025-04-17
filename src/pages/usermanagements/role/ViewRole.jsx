@@ -59,7 +59,6 @@ const ViewRole = () => {
 
   return (
     <Container className={classes.mainContainer}>
-
       <Breadcrumbs aria-label="breadcrumb">
         <Home />
         <RoleList />
@@ -68,7 +67,6 @@ const ViewRole = () => {
       <PageTitle title={LABEL.PAGE_TITLE_VIEW.replace(':type', LABEL.ROLE) + role.roleName} />
       <Container maxWidth="md">
         <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
-
           <Grid2 container spacing={2}>
             <Grid2 size={4}>
               <ReadOnlyField label={LABEL.ROLE_ID} value={role.roleId} />
@@ -80,7 +78,6 @@ const ViewRole = () => {
               <ReadOnlyField label={LABEL.ROLE_DESC} value={role.description} />
             </Grid2>
             <Grid2 size={6}>
-              {/*<Typography variant="h5">{LABEL.ROLE_ENABLED} {renderStatusIcon(role.enabled)}</Typography>*/}
               <EnabledIcon enabled={role.enabled}/>
             </Grid2>
             <Grid2 size={6}></Grid2>
@@ -91,12 +88,10 @@ const ViewRole = () => {
               <ReadOnlyField label={LABEL.ROLE_UPDATED_AT} value={formatDate(role.updatedAt)} />
             </Grid2>
           </Grid2>
-
           <Box className={classes.formButtonsContainer}>
             <EditButton onClick={handleUpdate} />
             <CancelButton onClick={handleCancel} />
           </Box>
-
         </Paper>
       </Container>
     </Container>

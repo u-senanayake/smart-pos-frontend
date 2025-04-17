@@ -117,7 +117,13 @@ const UpdateCategory = () => {
                                     label={LABEL.CATEGORY_NAME}
                                     name="name"
                                     value={name}
-                                    onChange={(e) => setName(e.target.value)}
+                                    onChange={(e) => {
+                                        setName(e.target.value);
+                                        setFormError((prevErrors) => ({
+                                            ...prevErrors,
+                                            name: undefined
+                                        }));
+                                    }}
                                     error={!!formError.name}
                                     helperText={formError.name}
                                     required={true}
@@ -128,7 +134,13 @@ const UpdateCategory = () => {
                                     label={LABEL.CATEGORY_PREFX}
                                     name="catPrefix"
                                     value={catPrefix}
-                                    onChange={(e) => setCatPrefix(e.target.value)}
+                                    onChange={(e) => {
+                                        setCatPrefix(e.target.value);
+                                        setFormError((prevErrors) => ({
+                                            ...prevErrors,
+                                            catPrefix: undefined
+                                        }));
+                                    }}
                                     error={!!formError.catPrefix}
                                     helperText={formError.catPrefix}
                                     required={true}
@@ -139,7 +151,13 @@ const UpdateCategory = () => {
                                     label={LABEL.CATEGORY_DESC}
                                     name="description"
                                     value={description}
-                                    onChange={(e) => setDescription(e.target.value)}
+                                    onChange={(e) => {
+                                        setDescription(e.target.value);
+                                        setFormError((prevErrors) => ({
+                                            ...prevErrors,
+                                            description: undefined
+                                        }));
+                                    }}
                                     error={!!formError.description}
                                     helperText={formError.description}
                                     required={true}
@@ -150,7 +168,13 @@ const UpdateCategory = () => {
                                     control={
                                         <Switch
                                             checked={enabled}
-                                            onChange={(e) => setEnabled(e.target.checked)}
+                                            onChange={(e) => {
+                                                setEnabled(e.target.checked);
+                                                setFormError((prevErrors) => ({
+                                                    ...prevErrors,
+                                                    enabled: undefined
+                                                }));
+                                            }}
                                             name="enabled"
                                             color="primary"
                                         />

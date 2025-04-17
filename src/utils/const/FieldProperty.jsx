@@ -17,5 +17,11 @@ export const USER_PASS_LENGTH = 10
 export const CATEGORY_NAME_MIN=5;
 export const CATEGORY_NAME_MAX=25;
 export const CATEGORY_DESC_MIN=5;
-export const CATEGORY_DESC_MAX=100;
+export const CATEGORY_DESC_MAX=255;
 export const CATEGORY_PRFX_LENGTH=1;
+
+//Brand
+export const BRAND_NAME_MIN=5;
+export const BRAND_NAME_MAX=50;
+export const BRAND_DESC_MIN=5;
+export const BRAND_DESC_MAX=255;

@@ -70,8 +70,12 @@ const UpdateRole = () => {
                     setTimeout(() => navigate(ROUTES.ROLE_LIST), APP_PROPERTY.ALERT_TIMEOUT); // Delay navigation
                 })
                 .catch((error) => {
-                    setErrorMessage(MESSAGE.UPDATE_ERROR_MSG.replace('type', LABEL.ROLE));
-                    console.error(MESSAGE.UPDATE_ERROR.replace('type', LABEL.ROLE), error.response.data);
+                    if (error.response && error.response.data) {
+                        setErrorMessage(error.response.data);
+                    } else {
+                        setErrorMessage(MESSAGE.UPDATE_ERROR_MSG.replace(':type', LABEL.ROLE));
+                    }
+                    console.error(MESSAGE.UPDATE_ERROR.replace(':type', LABEL.ROLE), error.response);
                 }).finally(() => setIsSaving(false));;
         }
     };

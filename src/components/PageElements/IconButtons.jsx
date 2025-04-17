@@ -1,6 +1,6 @@
 import React from "react";
 import { Chip, IconButton, Tooltip, } from "@mui/material";
-import { Delete, Edit, Preview, CheckCircle, Lock, LockOpen, DeleteOutline, } from "@mui/icons-material";
+import { Delete, Edit, Preview, CheckCircle, Lock, LockOpen, DeleteOutline, Cancel } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 
 export const DeleteIcon = ({ onClick, }) => {
@@ -36,9 +36,9 @@ export const PreviewIcon = ({ url, ariaLabel = "Preview Role" }) => {
 export const EnabledIcon = ({ enabled }) => {
     return (
         enabled ?
-            <Chip icon={<CheckCircle style={{ color: 'green' }} />} label="Enabled" />
+            <Chip icon={<CheckCircle style={{ color: 'green' }} />} label="Active" />
             :
-            <Chip icon={<CheckCircle />} label="Enabled" />
+            <Chip icon={<Cancel />} label="Not Active" />
 
     );
 };
@@ -46,7 +46,7 @@ export const EnabledIcon = ({ enabled }) => {
 export const LockedIcon = ({ locked }) => {
     return (
         locked ?
-            <Chip icon={<Lock style={{ color: 'red' }} />} label="Locked" />
+            <Chip icon={<Lock style={{ color: 'red' }} />} label="Un-Locked" />
             :
             <Chip icon={<LockOpen style={{ color: 'green' }} />} label="Locked" />
 

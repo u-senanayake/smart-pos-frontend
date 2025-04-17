@@ -92,7 +92,13 @@ const CreateCategory = () => {
                                     label={LABEL.CATEGORY_NAME}
                                     name="name"
                                     value={name}
-                                    onChange={(e) => setName(e.target.value)}
+                                    onChange={(e) => {
+                                        setName(e.target.value);
+                                        setErrors((prevErrors) => ({
+                                            ...prevErrors,
+                                            name: undefined
+                                        }));
+                                    }}
                                     error={!!formError.name}
                                     helperText={formError.name}
                                 />
@@ -102,7 +108,13 @@ const CreateCategory = () => {
                                     label={LABEL.CATEGORY_PREFX}
                                     name="catPrefix"
                                     value={catPrefix}
-                                    onChange={(e) => setCatPrefix(e.target.value)}
+                                    onChange={(e) => {
+                                        setCatPrefix(e.target.value);
+                                        setErrors((prevErrors) => ({
+                                            ...prevErrors,
+                                            catPrefix: undefined
+                                        }));
+                                    }}
                                     error={!!formError.catPrefix}
                                     helperText={formError.catPrefix}
                                 />
@@ -112,7 +124,13 @@ const CreateCategory = () => {
                                     label={LABEL.CATEGORY_DESC}
                                     name="description"
                                     value={description}
-                                    onChange={(e) => setDescription(e.target.value)}
+                                    onChange={(e) => {
+                                        setDescription(e.target.value);
+                                        setErrors((prevErrors) => ({
+                                            ...prevErrors,
+                                            description: undefined
+                                        }));
+                                    }}
                                     error={!!formError.description}
                                     helperText={formError.description}
                                 />
@@ -122,7 +140,13 @@ const CreateCategory = () => {
                                     control={
                                         <Switch
                                             checked={enabled}
-                                            onChange={(e) => setEnabled(e.target.checked)}
+                                            onChange={(e) => {
+                                                setEnabled(e.target.checked);
+                                                setErrors((prevErrors) => ({
+                                                    ...prevErrors,
+                                                    enabled: undefined
+                                                }));
+                                            }}
                                             name="enabled"
                                             color="primary"
                                         />
