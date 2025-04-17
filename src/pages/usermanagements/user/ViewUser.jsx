@@ -4,14 +4,15 @@ import { useParams, useNavigate } from 'react-router-dom';
 //Sevice
 import UserService from '../../../services/UserService';
 //Utils
-import { renderStatusIcon, renderLockIcon, formatPhoneNumber } from '../../../utils/utils';
+import { formatPhoneNumber } from '../../../utils/utils';
 import { formatDate } from '../../../utils/Dateutils';
 
 import { Loading, } from "../../../components/PageElements/Loading";
 import ErrorMessage from "../../../components/DialogBox/ErrorMessage";
 import { ReadOnlyField, PageTitle } from "../../../components/PageElements/CommonElements";
-import { Home, RoleList } from "../../../components/PageElements/BreadcrumbsLinks";
+import { Home, UserList } from "../../../components/PageElements/BreadcrumbsLinks";
 import { EditButton, CancelButton } from "../../../components/PageElements/Buttons";
+import { EnabledIcon, LockedIcon } from "../../../components/PageElements/IconButtons";
 import { useStyles } from "../../../style/makeStyle";
 
 import * as MESSAGE from '../../../utils/const/Message';
@@ -62,7 +63,7 @@ const ViewUser = () => {
     <Container className={classes.mainContainer}>
       <Breadcrumbs aria-label="breadcrumb">
         <Home />
-        <RoleList />
+        <UserList />
         <Typography sx={{ color: 'text.primary' }}>View Role</Typography>
       </Breadcrumbs>
       <PageTitle title={LABEL.PAGE_TITLE_VIEW.replace(':type', LABEL.USER) + user.username} />
@@ -97,10 +98,10 @@ const ViewUser = () => {
               <ReadOnlyField label={LABEL.USER_PHONE2} value={formatPhoneNumber(user.phoneNo2)} />
             </Grid2>
             <Grid2 size={6}>
-              <Typography variant="h5">{LABEL.USER_ENABLED}: {renderStatusIcon(user.enabled)}</Typography>
+              <EnabledIcon enabled={user.enabled} />
             </Grid2>
             <Grid2 size={6}>
-              <Typography variant="h5">{LABEL.USER_LOCKED}:{renderLockIcon(user.locked)}</Typography>
+              <LockedIcon locked={user.locked} />
             </Grid2>
             <Grid2 size={6}>
               <ReadOnlyField label={LABEL.USER_CREATED_AT} value={formatDate(user.createdAt)} />

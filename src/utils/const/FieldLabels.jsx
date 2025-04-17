@@ -37,7 +37,19 @@ export const USER_DELETED_BY = "Deleted By"
 
 
 //Category
-export const CATEGORY = "Category"
+export const CATEGORY = 'Category'
+export const CATEGORY_ID='Category ID'
+export const CATEGORY_NAME='Category Name'
+export const CATEGORY_PREFX='Category Prefix'
+export const CATEGORY_DESC='Category Description'
+export const CATEGORY_ENABLE='Enabled'
+export const CATEGORY_CREATED_AT = "Created At"
+export const CATEGORY_CREATED_BY = "Created By"
+export const CATEGORY_UPDATED_AT = "Updated At"
+export const CATEGORY_UPDATED_BY = "Updated By"
+export const CATEGORY_DELETED_AT = "Deleted At"
+export const CATEGORY_DELETED_BY = "Deleted By"
+
 
 //Brand
 export const BRAND = "Brand"

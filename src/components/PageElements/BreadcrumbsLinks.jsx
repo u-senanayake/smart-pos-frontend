@@ -26,3 +26,43 @@ export const UserList = () => {
         </Link>
     )
 };
+
+export const CategoryList = () => {
+    return (
+        <Link underline="hover" color="inherit" href={ROUTES.CATEGORY_LIST}>
+            Category List
+        </Link>
+    )
+};
+
+export const BrandList = () => {
+    return (
+        <Link underline="hover" color="inherit" href={ROUTES.BRAND_LIST}>
+            Brand List
+        </Link>
+    )
+};
+
+export const DistributorList = () => {
+    return (
+        <Link underline="hover" color="inherit" href={ROUTES.DISTRIBUTOR_LIST}>
+            Distributor List
+        </Link>
+    )
+};
+
+export const ProductList = () => {
+    return (
+        <Link underline="hover" color="inherit" href={ROUTES.PRODUCT_LIST}>
+            Product List
+        </Link>
+    )
+};
+
+export const CustomerGroupList = () => {
+    return (
+        <Link underline="hover" color="inherit" href={ROUTES.CST_GRP_LIST}>
+            Customer Group List
+        </Link>
+    )
+};

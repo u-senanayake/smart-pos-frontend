@@ -1,10 +1,23 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Typography, Paper, Container, TextField, Button, FormControlLabel, Checkbox, Grid2 } from '@mui/material';
+import { Box, Typography, Paper, Container, Switch, FormControlLabel, Checkbox, Grid2, Breadcrumbs } from '@mui/material';
 //Service
 import CategoryService from '../../../../services/CategoryService';
 //Utils
-import { validateRequired, validateLength } from '../../../../utils/Validations';
+import { validateRequired, validateLength, validateExactLength } from '../../../../utils/Validations';
+
+import { Home, CategoryList } from "../../../../components/PageElements/BreadcrumbsLinks";
+import { EditableTextField, PageTitle } from "../../../../components/PageElements/CommonElements";
+import { SaveButton, CancelButton } from "../../../../components/PageElements/Buttons";
+import { SuccessAlert, ErrorAlert, } from '../../../../components/DialogBox/Alerts';
+
+import * as LABEL from '../../../../utils/const/FieldLabels';
+import * as MESSAGE from '../../../../utils/const/Message';
+import * as PROPERTY from '../../../../utils/const/FieldProperty';
+import * as APP_PROPERTY from '../../../../utils/const/AppProperty';
+import * as ROUTES from '../../../../utils/const/RouteProperty';
+
+import { useStyles } from "../../../../style/makeStyle";
 
 const CreateCategory = () => {
 
@@ -13,23 +26,25 @@ const CreateCategory = () => {
     const [catPrefix, setCatPrefix] = useState('');
     const [enabled, setEnabled] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
-    const [errors, setErrors] = useState({});
-    const [serverErrors, setServerErrors] = useState({});
+    const [formError, setErrors] = useState({});
+    const [errorMessage, setErrorMessage] = useState('');//Server error
+    const [successMessage, setSuccessMessage] = useState(''); // State for success message
+    const classes = useStyles();
     const navigate = useNavigate();
 
     const validateForm = (category) => {
-        const errors = {};
+        const formError = {};
         //Name
-        if (!validateRequired(category.name)) errors.name = 'Name is required';
-        if (!validateLength(category.name, 1, 10)) errors.name = 'Name must be between 5 and 50 characters';
+        if (!validateRequired(category.name)) formError.name = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.CATEGORY_NAME);
+        if (!validateLength(category.name, PROPERTY.CATEGORY_NAME_MIN, PROPERTY.CATEGORY_NAME_MAX)) formError.name = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.CATEGORY_NAME).replace(':min', PROPERTY.CATEGORY_NAME_MIN).replace(':max', PROPERTY.CATEGORY_NAME_MAX);
         //Description
-        if (!validateRequired(category.description)) errors.description = 'Description is required';
-        if (!validateLength(category.description, 1, 255)) errors.description = 'Description must be less than 255 characters';
+        if (!validateRequired(category.description)) formError.description = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.CATEGORY_DELETED_BY);
+        if (!validateLength(category.description, PROPERTY.CATEGORY_DESC_MIN, PROPERTY.CATEGORY_DESC_MAX)) formError.description = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.CATEGORY_DESC).replace(':min', PROPERTY.CATEGORY_DESC_MIN).replace(':max', PROPERTY.CATEGORY_DESC_MAX);
         //Category prefix
-        if (!validateRequired(category.catPrefix)) errors.catPrefix = 'Category prefix is required';
-        if (!validateLength(category.catPrefix, 1, 1)) errors.catPrefix = 'Category prefix must 1 character';
+        if (!validateRequired(category.catPrefix)) formError.catPrefix = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.CATEGORY_PREFX);
+        if (!validateExactLength(category.catPrefix, PROPERTY.CATEGORY_PRFX_LENGTH)) formError.catPrefix = MESSAGE.FIELD_LENGTH.replace(':fieldName', LABEL.CATEGORY_PREFX).replace(':number', PROPERTY.CATEGORY_PRFX_LENGTH);
 
-        return errors;
+        return formError;
     };
 
     const handleSubmit = (e) => {
@@ -42,106 +57,89 @@ const CreateCategory = () => {
             setIsSaving(true);
             CategoryService.createCategory(category)
                 .then(() => {
-                    navigate('/productmanagement/categorylist');
+                    setSuccessMessage(MESSAGE.CREATE_SUCCESS.replace(':type', LABEL.CATEGORY)); // Set success message
+                    setTimeout(() => navigate(ROUTES.CATEGORY_LIST), APP_PROPERTY.ALERT_TIMEOUT); // Delay navigation
                 })
                 .catch((error) => {
                     if (error.response && error.response.data) {
-                        setServerErrors(error.response.data);
+                        setErrorMessage(error.response.data);
                     } else {
-                        console.error('Error creating category:', error);
+                        setErrorMessage(MESSAGE.CREATE_ERROR_MSG.replace(':type', LABEL.CATEGORY));
                     }
+                    console.error(MESSAGE.CREATE_ERROR.replace(':type', LABEL.CATEGORY), error.response);
                 }).finally(() => setIsSaving(false));
         }
     };
 
-    const handleCancel = () => { navigate('/productmanagement/categorylist'); };
-
-    const serverErrorMessages = Object.values(serverErrors);
+    const handleCancel = () => { navigate(ROUTES.CATEGORY_LIST); };
 
     return (
-        <Container maxWidth="md">
-            <Paper sx={{ p: 3, mt: 3 }}>
-                <Typography variant="h4" gutterBottom>
-                    Create Category
-                </Typography>
-                <form onSubmit={handleSubmit}>
-                    {Object.keys(serverErrorMessages).length > 0 && (
-                        <Box sx={{ mb: 2 }}>
-                            <Typography color="error">
-                                {serverErrorMessages}
-                            </Typography>
+        <Container className={classes.mainContainer}>
+            <Breadcrumbs aria-label="breadcrumb">
+                <Home />
+                <CategoryList />
+                <Typography sx={{ color: 'text.primary' }}>Create Category</Typography>
+            </Breadcrumbs>
+            <PageTitle title={LABEL.PAGE_TITLE_CREATE.replace(':type', LABEL.CATEGORY)} />
+            <Container maxWidth="lg">
+                <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
+                    <form onSubmit={handleSubmit}>
+                        <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
+                        <ErrorAlert message={errorMessage} />
+                        <Grid2 container spacing={2}>
+                            <Grid2 size={6}>
+                                <EditableTextField
+                                    label={LABEL.CATEGORY_NAME}
+                                    name="name"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    error={!!formError.name}
+                                    helperText={formError.name}
+                                />
+                            </Grid2>
+                            <Grid2 size={6}>
+                                <EditableTextField
+                                    label={LABEL.CATEGORY_PREFX}
+                                    name="catPrefix"
+                                    value={catPrefix}
+                                    onChange={(e) => setCatPrefix(e.target.value)}
+                                    error={!!formError.catPrefix}
+                                    helperText={formError.catPrefix}
+                                />
+                            </Grid2>
+                            <Grid2 size={12}>
+                                <EditableTextField
+                                    label={LABEL.CATEGORY_DESC}
+                                    name="description"
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                    error={!!formError.description}
+                                    helperText={formError.description}
+                                />
+                            </Grid2>
+                            <Grid2 size={6}>
+                                <FormControlLabel
+                                    control={
+                                        <Switch
+                                            checked={enabled}
+                                            onChange={(e) => setEnabled(e.target.checked)}
+                                            name="enabled"
+                                            color="primary"
+                                        />
+                                    }
+                                    label={LABEL.CATEGORY_ENABLE}
+                                />
+                            </Grid2>
+                            <Grid2 size={6}></Grid2>
+                        </Grid2>
+                        <Box className={classes.formButtonsContainer}>
+                            <SaveButton onClick={handleSubmit} isSaving={isSaving} />
+                            <CancelButton onClick={handleCancel} />
                         </Box>
-                    )}
-                    <Grid2 container spacing={2}>
-                        <Grid2 size={6}>
-                            <TextField
-                                label="Name"
-                                name="name"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                fullWidth
-                                variant="outlined"
-                                margin="normal"
-                                required
-                                error={!!errors.name}
-                                helperText={errors.name}
-                            />
-                        </Grid2>
-                        <Grid2 size={6}>
-                            <TextField
-                                label="Category Prefix"
-                                name="catPrefix"
-                                value={catPrefix}
-                                onChange={(e) => setCatPrefix(e.target.value)}
-                                fullWidth
-                                variant="outlined"
-                                margin="normal"
-                                required
-                                error={!!errors.catPrefix}
-                                helperText={errors.catPrefix}
-                            />
-                        </Grid2>
-                        <Grid2 size={12}>
-                            <TextField
-                                label="Description"
-                                name="description"
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                                fullWidth
-                                variant="outlined"
-                                margin="normal"
-                                required
-                                error={!!errors.description}
-                                helperText={errors.description}
-                            />
-                        </Grid2>
-                        <Grid2 size={6}>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={enabled}
-                                        onChange={(e) => setEnabled(e.target.checked)}
-                                        name="enabled"
-                                        color="primary"
-                                    />
-                                }
-                                label="Enabled"
-                            />
-                        </Grid2>
-                        <Grid2 size={6}></Grid2>
-                    </Grid2>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-                        <Button type="submit" variant="contained" color="primary">
-                            {isSaving ? 'Saving...' : 'Save'}
-                        </Button>
-                        <Button variant="outlined" color="secondary" onClick={handleCancel}>
-                            Cancel
-                        </Button>
-                    </Box>
-                </form>
-            </Paper>
+                    </form>
+                </Paper>
+            </Container>
         </Container>
-
     );
 };
 

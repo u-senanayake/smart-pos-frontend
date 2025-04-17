@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Container, FormControlLabel, Checkbox, Grid2, Breadcrumbs } from '@mui/material';
+import { Box, Typography, Paper, Container, FormControlLabel, Switch, Grid2, Breadcrumbs, } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 //Service
 import UserService from '../../../services/UserService';
@@ -250,7 +250,7 @@ const UpdateUser = () => {
               <Grid2 size={6}>
                 <FormControlLabel
                   control={
-                    <Checkbox
+                    <Switch
                       checked={user.enabled}
                       onChange={handleCheckboxChange}
                       name="enabled"
@@ -263,7 +263,7 @@ const UpdateUser = () => {
               <Grid2 size={6}>
                 <FormControlLabel
                   control={
-                    <Checkbox
+                    <Switch 
                       checked={user.locked}
                       onChange={handleCheckboxChange}
                       name="locked"

@@ -1,8 +1,7 @@
 import React from "react";
 import { Chip, IconButton, Tooltip, } from "@mui/material";
-import { Delete, Edit, Preview, CheckCircle, Lock, LockOpen,  DeleteOutline } from "@mui/icons-material";
+import { Delete, Edit, Preview, CheckCircle, Lock, LockOpen, DeleteOutline, } from "@mui/icons-material";
 import { Link } from "react-router-dom";
-import FaceIcon from "@mui/icons-material/Face";
 
 export const DeleteIcon = ({ onClick, }) => {
     return (
@@ -47,9 +46,9 @@ export const EnabledIcon = ({ enabled }) => {
 export const LockedIcon = ({ locked }) => {
     return (
         locked ?
-            <Chip icon={<Lock style={{ color: 'red' }} />} label="Enabled" />
+            <Chip icon={<Lock style={{ color: 'red' }} />} label="Locked" />
             :
-            <Chip icon={<LockOpen style={{ color: 'green' }} />} label="Enabled" />
+            <Chip icon={<LockOpen style={{ color: 'green' }} />} label="Locked" />
 
     );
 };
@@ -57,9 +56,9 @@ export const LockedIcon = ({ locked }) => {
 export const DeletedIcon = ({ deleted }) => {
     return (
         deleted ?
-            <Chip icon={<Delete style={{ color: 'red' }} />} label="Enabled" />
+            <Chip icon={<Delete style={{ color: 'red' }} />} label="Deleted" />
             :
-            <Chip icon={<DeleteOutline style={{ color: 'green' }} />} label="Enabled" />
+            <Chip icon={<DeleteOutline style={{ color: 'green' }} />} label="Deleted" />
 
     );
 };

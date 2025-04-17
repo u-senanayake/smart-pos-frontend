@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Container, TextField, Button, MenuItem, FormControlLabel, Checkbox, Grid2, Breadcrumbs } from '@mui/material';
+import { Box, Typography, Paper, Container, FormControlLabel, Checkbox, Grid2, Breadcrumbs, Switch } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 import UserService from '../../../services/UserService';
@@ -156,7 +156,7 @@ const CreateUser = () => {
   if (loading) {
     return <Loading />;
   }
-  
+
   return (
     <Container className={classes.mainContainer}>
       <Breadcrumbs aria-label="breadcrumb">
@@ -296,7 +296,7 @@ const CreateUser = () => {
               <Grid2 size={6}>
                 <FormControlLabel
                   control={
-                    <Checkbox
+                    <Switch
                       checked={user.locked}
                       onChange={handleCheckboxChange}
                       name="locked"
