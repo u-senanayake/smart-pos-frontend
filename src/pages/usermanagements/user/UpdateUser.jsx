@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import UserService from '../../../services/UserService';
 import RoleService from '../../../services/RoleService';
 //Utils
-import { validateEmail, validateRequired, validateLength } from '../../../utils/Validations';
+import { validateEmail, validateRequired, validateLength, validateExactLength } from '../../../utils/Validations';
 
 import { Loading, } from '../../../components/PageElements/Loading';
 import { Home, UserList } from "../../../components/PageElements/BreadcrumbsLinks";
@@ -85,7 +85,7 @@ const UpdateUser = () => {
     if (!validateEmail(user.email)) errors.email = MESSAGE.INVALID_EMAIL;
     // Phone number 1
     if (!validateRequired(user.phoneNo1)) errors.phoneNo1 = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.USER_PHONE1);
-    if (!validateLength(user.phoneNo1, 10, 10)) errors.phoneNo1 = MESSAGE.FIELD_LENGTH.replace(':fieldName', LABEL.USER_PHONE1).replace(':number', PROPERTY.USER_PHONE_LENGTH);
+    if (!validateExactLength(user.phoneNo1, 10)) errors.phoneNo1 = MESSAGE.FIELD_LENGTH.replace(':fieldName', LABEL.USER_PHONE1).replace(':number', PROPERTY.USER_PHONE_LENGTH);
     return errors;
   };
 

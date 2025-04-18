@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Container, Typography, Box, Paper, FormControlLabel, Checkbox, Grid2, Breadcrumbs } from '@mui/material';
+import { Container, Typography, Box, Paper, FormControlLabel, Grid2, Breadcrumbs, Switch } from '@mui/material';
 
 import RoleService from '../../../services/RoleService';
 
@@ -144,7 +144,7 @@ const UpdateRole = () => {
                             <Grid2 size={6}>
                                 <FormControlLabel
                                     control={
-                                        <Checkbox
+                                        <Switch
                                             checked={enabled}
                                             onChange={(e) => setEnabled(e.target.checked)}
                                             name="enabled"

@@ -35,7 +35,6 @@ export const USER_UPDATED_BY = "Updated By"
 export const USER_DELETED_AT = "Deleted At"
 export const USER_DELETED_BY = "Deleted By"
 
-
 //Category
 export const CATEGORY = 'Category'
 export const CATEGORY_ID='Category ID'
@@ -49,7 +48,6 @@ export const CATEGORY_UPDATED_AT = "Updated At"
 export const CATEGORY_UPDATED_BY = "Updated By"
 export const CATEGORY_DELETED_AT = "Deleted At"
 export const CATEGORY_DELETED_BY = "Deleted By"
-
 
 //Brand
 export const BRAND = 'Brand'
@@ -65,7 +63,21 @@ export const BRAND_DELETED_AT = "Deleted At"
 export const BRAND_DELETED_BY = "Deleted By"
 
 //Distributor
-export const DISTRIBUTOR = "Distributor"
+export const DISTRIBUTOR = 'Distributor'
+export const DISTRIBUTOR_ID='Distributor ID'
+export const DISTRIBUTOR_COMPANYNAME='Company Name'
+export const DISTRIBUTOR_EMAIL='Email'
+export const DISTRIBUTOR_PHONE1='Phone 1'
+export const DISTRIBUTOR_PHONE2='Phone 2'
+export const DISTRIBUTOR_ADDRESS='Adress'
+export const DISTRIBUTOR_ENABLED ='Enabled'
+export const DISTRIBUTOR_CREATED_AT = "Created At"
+export const DISTRIBUTOR_CREATED_BY = "Created By"
+export const DISTRIBUTOR_UPDATED_AT = "Updated At"
+export const DISTRIBUTOR_UPDATED_BY = "Updated By"
+export const DISTRIBUTOR_DELETED_AT = "Deleted At"
+export const DISTRIBUTOR_DELETED_BY = "Deleted By"
+
 
 //Product
 export const PRODUCT = "Product"

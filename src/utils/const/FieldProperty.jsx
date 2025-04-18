@@ -25,3 +25,10 @@ export const BRAND_NAME_MIN=5;
 export const BRAND_NAME_MAX=50;
 export const BRAND_DESC_MIN=5;
 export const BRAND_DESC_MAX=255;
+
+//Distributor
+export const DISTRIBUTOR_COMPANYNAME_MIN=10;
+export const DISTRIBUTOR_COMPANYNAME_MAX=100;
+export const DISTRIBUTOR_PHONE_LENGTH=10
+export const DISTRIBUTOR_ADDRESS_MIN=10;
+export const DISTRIBUTOR_ADDRESS_MAX=255;

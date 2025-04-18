@@ -136,16 +136,16 @@ const CreateUser = () => {
       delete requestData.role; // Remove the role object
       UserService.createUser(requestData)
         .then(() => {
-          setSuccessMessage(MESSAGE.CREATE_SUCCESS.replace(':type', LABEL.USER)); // Set success message
+          setSuccessMessage(MESSAGE.CREATE_SUCCESS.replace(':type', LABEL.ROLE)); // Set success message
           setTimeout(() => navigate(ROUTES.USER_LIST), APP_PROPERTY.ALERT_TIMEOUT); // Delay navigation
         })
         .catch((error) => {
           if (error.response && error.response.data) {
             setErrorMessage(error.response.data);
           } else {
-            setErrorMessage(MESSAGE.CREATE_ERROR_MSG.replace(':type', LABEL.USER));
+            setErrorMessage(MESSAGE.CREATE_ERROR_MSG.replace(':type', LABEL.ROLE));
           }
-          console.error(MESSAGE.CREATE_ERROR.replace(':type', LABEL.USER), error.response);
+          console.error(MESSAGE.CREATE_ERROR.replace(':type', LABEL.ROLE), error.response);
         })
         .finally(() => setIsSaving(false));
     }
