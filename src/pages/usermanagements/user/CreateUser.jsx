@@ -45,6 +45,7 @@ const CreateUser = () => {
   const [successMessage, setSuccessMessage] = useState(''); // State for success message
   const navigate = useNavigate();
   const classes = useStyles();
+
   const validateForm = (user) => {
     const errors = {};
     //Username

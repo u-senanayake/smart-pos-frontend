@@ -1,5 +1,6 @@
-import { Update as UpdateIcon, Save as SaveIcon, Edit as EditIcon, ArrowBackIosNew as ArrowBackIcon, Add as AddIcon } from '@mui/icons-material';
+import { Update as UpdateIcon, Save as SaveIcon, Edit as EditIcon, ArrowBackIosNew as ArrowBackIcon, Add as AddIcon, Adjust } from '@mui/icons-material';
 import Fab from '@mui/material/Fab';
+import Button from '@mui/material/Button';
 import { Link } from "react-router-dom";
 export const EditButton = ({ onClick, }) => {
     return (
@@ -66,5 +67,47 @@ export const AddNewButton = ({ url, }) => {
             aria-label="add">
             <AddIcon sx={{ mr: 1 }} />  Add New
         </Fab>
+    );
+};
+
+export const AddStockButton = ({ onClick, }) => {
+    return (
+        <Button
+            component={Link}
+            onClick={onClick}
+            variant="outlined"
+            size="medium"
+            color="primary"
+            aria-label="add">
+            <AddIcon sx={{ mr: 1 }} /> Add
+        </Button >
+    );
+};
+
+export const AdjustStockButton = ({ onClick, }) => {
+    return (
+        <Button
+            component={Link}
+            onClick={onClick}
+            variant="outlined"
+            size="medium"
+            color="secondary"
+            aria-label="add">
+            <Adjust sx={{ mr: 1 }} /> Adjust
+        </Button>
+    );
+};
+
+export const UpdateStockButton = ({ onClick, }) => {
+    return (
+        <Button
+            component={Link}
+            onClick={onClick}
+            variant="outlined"
+            size="medium"
+            color="primary"
+            aria-label="add">
+            <EditIcon sx={{ mr: 1 }} /> Update
+        </Button >
     );
 };

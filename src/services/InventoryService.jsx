@@ -4,13 +4,13 @@ const API_BASE_URL = "/api/v1/inventory";
 
 class InventoryService {
 
-    async addStock(inventory) {
-        const response = await axios.post(`${API_BASE_URL}/addStock`, inventory);
+    async addStock(productId, inventory) {
+        const response = await axios.post(`${API_BASE_URL}/addStock/${productId}`, inventory);
         return response;
     }
 
-    async decreaseStock(inventory) {
-        const response = await axios.post(`${API_BASE_URL}/decreaseStock`, inventory);
+    async decreaseStock(productId, inventory) {
+        const response = await axios.post(`${API_BASE_URL}/decreaseStock/${productId}`, inventory);
         return response;
     }
 
@@ -19,13 +19,8 @@ class InventoryService {
         return response;
     }
 
-    async adjustStock(inventory) {
-        const response = await axios.post(`${API_BASE_URL}/adjustStock`, inventory);
-        return response;
-    }
-
     async updateStockLevel(productId, inventory) {
-        const response = await axios.put(`${API_BASE_URL}/updateStockLevel${productId}`, inventory);
+        const response = await axios.put(`${API_BASE_URL}/updateStockLevel/${productId}`, inventory);
         return response;
     }
 

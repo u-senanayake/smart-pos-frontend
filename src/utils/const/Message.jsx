@@ -17,3 +17,5 @@ export const LIST_EMPTY = "No data found. Add some :type to see them here."
 
 export const INVALID_EMAIL='Invalid email address.'
 export const INVALID_PASS='Password do not match.'
+
+export const NUMBER_POSITIVE=':fieldName must be a positive number.'

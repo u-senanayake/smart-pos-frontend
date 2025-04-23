@@ -32,3 +32,9 @@ export const DISTRIBUTOR_COMPANYNAME_MAX=100;
 export const DISTRIBUTOR_PHONE_LENGTH=10
 export const DISTRIBUTOR_ADDRESS_MIN=10;
 export const DISTRIBUTOR_ADDRESS_MAX=255;
+
+//Product
+export const PRODUCT_NAME_MIN=5;
+export const PRODUCT_NAME_MAX=50;
+export const PRODUCT_DESC_MIN=5;
+export const PRODUCT_DESC_MAX=255;

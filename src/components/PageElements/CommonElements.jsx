@@ -29,6 +29,7 @@ export const ReadOnlyField = ({ label, value }) => {
     );
 };
 
+
 export const EditableTextField = ({ label, name, value, onChange, error, helperText, required, type
 }) => {
     return (
@@ -46,6 +47,7 @@ export const EditableTextField = ({ label, name, value, onChange, error, helperT
             error={!!error}
             helperText={helperText}
             slotProps={{ htmlInput: { autoComplete: "off" } }}
+            sx={{ padding: 1, }}
         />
     );
 };
@@ -65,6 +67,7 @@ export const EditableDropDown = ({ label, name, value, onChange, options, error,
             size="small"
             error={!!error}
             helperText={helperText}
+            sx={{ padding: 1, }}
         >
             {options.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
@@ -130,6 +133,37 @@ export const PageTitle = ({ title }) => {
             textAlign={"center"}
             marginBottom={2}
             textTransform={"uppercase"}
+        >
+            {title}
+        </Typography>
+    );
+};
+
+export const PageTitle2 = ({ title }) => {
+    return (
+        <Typography
+            variant="h7"
+            fontWeight={"bold"}
+            textAlign={"left"}
+            marginBottom={2}
+            textTransform={"uppercase"}
+            style={{ mt:4 }}
+        >
+            {title}
+        </Typography>
+    );
+};
+
+
+export const DialogTitle = ({ title }) => {
+    return (
+        <Typography
+            variant="h7"
+            fontWeight={"bold"}
+            textAlign={"left"}
+            marginBottom={2}
+            textTransform={"uppercase"}
+            style={{ padding: 10, }}
         >
             {title}
         </Typography>

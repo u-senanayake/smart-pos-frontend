@@ -27,3 +27,7 @@ export const validateExactLength = (value, exactLength) => {
   if (typeof value !== 'string') return false;
   return value.trim().length === exactLength;
 };
+
+export const validateNumberField = (number) => {
+  return typeof number === 'number' && number !== 0;
+};
