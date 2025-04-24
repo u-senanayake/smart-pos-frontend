@@ -132,7 +132,6 @@ const ProductList = () => {
     );
   }
 
-
   if (products.length === 0) {
     return (
       <div className={classes.errorTitle}>

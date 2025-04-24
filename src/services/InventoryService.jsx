@@ -35,7 +35,7 @@ class InventoryService {
     }
 
     async getAllInventoryItems() {
-        const response = await axios.get(`${API_BASE_URL}/getAllInventoryItems`);
+        const response = await axios.get(`${API_BASE_URL}/all`);
         return response;
     }
 

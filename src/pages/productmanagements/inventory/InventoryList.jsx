@@ -1,38 +1,31 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import {
-    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
-    Button, IconButton, Typography, Pagination, Skeleton, FormControl, InputLabel,
-    Select, MenuItem, Box
-} from "@mui/material";
-import { Add, Preview } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { Typography, Stack, Container, Breadcrumbs } from "@mui/material";
+
 //Service
 import InventoryService from "../../../services/InventoryService";
-import ProductService from "../../../services/ProductService";
-import CategoryService from "../../../services/CategoryService";
-import DistributorService from "../../../services/DistributorService";
-//Utils
-import { formatDate } from '../../../utils/Dateutils';
-import { SkeletonLoading, ErrorMessage, } from '../../../utils/FieldUtils'
-import { getSortedData, toggleSortDirection } from "../../../utils/SortUtils";
+
 //Style
-import { styles } from "../../../style/TableStyle";
+import { formatDateToYYYYMMDD } from '../../../utils/Dateutils';
+import * as LABEL from '../../../utils/const/FieldLabels';
+import * as MESSAGE from '../../../utils/const/Message';
+import * as ROUTES from '../../../utils/const/RouteProperty';
+import DataTable from "../../../components/PageElements/DataTable";
+import { AddNewButton } from "../../../components/PageElements/Buttons";
+import { PageTitle } from "../../../components/PageElements/CommonElements";
+import { SkeletonLoading } from "../../../components/PageElements/Loading";
+import { PreviewIcon } from "../../../components/PageElements/IconButtons";
+import { Home } from "../../../components/PageElements/BreadcrumbsLinks";
+import ErrorMessage from "../../../components/DialogBox/ErrorMessage";
+import { useStyles } from "../../../style/makeStyle";
 
 const InventoryList = () => {
 
     const [inventories, setInventories] = useState([]);
-    const [products, setProducts] = useState([]);
-    const [categories, setCategories] = useState([]);
-    const [distributors, setDistributors] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [paginationLoading, setPaginationLoading] = useState(false);
-    const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" }); // Sorting state
-    const [categoryFilter, setCategoryFilter] = useState(""); // Role filter state
-    const [distributorFilter, setDistributorFilter] = useState(""); // Role filter state
-
-    const itemsPerPage = 10;
+    const classes = useStyles();
+    const navigate = useNavigate();
 
     useEffect(() => {
         InventoryService.getAllInventoryItems()
@@ -41,66 +34,91 @@ const InventoryList = () => {
                 setLoading(false);
             })
             .catch((error) => {
-                console.error("Error fetching roles:", error);
-                setError("Failed to fetch roles. Please try again later.");
+                console.error(MESSAGE.FEATCHING_ERROR.replace('type', LABEL.INVENTORY), error);
+                setError(MESSAGE.FEATCHING_ERROR_MSG.replace('type', LABEL.INVENTORY));
                 setLoading(false);
             });
     }, []);
 
+    const columns = [
+        {
+            field: 'productId',
+            headerName: LABEL.TABLE_ID,
+            flex: 0.5,
+            headerClassName: 'super-app-theme--header',
+            valueGetter: (value, row) => `${row.product.productId}`,
+        },
+        {
+            field: 'productName',
+            headerName: LABEL.TABLE_NAME,
+            flex: 1.5,
+            headerClassName: 'super-app-theme--header',
+            valueGetter: (value, row) => `${row.product.productName}`,
+        },
+        {
+            field: 'category',
+            headerName: LABEL.TABLE_CATEGORY,
+            flex: 1,
+            headerClassName: 'super-app-theme--header',
+            valueGetter: (value, row) => `${row.product.category.name}`,
+        },
+        {
+            field: 'distributor',
+            headerName: LABEL.TABLE_DISTRIBUTOR,
+            flex: 1,
+            headerClassName: 'super-app-theme--header',
+            valueGetter: (value, row) => `${row.product.distributor.companyName}`,
+        },
+        {
+            field: 'quantity',
+            headerName: LABEL.TABLE_QTY,
+            flex: 0.5,
+            headerClassName: 'super-app-theme--header',
+        },
+        {
+            field: 'stockWarningLevel',
+            headerName: LABEL.TABLE_WARLEVEL,
+            flex: 0.5,
+            headerClassName: 'super-app-theme--header',
+        },
+        {
+            field: 'stockAlertLevel',
+            headerName: LABEL.TABLE_ALRLEVEL,
+            flex: 0.5,
+            headerClassName: 'super-app-theme--header',
+        },
+        {
+            field: 'lastUpdated',
+            headerName: LABEL.TABLE_LAST_UPDATED_DATE,
+            flex: 1,
+            headerClassName: 'super-app-theme--header',
+            valueGetter: (value, row) => `${formatDateToYYYYMMDD(row.lastUpdated)}`,
+        },
+        {
+            field: 'action',
+            headerName: LABEL.TABLE_ACTION,
+            flex: 0.5,
+            sortable: false,
+            filterable: false,
+            headerClassName: 'super-app-theme--header',
+            disableClickEventBubbling: true,
+            renderCell: (params) => {
+                const onClick = (e) => {
+                    const currentRow = params.row;
+                    return alert(JSON.stringify(currentRow, null, 4));
+                };
+                return (
+                    <Stack direction="row" spacing={2}>
+                        <PreviewIcon url={ROUTES.PRODUCT_VIEW.replace(':id', params.row.product.id)} />
+                    </Stack>
+                );
+            },
+        },
+    ]
 
-    useEffect(() => {
-        CategoryService.getCategories()
-            .then((res) => {
-                setCategories(res.data);
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.error("Error fetching categories:", error);
-                setError("Failed to fetch categories. Please try again later.");
-                setLoading(false);
-            });
-    }, []);
-
-    useEffect(() => {
-        DistributorService.getDistributors()
-            .then((res) => {
-                setDistributors(res.data);
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.error("Error fetching distributors:", error);
-                setError("Failed to fetch distributors. Please try again later.");
-                setLoading(false);
-            });
-    }, []);
-
-    const handlePageChange = (event, value) => {
-        setPaginationLoading(true);
-        setTimeout(() => {
-            setCurrentPage(value);
-            setPaginationLoading(false);
-        }, 500); // Simulate a delay (replace this with actual fetching logic if needed)
-    };
-
-    const handleSort = (key) => {
-        setSortConfig((currentConfig) => toggleSortDirection(currentConfig, key));
-    };
-
-    const applyFilters = () => {
-        return inventories.filter((inventory) => {
-            const matchesCategory = categoryFilter ? inventory.categoryName === categoryFilter : true;
-            const matchesDistributor = distributorFilter ? inventory.distributorName === distributorFilter : true;
-            return matchesCategory && matchesDistributor;
-        });
-    };
-
-    const filteredInventories = applyFilters();
-    const sortedInventories = getSortedData(filteredInventories, sortConfig);
-
-    const paginatedInventories = sortedInventories.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    );
+    function handleClick(event) {
+        navigate(event.target.href);
+    }
 
     if (error) {
         return (
@@ -112,142 +130,39 @@ const InventoryList = () => {
         );
     }
 
-    if (loading || paginationLoading) {
+    if (loading) {
         return <SkeletonLoading />;
     }
 
     if (error) {
         return (
-            <ErrorMessage
-                message={error}
-                actionText="Retry"
-                onAction={() => window.location.reload()}
-            />
+            <ErrorMessage message={error} actionText="Retry" onAction={() => window.location.reload()} />
         );
     }
 
     if (inventories.length === 0) {
         return (
-            <div style={{ textAlign: "center", marginTop: "20px" }}>
-                <Typography variant="h6">No inventories found. Add some product to see them here.</Typography>
-                <Button
-                    component={Link}
-                    to="/productmanagement/product/createproduct"
-                    variant="contained"
-                    color="primary"
-                    startIcon={<Add />}
-                    style={{ marginTop: "10px" }}
-                >
-                    Add Brand
-                </Button>
+            <div className={classes.errorTitle}>
+                <Typography variant="h6">{MESSAGE.LIST_EMPTY.replace('type', LABEL.INVENTORY)}</Typography>
+                <AddNewButton url={ROUTES.PRODUCT_CREATE} />
             </div>
         );
     }
 
     return (
-        <div style={styles.mainContainer}>
-            <Typography variant="h4" style={styles.title}>
-                Inventory List
-            </Typography>
-            <div style={styles.filterContainer}>
-                <Button
-                    component={Link}
-                    to="/productmanagement/product/createproduct"
-                    variant="contained"
-                    color="primary"
-                    startIcon={<Add />}
-                    style={{ marginBottom: "20px" }}
-                >
-                    Add Product
-                </Button>
-                <Paper sx={{ p: 1, mt: 1, mb: 1 }}>
-                    <Typography variant="h6" style={styles.filterTitle}>
-                        Filter data
-                    </Typography>
-                    <FormControl style={styles.filterFormController}>
-                        <InputLabel>Category</InputLabel>
-                        <Select
-                            value={categoryFilter}
-                            onChange={(e) => setCategoryFilter(e.target.value)}
-                        >
-                            <MenuItem value="">All</MenuItem>
-                            {categories.map((category) => (
-                                <MenuItem key={category.categoryId} value={category.name}>
-                                    {category.name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                    <FormControl style={styles.filterFormController}>
-                        <InputLabel>Distributor</InputLabel>
-                        <Select
-                            value={distributorFilter}
-                            onChange={(e) => setDistributorFilter(e.target.value)}
-                        >
-                            <MenuItem value="">All</MenuItem>
-                            {distributors.map((distributor) => (
-                                <MenuItem key={distributor.distributorId} value={distributor.companyName}>
-                                    {distributor.companyName}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                </Paper>
+        <Container className={classes.mainContainer}>
+            <div role="presentation" onClick={handleClick}>
+                <Breadcrumbs aria-label="breadcrumb">
+                    <Home />
+                    <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Product List</Typography>
+                </Breadcrumbs>
             </div>
-
-            {paginationLoading ? (
-                <SkeletonLoading />
-            ) : (
-                <TableContainer component={Paper} sx={{ width: '100%', overflowX: 'auto' }}>
-                    <Box sx={{ overflowX: 'auto' }}>
-                        <Table sx={{ minWidth: '1000px' }}>
-                            <TableHead style={styles.tableHeaderCell}>
-                                <TableRow>
-                                    <TableCell onClick={() => handleSort("productStringId")}>Product ID {sortConfig.key === "productStringId" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                                    <TableCell onClick={() => handleSort("productName")}>Product Name {sortConfig.key === "productName" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                                    <TableCell onClick={() => handleSort("categoryName")}>Product Category {sortConfig.key === "categoryName" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                                    <TableCell onClick={() => handleSort("distributorName")}>Distributor {sortConfig.key === "distributorName" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                                    <TableCell>Quantity</TableCell>
-                                    <TableCell>Stock Warning Level</TableCell>
-                                    <TableCell>Stock Alert Level</TableCell>
-                                    <TableCell onClick={() => handleSort("lastUpdated")}>Last Updated {sortConfig.key === "lastUpdated" && (sortConfig.direction === "asc" ? "↑" : "↓")}</TableCell>
-                                    <TableCell>Actions</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {paginatedInventories.map((inventory) => (
-                                    <TableRow key={inventory.inventoryId}
-                                        sx={{
-                                            backgroundColor: inventory.quantity < inventory.stockAlertLevel ? 'rgba(255, 0, 0, 0.1)' : inventory.quantity < inventory.stockWarningLevel ? 'rgba(255, 255, 0, 0.1)' : 'inherit',
-                                        }}>
-                                        <TableCell style={styles.tableCell}>{inventory.productStringId}</TableCell>
-                                        <TableCell style={styles.tableCell}>{inventory.productName}</TableCell>
-                                        <TableCell style={styles.tableCell}>{inventory.categoryName}</TableCell>
-                                        <TableCell style={styles.tableCell}>{inventory.distributorName}</TableCell>
-                                        <TableCell style={styles.tableCell}>{inventory.quantity}</TableCell>
-                                        <TableCell style={styles.tableCell}>{inventory.stockWarningLevel}</TableCell>
-                                        <TableCell style={styles.tableCell}>{inventory.stockAlertLevel}</TableCell>
-                                        <TableCell style={styles.tableCell}>{formatDate(inventory.lastUpdated)}</TableCell>
-                                        <TableCell style={styles.tableCell}>
-                                            <IconButton component={Link} to={`/productmanagement/product/viewproduct/${inventory.productId}`}>
-                                                <Preview color="primary" />
-                                            </IconButton>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </Box>
-                </TableContainer>
-            )}
-            <Pagination
-                count={Math.ceil(inventories.length / itemsPerPage)} // Total pages
-                page={currentPage}
-                onChange={handlePageChange}
-                color="primary"
-                style={styles.pagination}
-            />
-        </div>
+            <PageTitle title={LABEL.PAGE_TITLE_LIST.replace(':type', LABEL.INVENTORY)} />
+            <div style={{ marginBottom: "10px" }}>
+                <AddNewButton url={ROUTES.PRODUCT_CREATE} />
+            </div >
+            <DataTable rows={inventories} columns={columns} getRowId={(row) => row.inventoryId} />
+        </Container >
     );
 };
 
