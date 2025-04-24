@@ -38,3 +38,9 @@ export const PRODUCT_NAME_MIN=5;
 export const PRODUCT_NAME_MAX=50;
 export const PRODUCT_DESC_MIN=5;
 export const PRODUCT_DESC_MAX=255;
+
+//CustomerGroup
+export const CUSTGRP_NAME_MIN=5;
+export const CUSTGRP_NAME_MAX=50;
+export const CUSTGRP_DESC_MIN=5;
+export const CUSTGRP_DESC_MAX=255;

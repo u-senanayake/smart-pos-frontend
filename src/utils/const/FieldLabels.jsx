@@ -116,6 +116,16 @@ export const INVENTORY_INI_STOCK = "Initial Stock"
 
 //Customer Group
 export const CUSTGRP = "Customer Group"
+export const CUSTGRP_ID = "ID"
+export const CUSTGRP_NAME = "Name"
+export const CUSTGRP_DESC = "Description"
+export const CUSTGRP_ENABLED = "Enabled"
+export const CUSTGRP_CREATED_AT = "Created At"
+export const CUSTGRP_CREATED_BY = "Created By"
+export const CUSTGRP_UPDATED_AT = "Updated At"
+export const CUSTGRP_UPDATED_BY = "Updated By"
+export const CUSTGRP_DELETED_AT = "Deleted At"
+export const CUSTGRP_DELETED_BY = "Deleted By"
 
 //Customer
 export const CUSTOMER = "Customer"
