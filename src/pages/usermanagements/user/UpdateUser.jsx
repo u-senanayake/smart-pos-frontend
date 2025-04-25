@@ -71,7 +71,7 @@ const UpdateUser = () => {
     const errors = {};
     // Username
     if (!validateRequired(user.username)) errors.username = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.USER_USERNAME);
-    if (!validateLength(user.username, 5, 50)) errors.username = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.USER_USERNAME).replace(':min', PROPERTY.USER_USERNAME_MIN).replace(':max', PROPERTY.USER_NAME_MAX);
+    if (!validateLength(user.username, PROPERTY.USER_USERNAME_MIN, PROPERTY.USER_USERNAME_MAX)) errors.username = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.USER_USERNAME).replace(':min', PROPERTY.USER_USERNAME_MIN).replace(':max', PROPERTY.USER_USERNAME_MAX);
     //Role
     if (!validateRequired(user.role)) errors.role = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.USER_ROLE);
     // First name

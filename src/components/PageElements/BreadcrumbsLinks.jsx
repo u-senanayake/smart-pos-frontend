@@ -66,3 +66,11 @@ export const CustomerGroupList = () => {
         </Link>
     )
 };
+
+export const CustomerList = () => {
+    return (
+        <Link underline="hover" color="inherit" href={ROUTES.CUSTOMER_LIST}>
+            Customer List
+        </Link>
+    )
+};

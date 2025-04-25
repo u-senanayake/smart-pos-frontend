@@ -46,9 +46,9 @@ export const EnabledIcon = ({ enabled }) => {
 export const LockedIcon = ({ locked }) => {
     return (
         locked ?
-            <Chip icon={<Lock style={{ color: 'red' }} />} label="Un-Locked" />
+            <Chip icon={<Lock style={{ color: 'red' }} />} label="Locked" />
             :
-            <Chip icon={<LockOpen style={{ color: 'green' }} />} label="Locked" />
+            <Chip icon={<LockOpen style={{ color: 'green' }} />} label="Un-Locked" />
 
     );
 };

@@ -1,19 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Container, Typography, Box, Paper, Button, TextField, Grid2, } from "@mui/material";
+import { Container, Typography, Box, Paper, Grid2, Breadcrumbs, } from "@mui/material";
 //Service
 import CustomerService from '../../../services/CustomerService';
 //Utils
-import { renderStatusIcon, renderLockIcon } from "../../../utils/utils";
 import { formatDate } from "../../../utils/Dateutils";
-import { Loading, ReadOnlyField, ErrorMessage } from '../../../utils/FieldUtils'
+
+import { Loading, } from "../../../components/PageElements/Loading";
+import ErrorMessage from "../../../components/DialogBox/ErrorMessage";
+import { ReadOnlyField, PageTitle } from "../../../components/PageElements/CommonElements";
+import { Home, CustomerList } from "../../../components/PageElements/BreadcrumbsLinks";
+import { EditButton, CancelButton } from "../../../components/PageElements/Buttons";
+import { EnabledIcon, LockedIcon } from "../../../components/PageElements/IconButtons";
+import { useStyles } from "../../../style/makeStyle";
+
+import * as MESSAGE from '../../../utils/const/Message';
+import * as LABEL from '../../../utils/const/FieldLabels';
+import * as ROUTES from '../../../utils/const/RouteProperty';
 
 const ViewCustomer = () => {
     const { customerId } = useParams();
     const [customer, setCustomer] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [errorMessage, setErrorMessage] = useState(null);
     const navigate = useNavigate();
+    const classes = useStyles();
 
     useEffect(() => {
         CustomerService.getCustomerById(customerId)
@@ -21,95 +32,96 @@ const ViewCustomer = () => {
                 setCustomer(res.data);
             })
             .catch((error) => {
-                console.error('Error fetching customer:', error);
-                setError("Failed to fetch customer. Please try again later.");
+                console.error(MESSAGE.FEATCHING_ERROR.replace(':type', LABEL.CUSTOMER), error);
+                setErrorMessage(MESSAGE.FEATCHING_ERROR_MSG.replace(':type', LABEL.CUSTOMER));
             }).finally(() => setLoading(false));
     }, [customerId]);
 
-    const cancel = () => navigate('/customer/customerlist');
+    const handleCancel = () => navigate(ROUTES.CUSTOMER_LIST);
 
     const handleUpdate = () => {
-        navigate(`/customer/updatecustomer/${customerId}`);
+        navigate(ROUTES.CUSTOMER_UPDATE.replace(':customerId', customerId));
     };
 
     if (loading) {
         return <Loading />;
     }
 
-    if (error) {
+    if (errorMessage) {
         return (
-            <ErrorMessage
-                message={error}
-                actionText="Retry"
-                onAction={() => window.location.reload()}
-            />
+          <ErrorMessage
+            message={errorMessage}
+            actionText="Retry"
+            onAction={() => window.location.reload()}
+          />
         );
-    }
+      }
 
     return (
-        <Container maxWidth="md">
-            <Paper sx={{ p: 3, mt: 3 }}>
-                <Typography variant="h4" gutterBottom>
-                    View Customer
-                </Typography>
-                <Grid2 container spacing={2}>
-                    <Grid2 size={4}>
-                        <ReadOnlyField label="Customer ID" value={customer.customerId} />
+        <Container className={classes.mainContainer}>
+            <Breadcrumbs aria-label="breadcrumb">
+                <Home />
+                <CustomerList />
+                <Typography sx={{ color: 'text.primary' }}>View Customer</Typography>
+            </Breadcrumbs>
+            <PageTitle title={LABEL.PAGE_TITLE_VIEW.replace(':type', LABEL.CUSTOMER) + customer.firstName} />
+            <Container maxWidth="lg">
+                <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
+                    <Grid2 container spacing={2}>
+                        <Grid2 size={4}>
+                            <ReadOnlyField label={LABEL.CUSTOMER_ID} value={customer.customerId} />
+                        </Grid2>
+                        <Grid2 size={8}><ReadOnlyField label={LABEL.CUSTOMER_USERNAME} value={customer.username} /></Grid2>
+                        <Grid2 size={6}>
+                            <ReadOnlyField label={LABEL.CUSTOMER_GROUP} value={customer.customerGroup.name} />
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <ReadOnlyField label={LABEL.CUSTOMER_NAME} value={`${customer.firstName} ${customer.lastName}`} />
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <ReadOnlyField label={LABEL.CUSTOMER_EMAIL} value={customer.email} />
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <ReadOnlyField label={LABEL.CUSTOMER_PHONE} value={customer.phoneNo1} />
+                        </Grid2>
+                        <Grid2 size={12}>
+                            <ReadOnlyField label={LABEL.CUSTOMER_ADDRS} value={customer.address} />
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <EnabledIcon enabled={customer.enabled} />
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <LockedIcon locked={customer.locked} />
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <ReadOnlyField label={LABEL.CUSTOMER_CREATED_AT} value={formatDate(customer.createdAt)} />
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <ReadOnlyField label={LABEL.CUSTOMER_CREATED_BY} value={`${customer.createdUser.firstName} ${customer.createdUser.lastName} (${customer.createdUser.username})`} />
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <ReadOnlyField label={LABEL.CUSTOMER_UPDATED_AT} value={formatDate(customer.updatedAt)} />
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <ReadOnlyField label={LABEL.CUSTOMER_UPDATED_BY} value={`${customer.updatedUser.firstName} ${customer.updatedUser.lastName} (${customer.updatedUser.username})`} />
+                        </Grid2>
+                        {customer.deleted && (
+                            <>
+                                <Grid2 size={6}>
+                                    <ReadOnlyField label={LABEL.CUSTOMER_DELETED_AT} value={formatDate(customer.deletedAt)} />
+                                </Grid2>
+                                <Grid2 size={6}>
+                                    <ReadOnlyField label={LABEL.CUSTOMER_DELETED_BY} value={`${customer.deletedUser?.firstName} ${customer.deletedUser?.lastName} (${customer.deletedUser?.username})`} />
+                                </Grid2>
+                            </>
+                        )}
                     </Grid2>
-                    <Grid2 size={8}><ReadOnlyField label="Username" value={customer.username} /></Grid2>
-                    <Grid2 size={6}>
-                        <ReadOnlyField label="Customer Group" value={customer.customerGroup.name} />
-                    </Grid2>
-                    <Grid2 size={6}>
-                        <ReadOnlyField label="Name" value={`${customer.firstName} ${customer.lastName}`} />
-                    </Grid2>
-                    <Grid2 size={6}>
-                        <ReadOnlyField label="Email" value={customer.email} />
-                    </Grid2>
-                    <Grid2 size={6}>
-                        <ReadOnlyField label="Phone" value={customer.phoneNo1} />
-                    </Grid2>
-                    <Grid2 size={12}>
-                        <ReadOnlyField label="Address" value={customer.address} />
-                    </Grid2>
-                    <Grid2 size={6}>
-                        <Typography variant="h5">Enabled: {renderStatusIcon(customer.enabled)}</Typography>
-                    </Grid2>
-                    <Grid2 size={6}>
-                        <Typography variant="h5">Locked: {renderLockIcon(customer.locked)}</Typography>
-                    </Grid2>
-                    <Grid2 size={6}>
-                        <ReadOnlyField label="Created At" value={formatDate(customer.createdAt)} />
-                    </Grid2>
-                    <Grid2 size={6}>
-                        <ReadOnlyField label="Created By" value={`${customer.createdUser.firstName} ${customer.createdUser.lastName} (${customer.createdUser.username})`} />
-                    </Grid2>
-                    <Grid2 size={6}>
-                        <ReadOnlyField label="Updated At" value={formatDate(customer.updatedAt)} />
-                    </Grid2>
-                    <Grid2 size={6}>
-                        <ReadOnlyField label="Updated By" value={`${customer.updatedUser.firstName} ${customer.updatedUser.lastName} (${customer.updatedUser.username})`} />
-                    </Grid2>
-                    {customer.deleted && (
-                        <>
-                            <Grid2 size={6}>
-                                <ReadOnlyField label="Deleted At" value={formatDate(customer.deletedAt)} />
-                            </Grid2>
-                            <Grid2 size={6}>
-                                <ReadOnlyField label="Deleted By" value={`${customer.deletedUser?.firstName} ${customer.deletedUser?.lastName} (${customer.deletedUser?.username})`} />
-                            </Grid2>
-                        </>
-                    )}
-                </Grid2>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-                    <Button variant="contained" color="primary" onClick={handleUpdate}>
-                        Update
-                    </Button>
-                    <Button variant="outlined" color="secondary" onClick={cancel}>
-                        Cancel
-                    </Button>
-                </Box>
-            </Paper>
+                    <Box className={classes.formButtonsContainer}>
+                        <EditButton onClick={handleUpdate} />
+                        <CancelButton onClick={handleCancel} />
+                    </Box>
+                </Paper>
+            </Container>
         </Container>
     );
 };
