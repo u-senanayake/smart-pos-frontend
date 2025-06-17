@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-route
 import { CssBaseline, Box } from "@mui/material";
 
 import * as ROUTES from "./utils/const/RouteProperty";
+import PrivateRoute from "./components/PrivateRoute";
 
 // Importing Components
 import Header from "./components/Header";
@@ -11,6 +12,9 @@ import Sidebar from "./components/Sidebar";
 
 //Test Page
 import Test from "./utils/TestPage"
+
+//Login Page
+import Login from "./pages/auth/LoginPage";
 
 // Home Page
 import Home from "./pages/home/Home";
@@ -100,6 +104,10 @@ import UserList from './pages/usermanagements/user/UserList';
 
 // Layout Component for Conditional Sidebar/Footer
 const Layout = ({ children }) => {
+
+    const location = useLocation();
+    const isLoginPage = location.pathname === "/login";
+
     return (
         <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
             {/* Header */}
@@ -107,7 +115,9 @@ const Layout = ({ children }) => {
 
             {/* Main Content */}
             {/* <Box sx={{ display: "flex", flex: 1 }}> */}
-            {<Sidebar children={children} />}
+            {isLoginPage
+                ? children // No Sidebar on login page
+                : <Sidebar children={children} />}
             {/* </Box> */}
 
             {/* Conditionally Render Footer */}
@@ -122,80 +132,84 @@ const App = () => {
             <CssBaseline />
             <Layout>
                 <Routes>
+                    {/* Login */}
+                    <Route path="/login" element={<Login />} />
+
+                    {/* Catch All Route */}
                     {/* Home Route */}
                     <Route path="/home" element={<Home />} />
                     <Route path="/" element={<Home />} />
 
                     {/* Test */}
-                    <Route path="/test" element={<Test />} />
+                    <Route path="/test" element={<PrivateRoute><Test /></PrivateRoute>} />
 
                     {/* Sale Routes */}
-                    <Route path="/sale/pos" element={<SalesScreen />} /> {/* Route for new sale */}
-                    <Route path="/sale/pos/:saleId" element={<SalesScreen />} /> {/* Route for draft sale */}
-                    <Route path="/sale/listdrafts" element={<ListDrafts />} />
-                    <Route path="/sale/saleshistory" element={<SalesHistory />} />
-                    <Route path="/sale/salesreturn" element={<SalesReturn />} />
-                    <Route path="/sale/listreturn" element={<ListReturn />} />
+                    <Route path="/sale/pos" element={<PrivateRoute><SalesScreen /></PrivateRoute>} />
+                    <Route path="/sale/pos/:saleId" element={<PrivateRoute><SalesScreen /></PrivateRoute>} />
+                    <Route path="/sale/listdrafts" element={<PrivateRoute><ListDrafts /></PrivateRoute>} />
+                    <Route path="/sale/saleshistory" element={<PrivateRoute><SalesHistory /></PrivateRoute>} />
+                    <Route path="/sale/salesreturn" element={<PrivateRoute><SalesReturn /></PrivateRoute>} />
+                    <Route path="/sale/listreturn" element={<PrivateRoute><ListReturn /></PrivateRoute>} />
 
-                    <Route path="/quotation/addquotation" element={<AddQuotation />} />
-                    <Route path="/quotation/listquotation" element={<ListQuotation />} />
+                    <Route path="/quotation/addquotation" element={<PrivateRoute><AddQuotation /></PrivateRoute>} />
+                    <Route path="/quotation/listquotation" element={<PrivateRoute><ListQuotation /></PrivateRoute>} />
 
-                    <Route path="/delivery/shipments" element={<Shipments />} />
+                    <Route path="/delivery/shipments" element={<PrivateRoute><Shipments /></PrivateRoute>} />
 
-                    <Route path="/purchase/listpurchase" element={<ListPurchase />} />
-                    <Route path="/purchase/createpurchase" element={<CreatePurchase />} />
-                    <Route path="/purchase/listpurchasereturns" element={<ListPurchaseReturns />} />
+                    <Route path="/purchase/listpurchase" element={<PrivateRoute><ListPurchase /></PrivateRoute>} />
+                    <Route path="/purchase/createpurchase" element={<PrivateRoute><CreatePurchase /></PrivateRoute>} />
+                    <Route path="/purchase/listpurchasereturns" element={<PrivateRoute><ListPurchaseReturns /></PrivateRoute>} />
 
-                    <Route path="/expenses/listexpenses" element={<ListExpenses />} />
-                    <Route path="/expenses/createexpense" element={<CreateExpense />} />
-                    <Route path="/expenses/expensecategory" element={<ExpenseCategory />} />
+                    <Route path="/expenses/listexpenses" element={<PrivateRoute><ListExpenses /></PrivateRoute>} />
+                    <Route path="/expenses/createexpense" element={<PrivateRoute><CreateExpense /></PrivateRoute>} />
+                    <Route path="/expenses/expensecategory" element={<PrivateRoute><ExpenseCategory /></PrivateRoute>} />
 
                     {/* User Management */}
                     {/* Role Routes */}
-                    <Route path={ROUTES.ROLE_LIST} element={<RoleList />} />
-                    <Route path={ROUTES.ROLE_CREATE} element={<CreateRole />} />
-                    <Route path={ROUTES.ROLE_UPDATE} element={<UpdateRole />} />
-                    <Route path={ROUTES.ROLE_VIEW} element={<ViewRole />} />
+                    <Route path={ROUTES.ROLE_LIST} element={<PrivateRoute><RoleList /></PrivateRoute>} />
+                    <Route path={ROUTES.ROLE_CREATE} element={<PrivateRoute><CreateRole /></PrivateRoute>} />
+                    <Route path={ROUTES.ROLE_UPDATE} element={<PrivateRoute><UpdateRole /></PrivateRoute>} />
+                    <Route path={ROUTES.ROLE_VIEW} element={<PrivateRoute><ViewRole /></PrivateRoute>} />
                     {/* User Routes */}
-                    <Route path="/user/userlist" element={<UserList />} />
-                    <Route path="/user/createuser" element={<CreateUser />} />
-                    <Route path="/user/updateuser/:userId" element={<UpdateUser />} />
-                    <Route path="/user/viewuser/:userId" element={<ViewUser />} />
+                    <Route path="/user/userlist" element={<PrivateRoute><UserList /></PrivateRoute>} />
+                    <Route path="/user/createuser" element={<PrivateRoute><CreateUser /></PrivateRoute>} />
+                    <Route path="/user/updateuser/:userId" element={<PrivateRoute><UpdateUser /></PrivateRoute>} />
+                    <Route path="/user/viewuser/:userId" element={<PrivateRoute><ViewUser /></PrivateRoute>} />
 
                     {/* Product Management */}
                     {/* Category Routes */}
-                    <Route path="/product/categorylist" element={<CategoryList />} />
-                    <Route path="/product/category/createcategory" element={<CreateCategory />} />
-                    <Route path="/product/category/updatecategory/:categoryId" element={<UpdateCategory />} />
-                    <Route path="/product/category/viewcategory/:categoryId" element={<ViewCategory />} />
+                    <Route path="/product/categorylist" element={<PrivateRoute><CategoryList /></PrivateRoute>} />
+                    <Route path="/product/category/createcategory" element={<PrivateRoute><CreateCategory /></PrivateRoute>} />
+                    <Route path="/product/category/updatecategory/:categoryId" element={<PrivateRoute><UpdateCategory /></PrivateRoute>} />
+                    <Route path="/product/category/viewcategory/:categoryId" element={<PrivateRoute><ViewCategory /></PrivateRoute>} />
                     {/* Brand */}
-                    <Route path="/product/brandlist" element={<Brandlist />} />
-                    <Route path="/product/brand/createbrand" element={<CreateBrand />} />
-                    <Route path="/product/brand/updatebrand/:brandId" element={<UpdateBrand />} />
-                    <Route path="/product/brand/viewbrand/:brandId" element={<ViewBrand />} />
+                    <Route path="/product/brandlist" element={<PrivateRoute><Brandlist /></PrivateRoute>} />
+                    <Route path="/product/brand/createbrand" element={<PrivateRoute><CreateBrand /></PrivateRoute>} />
+                    <Route path="/product/brand/updatebrand/:brandId" element={<PrivateRoute><UpdateBrand /></PrivateRoute>} />
+                    <Route path="/product/brand/viewbrand/:brandId" element={<PrivateRoute><ViewBrand /></PrivateRoute>} />
                     {/* Distributor */}
-                    <Route path="/product/distributorlist" element={<DistributorList />} />
-                    <Route path="/product/distributor/createdistributor" element={<CreateDistributor />} />
-                    <Route path="/product/distributor/updatedistributor/:distributorId" element={<UpdateDistributor />} />
-                    <Route path="/product/distributor/viewdistributor/:distributorId" element={<ViewDistributor />} />
+                    <Route path="/product/distributorlist" element={<PrivateRoute><DistributorList /></PrivateRoute>} />
+                    <Route path="/product/distributor/createdistributor" element={<PrivateRoute><CreateDistributor /></PrivateRoute>} />
+                    <Route path="/product/distributor/updatedistributor/:distributorId" element={<PrivateRoute><UpdateDistributor /></PrivateRoute>} />
+                    <Route path="/product/distributor/viewdistributor/:distributorId" element={<PrivateRoute><ViewDistributor /></PrivateRoute>} />
                     {/* Product */}
-                    <Route path="/product/productlist" element={<ProductList />} />
-                    <Route path="/product/createproduct" element={<CreateProduct />} />
-                    <Route path="/product/updateproduct/:id" element={<UpdateProduct />} />
-                    <Route path="/product/viewproduct/:id" element={<ViewProduct />} />
+                    <Route path="/product/productlist" element={<PrivateRoute><ProductList /></PrivateRoute>} />
+                    <Route path="/product/createproduct" element={<PrivateRoute><CreateProduct /></PrivateRoute>} />
+                    <Route path="/product/updateproduct/:id" element={<PrivateRoute><UpdateProduct /></PrivateRoute>} />
+                    <Route path="/product/viewproduct/:id" element={<PrivateRoute><ViewProduct /></PrivateRoute>} />
                     {/* Inventory */}
-                    <Route path="/inventory/inventorylist" element={<InventoryList />} />
+                    <Route path="/inventory/inventorylist" element={<PrivateRoute><InventoryList /></PrivateRoute>} />
                     {/* Customer management */}
                     {/* Customer group */}
-                    <Route path="/customer/customergrouplist" element={<CustomerGroupList />} />
-                    <Route path="/customer/customergroup/createcustomergroup" element={<CreateCustomerGroup />} />
-                    <Route path="/customer/customergroup/updatecustomergroup/:customerGroupId" element={<UpdateCustomerGroup />} />
-                    <Route path="/customer/customergroup/viewcustomergroup/:customerGroupId" element={<ViewCustomerGroup />} />
+                    <Route path="/customer/customergrouplist" element={<PrivateRoute><CustomerGroupList /></PrivateRoute>} />
+                    <Route path="/customer/customergroup/createcustomergroup" element={<PrivateRoute><CreateCustomerGroup /></PrivateRoute>} />
+                    <Route path="/customer/customergroup/updatecustomergroup/:customerGroupId" element={<PrivateRoute><UpdateCustomerGroup /></PrivateRoute>} />
+                    <Route path="/customer/customergroup/viewcustomergroup/:customerGroupId" element={<PrivateRoute><ViewCustomerGroup /></PrivateRoute>} />
                     {/* Customer */}
-                    <Route path="/customer/customerlist" element={<CustomerList />} />
-                    <Route path="/customer/createcustomer" element={<CreateCustomer />} />
-                    <Route path="/customer/updatecustomer/:customerId" element={<UpdateCustomer />} />
-                    <Route path="/customer/viewcustomer/:customerId" element={<ViewCustomer />} />
+                    <Route path="/customer/customerlist" element={<PrivateRoute><CustomerList /></PrivateRoute>} />
+                    <Route path="/customer/createcustomer" element={<PrivateRoute><CreateCustomer /></PrivateRoute>} />
+                    <Route path="/customer/updatecustomer/:customerId" element={<PrivateRoute><UpdateCustomer /></PrivateRoute>} />
+                    <Route path="/customer/viewcustomer/:customerId" element={<PrivateRoute><ViewCustomer /></PrivateRoute>} />
                 </Routes>
             </Layout>
         </Router>

@@ -27,6 +27,8 @@ import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { Typography, } from "@mui/material";
 
+import AuthService from '../services/AuthService';
+
 const NAVIGATION = [
     {
         kind: 'header',
@@ -239,30 +241,42 @@ const demoTheme = createTheme({
 });
 
 function DashboardLayoutBasic({ children }) {
+    
+    const user = AuthService.getCurrentUser();
+
     const [session, setSession] = React.useState({
-        user: {
-            name: 'Bharat Kashyap',
-            email: 'bharatkashyap@outlook.com',
-            image: 'https://avatars.githubusercontent.com/u/19550456',
-        },
+        user: user
+            ? {
+                name: user.username || user.name || 'User',
+                email: user.email || '',
+                image: user.image || 'https://avatars.githubusercontent.com/u/19550456',
+            }
+            : null,
     });
 
-    const authentication = React.useMemo(() => {
-        return {
-            signIn: () => {
-                setSession({
-                    user: {
-                        name: 'Bharat Kashyap',
-                        email: 'bharatkashyap@outlook.com',
-                        image: 'https://avatars.githubusercontent.com/u/19550456',
-                    },
-                });
-            },
-            signOut: () => {
-                setSession(null);
-            },
-        };
-    }, []);
+    const navigate = window.toolpadNavigate || ((path) => { window.location.href = path; });
+
+    const authentication = React.useMemo(() => ({
+        signIn: () => {
+            const user = AuthService.getCurrentUser();
+            setSession({
+                user: user
+                    ? {
+                        name: user.username || user.name || 'User',
+                        email: user.email || '',
+                        image: user.image || 'https://avatars.githubusercontent.com/u/19550456',
+                    }
+                    : null,
+            });
+            navigate('/login');
+        },
+        signOut: () => {
+            setSession({ user: null });
+            AuthService.logout();
+            navigate('/login');
+        },
+    }), [navigate]);
+
     return (
         <AppProvider
             session={session}
@@ -277,7 +291,6 @@ function DashboardLayoutBasic({ children }) {
                 ),
                 //logo: <img src="/logo.png" alt="logo" />,
             }}
-
         >
             <DashboardLayout>
                 {children}
