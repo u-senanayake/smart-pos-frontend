@@ -5,7 +5,7 @@ import * as ROUTES from '../../utils/const/RouteProperty';
 
 export const Home = () => {
     return (
-        <Link underline="hover" color="inherit" href={ROUTES.HOME}>
+        <Link underline="hover" color="inherit" href={ROUTES.ROOT}>
             <HomeIcon sx={{ mr: 0.5, verticalAlign: 'middle' }} fontSize="inherit" />
             Home
         </Link>

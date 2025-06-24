@@ -1,9 +1,9 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, IconButton, Button, Box } from '@mui/material';
-import { styled } from '@mui/material/styles';
 import { Home, Settings, Add, Cancel, FolderOpen, Save } from '@mui/icons-material';
-import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
-import SaleService from "../../../services/SaleService"; // Import SaleService
+import { Link, useNavigate } from 'react-router-dom';
+import SaleService from "../../../services/SaleService";
+import * as ROUTES from '../../../utils/const/RouteProperty';
 
 const buttonStyle = {
     color: '#fff',
@@ -26,7 +26,7 @@ const POSHeader = ({
     const handleNewSale = async () => {
         try {
             const response = await SaleService.createSale({ customerId: 1 }); // Create a new sale with default customer
-            navigate(`/sale/pos/${response.data.saleId}`); // Navigate to the new sale
+            navigate(ROUTES.SALES_POS_OPEN.replace(':saleId', response.data.saleId)); // Navigate to the new sale
         } catch (error) {
             console.error("Failed to create new sale:", error);
         }
@@ -37,7 +37,7 @@ const POSHeader = ({
             try {
                 await SaleService.deleteSale(saleId); // Delete the current sale
                 const response = await SaleService.createSale({ customerId: 1 }); // Create a new sale
-                navigate(`/sale/pos/${response.data.saleId}`); // Navigate to the new sale
+                navigate(ROUTES.SALES_POS_OPEN.replace(':saleId', response.data.saleId)); // Navigate to the new sale
             } catch (error) {
                 console.error("Failed to cancel and create a new sale:", error);
             }
@@ -45,7 +45,7 @@ const POSHeader = ({
     };
 
     const handleOpenSale = () => {
-        navigate('/sale/listdrafts'); // Navigate to the ListDrafts page
+        navigate(ROUTES.SALES_DRAFTLIST); // Navigate to the ListDrafts page
     };
 
     return (

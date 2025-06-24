@@ -5,7 +5,6 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import DescriptionIcon from '@mui/icons-material/Description';
-import LayersIcon from '@mui/icons-material/Layers';
 import SettingsIcon from '@mui/icons-material/Settings';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import PaymentIcon from '@mui/icons-material/Payment';
@@ -41,31 +40,35 @@ const NAVIGATION = [
     },
     {
         kind: 'divider',
+         roles: ['admin', 'sales'],
     },
     {
         kind: 'header',
         title: 'Sales Management',
+        roles: ['admin', 'sales'],
     },
     {
-        segment: 'sale',
+        segment: 'sales',
         title: 'Sale',
         icon: <ShoppingCartIcon />,
         children: [
             { segment: 'pos', title: 'POS', icon: <StoreIcon /> },
-            { segment: 'listdrafts', title: 'List Drafts', icon: <DescriptionIcon /> },
+            { segment: 'draftslist', title: 'Drafts List', icon: <DescriptionIcon /> },
             { segment: 'saleshistory', title: 'Sales History', icon: <HistoryIcon /> },
             { segment: 'salesreturn', title: 'Sales Return', icon: <ReceiptIcon /> },
             { segment: 'listreturn', title: 'List Return', icon: <ReceiptIcon /> },
         ],
+        roles: ['admin', 'sales'],
     },
     {
         segment: 'quotation',
         title: 'Quotation',
         icon: <AttachMoneyIcon />,
         children: [
-            { segment: 'addquotation', title: 'Add Quotation', icon: <AttachMoneyIcon /> },
-            { segment: 'listquotation', title: 'List Quotation', icon: <DescriptionIcon /> },
+            { segment: 'createquotation', title: 'Create Quotation', icon: <AttachMoneyIcon /> },
+            { segment: 'quotationlist', title: 'Quotation List', icon: <DescriptionIcon /> },
         ],
+        roles: ['admin', 'sales'],
     },
     {
         segment: 'delivery',
@@ -74,26 +77,29 @@ const NAVIGATION = [
         children: [
             { segment: 'shipments', title: 'Shipments', icon: <LocalShippingIcon /> },
         ],
+        roles: ['admin', 'sales', 'delivery'],
     },
     {
         segment: 'purchase',
         title: 'Purchase',
         icon: <ShoppingCartIcon />,
         children: [
-            { segment: 'listpurchase', title: 'List Purchase', icon: <DescriptionIcon /> },
+            { segment: 'purchaselist', title: 'List Purchase', icon: <DescriptionIcon /> },
             { segment: 'createpurchase', title: 'Create Purchase', icon: <AttachMoneyIcon /> },
-            { segment: 'listpurchasereturns', title: 'List Purchase Returns', icon: <ReceiptIcon /> },
+            { segment: 'purchasereturnslist', title: 'Purchase Returns List ', icon: <ReceiptIcon /> },
         ],
+        roles: ['admin', 'sales', 'purchase'],
     },
     {
         segment: 'expenses',
         title: 'Expenses',
         icon: <AttachMoneyIcon />,
         children: [
-            { segment: 'listexpenses', title: 'List Expenses', icon: <DescriptionIcon /> },
+            { segment: 'expenselist', title: 'Expenses List', icon: <DescriptionIcon /> },
             { segment: 'createexpense', title: 'Create Expenses', icon: <AttachMoneyIcon /> },
             { segment: 'expensecategory', title: 'Expense Category', icon: <CategoryIcon /> },
         ],
+        roles: ['admin', 'accountant'],
     },
     {
         kind: 'divider',
@@ -101,6 +107,7 @@ const NAVIGATION = [
     {
         kind: 'header',
         title: 'Product Management',
+        roles: ['admin', 'product_manager'],
     },
     {
         segment: 'product',
@@ -115,6 +122,7 @@ const NAVIGATION = [
             { segment: 'units', title: 'Units', icon: <CategoryIcon /> },
             { segment: 'warranties', title: 'Warranties', icon: <DescriptionIcon /> },
         ],
+        roles: ['admin', 'product_manager'],
     },
     {
         segment: 'inventory',
@@ -126,6 +134,7 @@ const NAVIGATION = [
             { segment: 'stocktransfer', title: 'Stock Transfer', icon: <LocalShippingIcon /> },
             { segment: 'stockadjustment', title: 'Stock Adjustment', icon: <AssessmentIcon /> },
         ],
+        roles: ['admin', 'product_manager'],
     },
     {
         kind: 'divider',
@@ -133,6 +142,7 @@ const NAVIGATION = [
     {
         kind: 'header',
         title: 'Customer Management',
+        roles: ['admin', 'sales'],
     },
     {
         segment: 'customer',
@@ -144,6 +154,7 @@ const NAVIGATION = [
             { segment: 'loyaltypoint', title: 'Loyalty Point', icon: <LoyaltyIcon /> },
             { segment: 'feedback', title: 'Feedback', icon: <FeedbackIcon /> },
         ],
+        roles: ['admin', 'sales'],
     },
     {
         segment: 'promotiondiscount',
@@ -161,6 +172,7 @@ const NAVIGATION = [
     {
         kind: 'header',
         title: 'User Management',
+        roles: ['admin'],
     },
     {
         segment: 'user',
@@ -172,13 +184,16 @@ const NAVIGATION = [
             { segment: 'permission', title: 'Permission', icon: <SecurityIcon /> },
             { segment: 'salescommission', title: 'Sales Commission', icon: <AttachMoneyIcon /> },
         ],
+        roles: ['admin'],
     },
     {
         kind: 'divider',
+        roles: ['admin'],
     },
     {
         kind: 'header',
         title: 'Report Management',
+        roles: ['admin'],
     },
     {
         segment: 'reportmanagement',
@@ -203,13 +218,16 @@ const NAVIGATION = [
             { segment: 'taxreport', title: 'Tax Report', icon: <AttachMoneyIcon /> },
             { segment: 'activitylog', title: 'Activity Log', icon: <HistoryIcon /> },
         ],
+        roles: ['admin'],
     },
     {
         kind: 'divider',
+        roles: ['admin'],
     },
     {
         kind: 'header',
         title: 'Settings',
+        roles: ['admin'],
     },
     {
         segment: 'settings',
@@ -221,6 +239,7 @@ const NAVIGATION = [
             { segment: 'paymentsettings', title: 'Payment Settings', icon: <PaymentIcon /> },
             { segment: 'notificationsettings', title: 'Notification Settings', icon: <NotificationsIcon /> },
         ],
+        roles: ['admin'],
     },
 ];
 
@@ -240,9 +259,35 @@ const demoTheme = createTheme({
     },
 });
 
+function filterNavigationByRole(navigation, userRoleName) {
+    // Recursively filter navigation items based on allowed roles
+    return navigation
+        .map(item => {
+            // If item has a roles property, check if userRoleName is allowed
+            if (item.roles && Array.isArray(item.roles) && !item.roles.includes(userRoleName)) {
+                return null;
+            }
+            // If item has children, filter them too
+            if (item.children) {
+                const filteredChildren = filterNavigationByRole(item.children, userRoleName);
+                if (filteredChildren.length === 0) return null;
+                return { ...item, children: filteredChildren };
+            }
+            return item;
+        })
+        .filter(Boolean);
+}
+
 function DashboardLayoutBasic({ children }) {
     
     const user = AuthService.getCurrentUser();
+    const userRoleName = user && user.role && user.role.roleName ? user.role.roleName : null;
+
+    // Filter navigation based on user role
+    const filteredNavigation = React.useMemo(
+        () => filterNavigationByRole(NAVIGATION, userRoleName),
+        [userRoleName]
+    );
 
     const [session, setSession] = React.useState({
         user: user
@@ -281,7 +326,7 @@ function DashboardLayoutBasic({ children }) {
         <AppProvider
             session={session}
             authentication={authentication}
-            navigation={NAVIGATION}
+            navigation={filteredNavigation}
             theme={demoTheme}
             branding={{
                 title: (

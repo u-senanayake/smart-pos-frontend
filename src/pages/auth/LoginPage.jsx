@@ -14,7 +14,7 @@ const LoginPage = () => {
         try {
             const login = await AuthService.login(username, password);
             console.log("Login successful:", login.token);
-            navigate(ROUTES.HOME);
+            navigate(ROUTES.ROOT);
         } catch (error) {
             console.error("Login failed:", error);
             setErrorMessage("Invalid username or password. Please try again.");
