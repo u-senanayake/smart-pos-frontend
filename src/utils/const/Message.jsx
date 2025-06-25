@@ -1,3 +1,7 @@
+export const LOGIN_SUCCESS = "Login successful: :param"
+export const LOGIN_ERROR = "Login failed: :param"
+export const LOGIN_FAILED_MSG = "Invalid username or password. Please try again."   
+
 export const FIELD_REQUIRED = ":fieldName is required"
 export const FIELD_MIN_MAX = `:fieldName must be between :min and :max characters long`;
 export const FIELD_LENGTH=':fieldName should be :number characters';

@@ -4,15 +4,13 @@ const API_URL = '/api/v1/users/';
 
 class AuthService {
     // Login user
-    login(username, password) {
-        return axios
-            .post(`${API_URL}login`, { username, password })
-            .then(response => {
-                if (response.data.token) {
-                    localStorage.setItem('login', JSON.stringify(response.data));
-                }
-                return response.data;
-            });
+    async login(username, password) {
+        const response = await axios
+            .post(`${API_URL}login`, { username, password });
+        if (response.data.token) {
+            localStorage.setItem('login', JSON.stringify(response.data));
+        }
+        return response.data;
     }
 
     // Logout user

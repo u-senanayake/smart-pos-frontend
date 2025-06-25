@@ -3,6 +3,7 @@ import { Container, TextField, Button, Typography, Box, Alert } from "@mui/mater
 import { useNavigate } from "react-router-dom";
 import AuthService from "../../services/AuthService";
 import * as ROUTES from "../../utils/const/RouteProperty";
+import * as MESSAGE from "../../utils/const/Message";
 
 const LoginPage = () => {
     const [username, setUsername] = useState("");
@@ -13,11 +14,11 @@ const LoginPage = () => {
     const handleLogin = async () => {
         try {
             const login = await AuthService.login(username, password);
-            console.log("Login successful:", login.token);
+            console.log(MESSAGE.LOGIN_SUCCESS.replace(":param", login.token));
             navigate(ROUTES.ROOT);
         } catch (error) {
-            console.error("Login failed:", error);
-            setErrorMessage("Invalid username or password. Please try again.");
+            console.error(MESSAGE.LOGIN_ERROR.replace(":param", error));
+            setErrorMessage(MESSAGE.LOGIN_FAILED_MSG);
         }
     };
 
