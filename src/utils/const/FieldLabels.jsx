@@ -1,7 +1,7 @@
 //Page Titles
 export const PAGE_TITLE_CREATE = "Create :type"
-export const PAGE_TITLE_UPDATE = "Update :type "
-export const PAGE_TITLE_VIEW = "View :type "
+export const PAGE_TITLE_UPDATE = "Update :type ':name'"
+export const PAGE_TITLE_VIEW = "View :type ':name'"
 export const PAGE_TITLE_LIST = ":type List"
 export const PAGE_TITLE_ADD_STOCK = "Add Stock"
 export const PAGE_TITLE_DECREASE_STOCK = "Decrease Stock"

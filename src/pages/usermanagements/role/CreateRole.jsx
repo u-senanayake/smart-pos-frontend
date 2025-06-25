@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Typography, Box, Paper, FormControlLabel, Checkbox, Grid2, Breadcrumbs, } from '@mui/material';
+import { Container, Typography, Box, Paper, FormControlLabel, Checkbox, Grid2, Breadcrumbs, Switch, } from '@mui/material';
 
 import RoleService from '../../../services/RoleService';
 
@@ -79,7 +79,7 @@ const CreateRole = () => {
             <Container maxWidth="md">
                 <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
 
-                    <form onSubmit={handleSubmit}>
+                    <form>
 
                         <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
                         <ErrorAlert message={errorMessage} />
@@ -122,15 +122,9 @@ const CreateRole = () => {
                             <Grid2 size={6}>
                                 <FormControlLabel
                                     control={
-                                        <Checkbox
+                                        <Switch
                                             checked={enabled}
-                                            onChange={(e) => {
-                                                setEnabled(e.target.checked);
-                                                setFormError((prevErrors) => ({
-                                                    ...prevErrors,
-                                                    enabled: undefined // Clear the error for enabled if any
-                                                }));
-                                            }}
+                                            onChange={(e) => setEnabled(e.target.checked)}
                                             name="enabled"
                                             color="primary"
                                         />

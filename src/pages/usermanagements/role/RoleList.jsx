@@ -52,7 +52,7 @@ const RoleList = () => {
     RoleService.deleteRole(id)
       .then(() => setRoles(roles.filter((role) => role.roleId !== id)))
       .catch((error) => {
-        console.error(MESSAGE.DELETE_ERROR.replace('type', LABEL.ROLE), error);
+        console.error(MESSAGE.DELETE_ERROR.replace(':type', LABEL.ROLE), error);
         setError(MESSAGE.DELETE_ERROR_MSG.replace(':type', LABEL.ROLE));
       });
   };
@@ -140,7 +140,7 @@ const RoleList = () => {
     <Container className={classes.mainContainer}>
       <Breadcrumbs aria-label="breadcrumb">
         <Home />
-        <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Category List</Typography>
+        <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Role List</Typography>
       </Breadcrumbs>
       <PageTitle title={LABEL.PAGE_TITLE_LIST.replace(':type', LABEL.ROLE)} />
       <div style={{ marginBottom: "10px" }}>

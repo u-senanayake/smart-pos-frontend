@@ -95,7 +95,7 @@ const UpdateRole = () => {
                 <Typography sx={{ color: 'text.primary' }}>Edit Role</Typography>
             </Breadcrumbs>
 
-            <PageTitle title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.ROLE) + roleName} />
+            <PageTitle title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.ROLE) .replace(':name', roleName)} />
             <Container maxWidth="sm" >
                 <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
                     <form>
@@ -154,7 +154,6 @@ const UpdateRole = () => {
                                     label={LABEL.ROLE_ENABLED}
                                 />
                             </Grid2>
-                            <Grid2 size={6}></Grid2>
                         </Grid2>
                         <Box className={classes.formButtonsContainer}>
                             <UpdateButton onClick={handleSubmit} isSaving={isSaving} />

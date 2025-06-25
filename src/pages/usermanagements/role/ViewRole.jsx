@@ -34,7 +34,7 @@ const ViewRole = () => {
       })
       .catch((error) => {
         console.error(MESSAGE.FEATCHING_ERROR.replace(':type', LABEL.ROLE), error);
-        setErrorMessage(MESSAGE.FEATCHING_ERROR.replace(':type', LABEL.ROLE));
+        setErrorMessage(MESSAGE.FEATCHING_ERROR_MSG.replace(':type', LABEL.ROLE));
       }).finally(() => setLoading(false));
 
   }, [roleId]);
@@ -64,7 +64,7 @@ const ViewRole = () => {
         <RoleList />
         <Typography sx={{ color: 'text.primary' }}>View Role</Typography>
       </Breadcrumbs>
-      <PageTitle title={LABEL.PAGE_TITLE_VIEW.replace(':type', LABEL.ROLE) + role.roleName} />
+      <PageTitle title={LABEL.PAGE_TITLE_VIEW.replace(':type', LABEL.ROLE).replace(':name', role.roleName)} />
       <Container maxWidth="md">
         <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
           <Grid2 container spacing={2}>
