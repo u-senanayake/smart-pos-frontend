@@ -37,7 +37,7 @@ const CreateCustomerGroup = () => {
         if (!validateLength(customergroup.name, PROPERTY.CUSTGRP_NAME_MIN, PROPERTY.CUSTGRP_NAME_MAX)) errors.name = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.CUSTGRP_NAME).replace(':min', PROPERTY.CUSTGRP_NAME_MIN).replace(':max', PROPERTY.CUSTGRP_NAME_MAX);
         //Description
         if (!validateRequired(customergroup.description)) errors.description = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.CUSTGRP_DESC);
-        if (!validateLength(customergroup.description, PROPERTY.CUSTGRP_DESC_MIN, PROPERTY.CUSTGRP_DESC_MAX)) errors.description = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.CUSTGRP_NAME).replace(':min', PROPERTY.CUSTGRP_DESC_MIN).replace(':max', PROPERTY.CUSTGRP_DESC_MAX);
+        if (!validateLength(customergroup.description, PROPERTY.CUSTGRP_DESC_MIN, PROPERTY.CUSTGRP_DESC_MAX)) errors.description = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.CUSTGRP_DESC).replace(':min', PROPERTY.CUSTGRP_DESC_MIN).replace(':max', PROPERTY.CUSTGRP_DESC_MAX);
 
         return errors;
     };
@@ -78,7 +78,7 @@ const CreateCustomerGroup = () => {
             <PageTitle title={LABEL.PAGE_TITLE_CREATE.replace(':type', LABEL.CUSTGRP)} />
             <Container maxWidth="lg">
                 <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
-                    <form onSubmit={handleSubmit}>
+                    <form>
                         <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
                         <ErrorAlert message={errorMessage} />
                         <Grid2 container spacing={2}>
@@ -124,10 +124,9 @@ const CreateCustomerGroup = () => {
                                             color="primary"
                                         />
                                     }
-                                    label="Enabled"
+                                    label={LABEL.CUSTGRP_ENABLED}
                                 />
                             </Grid2>
-                            <Grid2 size={6}></Grid2>
                         </Grid2>
                         <Box className={classes.formButtonsContainer}>
                             <SaveButton onClick={handleSubmit} isSaving={isSaving} />

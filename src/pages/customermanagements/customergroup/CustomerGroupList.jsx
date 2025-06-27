@@ -40,8 +40,8 @@ const CustomerGroupList = () => {
                 setLoading(false);
             })
             .catch((error) => {
-                console.error(MESSAGE.FEATCHING_ERROR.replace('type', LABEL.CUSTGRP), error);
-                setError(MESSAGE.FEATCHING_ERROR_MSG.replace('type', LABEL.CUSTGRP));
+                console.error(MESSAGE.FEATCHING_ERROR.replace(':type', LABEL.CUSTGRP), error);
+                setError(MESSAGE.FEATCHING_ERROR_MSG.replace(':type', LABEL.CUSTGRP));
                 setLoading(false);
             });
     }, []);
@@ -50,8 +50,8 @@ const CustomerGroupList = () => {
         CustomerGroupService.deleteCustomerGroup(id)
             .then(() => setCustomerGroups(customerGroups.filter((customerGroup) => customerGroup.customerGroupId !== id)))
             .catch((error) => {
-                console.error(MESSAGE.DELETE_ERROR.replace('type', LABEL.CUSTGRP), error);
-                setError(MESSAGE.DELETE_ERROR_MSG.replace('type', LABEL.CUSTGRP));
+                console.error(MESSAGE.DELETE_ERROR.replace(':type', LABEL.CUSTGRP), error);
+                setError(MESSAGE.DELETE_ERROR_MSG.replace(':type', LABEL.CUSTGRP));
             });
     };
 
@@ -123,19 +123,17 @@ const CustomerGroupList = () => {
         return (
             <div className={classes.errorTitle}>
                 <Typography variant="h6">{MESSAGE.LIST_EMPTY.replace('type', LABEL.CUSTGRP)}</Typography>
-                <AddNewButton url={ROUTES.ROLE_CREATE} />
+                <AddNewButton url={ROUTES.CST_GRP_CREATE} />
             </div>
         );
     }
 
     return (
         <Container className={classes.mainContainer}>
-            <div role="presentation" onClick={handleClick}>
-                <Breadcrumbs aria-label="breadcrumb">
-                    <Home />
-                    <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Customer Group List</Typography>
-                </Breadcrumbs>
-            </div>
+            <Breadcrumbs aria-label="breadcrumb">
+                <Home />
+                <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Customer Group List</Typography>
+            </Breadcrumbs>
             <PageTitle title={LABEL.PAGE_TITLE_LIST.replace(':type', LABEL.CUSTGRP)} />
             <div style={{ marginBottom: "10px" }}>
                 <AddNewButton url={ROUTES.CST_GRP_CREATE} />
