@@ -139,7 +139,7 @@ const CustomerGroupList = () => {
                 <AddNewButton url={ROUTES.CST_GRP_CREATE} />
             </div >
             <DataTable rows={customerGroups} columns={columns} getRowId={(row) => row.customerGroupId} />
-            <DeleteConfirmDialog open={dialogOpen} onDelete={deleteCustomerGroups} onCancel={() => setDialogOpen(false)} id={selectedId} />
+            <DeleteConfirmDialog open={dialogOpen} onDelete={deleteCustomerGroups} onCancel={() => setDialogOpen(false)} id={selectedId} type={LABEL.CUSTGRP}/>
         </Container>
     );
 };

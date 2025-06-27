@@ -144,7 +144,7 @@ const CustomerList = () => {
                 <AddNewButton url={ROUTES.CUSTOMER_CREATE} />
             </div >
             <DataTable rows={customers} columns={columns} getRowId={(row) => row.customerId} />
-            <DeleteConfirmDialog open={dialogOpen} onDelete={deleteCustomer} onCancel={() => setDialogOpen(false)} id={selectedId} />
+            <DeleteConfirmDialog open={dialogOpen} onDelete={deleteCustomer} onCancel={() => setDialogOpen(false)} id={selectedId} type={LABEL.CUSTOMER}/>
         </Container>
     );
 };

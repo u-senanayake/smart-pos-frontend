@@ -6,8 +6,10 @@ import {
     DialogTitle,
     Button,
 } from "@mui/material";
+import * as MESSAGE from '../../utils/const/Message';
+import * as LABEL from '../../utils/const/FieldLabels';
 
-const DeleteConfirmDialog = ({ open, message, onDelete, onCancel, id }) => {
+const DeleteConfirmDialog= ({ open, onDelete, onCancel, id, type }) => {
 
     const handleConfirm = () => {
         if (onDelete && id) {
@@ -18,16 +20,16 @@ const DeleteConfirmDialog = ({ open, message, onDelete, onCancel, id }) => {
 
     return (
         <Dialog open={open} onClose={onCancel}>
-            <DialogTitle>{"Delete"}</DialogTitle>
+            <DialogTitle>{LABEL.DELETE_DIALOG_TITLE.replace(':type', type)}</DialogTitle>
             <DialogContent>
-                <DialogContentText>Are you sure you want to delete this role?</DialogContentText>
+                <DialogContentText>{MESSAGE.DELETE_CONFIRM.replace(':type', type)}</DialogContentText>
             </DialogContent>
             <DialogActions>
                 <Button onClick={onCancel} color="primary">
-                    Cancel
+                    {LABEL.DELETE_DIALOG_BTN_CANCEL}
                 </Button>
                 <Button onClick={handleConfirm} color="secondary">
-                    Confirm
+                    {LABEL.DELETE_DIALOG_BTN_CONFIRM}
                 </Button>
             </DialogActions>
         </Dialog>

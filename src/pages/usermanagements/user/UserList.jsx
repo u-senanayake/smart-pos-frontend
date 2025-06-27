@@ -152,7 +152,7 @@ const UserList = () => {
         <AddNewButton url={ROUTES.USER_CREATE} />
       </div >
       <DataTable rows={users} columns={columns} getRowId={(row) => row.userId} />
-      <DeleteConfirmDialog open={dialogOpen} onDelete={deleteUser} onCancel={() => setDialogOpen(false)} id={selectedId} />
+      <DeleteConfirmDialog open={dialogOpen} onDelete={deleteUser} onCancel={() => setDialogOpen(false)} id={selectedId} type={LABEL.USER}/>
     </Container>
   );
 };

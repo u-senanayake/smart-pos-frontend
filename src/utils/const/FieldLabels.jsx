@@ -177,4 +177,7 @@ export const TABLE_PRICE = "Price"
 export const TABLE_MNFC_DATE = "Manufactore Date"
 export const TABLE_EXPR_DATE = "Expire Date"
 
-
+//Dialog Box Labels
+export const DELETE_DIALOG_TITLE = ":type Delete Confirmation"
+export const DELETE_DIALOG_BTN_CANCEL = "Cancel"
+export const DELETE_DIALOG_BTN_CONFIRM = "Confirm"

@@ -152,7 +152,7 @@ const ProductList = () => {
         <AddNewButton url={ROUTES.PRODUCT_CREATE} />
       </div >
       <DataTable rows={products} columns={columns} getRowId={(row) => row.id} />
-      <DeleteConfirmDialog open={dialogOpen} onDelete={deleteProduct} onCancel={() => setDialogOpen(false)} id={selectedId} />
+      <DeleteConfirmDialog open={dialogOpen} onDelete={deleteProduct} onCancel={() => setDialogOpen(false)} id={selectedId} type={LABEL.PRODUCT}/>
     </Container>
   );
 };

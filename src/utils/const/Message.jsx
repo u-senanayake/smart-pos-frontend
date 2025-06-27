@@ -23,3 +23,5 @@ export const INVALID_EMAIL='Invalid email address.'
 export const INVALID_PASS='Password do not match.'
 
 export const NUMBER_POSITIVE=':fieldName must be a positive number.'
+
+export const DELETE_CONFIRM='Are you sure you want to delete this :type?'

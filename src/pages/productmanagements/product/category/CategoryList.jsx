@@ -146,7 +146,7 @@ const CategoryList = () => {
         <AddNewButton url={ROUTES.CATEGORY_CREATE} />
       </div >
       <DataTable rows={categories} columns={columns} getRowId={(row) => row.categoryId} />
-      <DeleteConfirmDialog open={dialogOpen} onDelete={deleteCategory} onCancel={() => setDialogOpen(false)} id={selectedId} />
+      <DeleteConfirmDialog open={dialogOpen} onDelete={deleteCategory} onCancel={() => setDialogOpen(false)} id={selectedId} type={LABEL.CATEGORY}/>
     </Container>
   );
 };

@@ -140,7 +140,7 @@ const BrandList = () => {
         <AddNewButton url={ROUTES.BRAND_CREATE} />
       </div >
       <DataTable rows={brands} columns={columns} getRowId={(row) => row.brandId} />
-      <DeleteConfirmDialog open={dialogOpen} onDelete={deleteBrand} onCancel={() => setDialogOpen(false)} id={selectedId} />
+      <DeleteConfirmDialog open={dialogOpen} onDelete={deleteBrand} onCancel={() => setDialogOpen(false)} id={selectedId} type={LABEL.BRAND}/>
     </Container>
   );
 };

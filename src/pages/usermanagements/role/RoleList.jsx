@@ -147,7 +147,7 @@ const RoleList = () => {
         <AddNewButton url={ROUTES.ROLE_CREATE} />
       </div >
       <DataTable rows={roles} columns={columns} getRowId={(row) => row.roleId} />
-      <DeleteConfirmDialog open={dialogOpen} onDelete={deleteRole} onCancel={() => setDialogOpen(false)} id={selectedId} />
+      <DeleteConfirmDialog open={dialogOpen} onDelete={deleteRole} onCancel={() => setDialogOpen(false)} id={selectedId} type={LABEL.ROLE}/>
     </Container>
   );
 };

@@ -147,7 +147,7 @@ const DistributorList = () => {
         <AddNewButton url={ROUTES.DISTRIBUTOR_CREATE} />
       </div >
       <DataTable rows={distributors} columns={columns} getRowId={(row) => row.distributorId} />
-      <DeleteConfirmDialog open={dialogOpen} onDelete={deleteDistributor} onCancel={() => setDialogOpen(false)} id={selectedId} />
+      <DeleteConfirmDialog open={dialogOpen} onDelete={deleteDistributor} onCancel={() => setDialogOpen(false)} id={selectedId} type={LABEL.DISTRIBUTOR}/>
     </Container>
   );
 };

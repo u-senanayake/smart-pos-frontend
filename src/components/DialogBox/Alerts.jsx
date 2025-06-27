@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Alert } from '@mui/material';
 
 export const SuccessAlert = ({ message, onClose }) => {
