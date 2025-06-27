@@ -41,8 +41,8 @@ const DistributorList = () => {
         setLoading(false);
       })
       .catch((error) => {
-        console.error(MESSAGE.FEATCHING_ERROR.replace('type', LABEL.DISTRIBUTOR), error);
-        setError(MESSAGE.FEATCHING_ERROR_MSG.replace('type', LABEL.DISTRIBUTOR));
+        console.error(MESSAGE.FEATCHING_ERROR.replace(':type', LABEL.DISTRIBUTOR), error);
+        setError(MESSAGE.FEATCHING_ERROR_MSG.replace(':type', LABEL.DISTRIBUTOR));
         setLoading(false);
       });
   }, []);
@@ -51,8 +51,8 @@ const DistributorList = () => {
     DistributorService.deleteDistributor(id)
       .then(() => setDistributors(distributors.filter((distributor) => distributor.distributorId !== id)))
       .catch((error) => {
-        console.error(MESSAGE.DELETE_ERROR.replace('type', LABEL.DISTRIBUTOR), error);
-        setError(MESSAGE.DELETE_ERROR_MSG.replace('type', LABEL.DISTRIBUTOR));
+        console.error(MESSAGE.DELETE_ERROR.replace(':type', LABEL.DISTRIBUTOR), error);
+        setError(MESSAGE.DELETE_ERROR_MSG.replace(':type', LABEL.DISTRIBUTOR));
       });
   };
 
@@ -138,12 +138,10 @@ const DistributorList = () => {
 
   return (
     <Container className={classes.mainContainer}>
-      <div role="presentation" onClick={handleClick}>
-        <Breadcrumbs aria-label="breadcrumb">
-          <Home />
-          <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Distributor List</Typography>
-        </Breadcrumbs>
-      </div>
+      <Breadcrumbs aria-label="breadcrumb">
+        <Home />
+        <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Distributor List</Typography>
+      </Breadcrumbs>
       <PageTitle title={LABEL.PAGE_TITLE_LIST.replace(':type', LABEL.DISTRIBUTOR)} />
       <div style={{ marginBottom: "10px" }}>
         <AddNewButton url={ROUTES.DISTRIBUTOR_CREATE} />
