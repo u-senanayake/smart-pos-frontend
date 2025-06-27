@@ -38,7 +38,7 @@ const CreateCategory = () => {
         if (!validateRequired(category.name)) formError.name = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.CATEGORY_NAME);
         if (!validateLength(category.name, PROPERTY.CATEGORY_NAME_MIN, PROPERTY.CATEGORY_NAME_MAX)) formError.name = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.CATEGORY_NAME).replace(':min', PROPERTY.CATEGORY_NAME_MIN).replace(':max', PROPERTY.CATEGORY_NAME_MAX);
         //Description
-        if (!validateRequired(category.description)) formError.description = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.CATEGORY_DELETED_BY);
+        if (!validateRequired(category.description)) formError.description = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.CATEGORY_DESC);
         if (!validateLength(category.description, PROPERTY.CATEGORY_DESC_MIN, PROPERTY.CATEGORY_DESC_MAX)) formError.description = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.CATEGORY_DESC).replace(':min', PROPERTY.CATEGORY_DESC_MIN).replace(':max', PROPERTY.CATEGORY_DESC_MAX);
         //Category prefix
         if (!validateRequired(category.catPrefix)) formError.catPrefix = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.CATEGORY_PREFX);
@@ -83,7 +83,7 @@ const CreateCategory = () => {
             <PageTitle title={LABEL.PAGE_TITLE_CREATE.replace(':type', LABEL.CATEGORY)} />
             <Container maxWidth="lg">
                 <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
-                    <form onSubmit={handleSubmit}>
+                    <form>
                         <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
                         <ErrorAlert message={errorMessage} />
                         <Grid2 container spacing={2}>
@@ -154,7 +154,6 @@ const CreateCategory = () => {
                                     label={LABEL.CATEGORY_ENABLE}
                                 />
                             </Grid2>
-                            <Grid2 size={6}></Grid2>
                         </Grid2>
                         <Box className={classes.formButtonsContainer}>
                             <SaveButton onClick={handleSubmit} isSaving={isSaving} />

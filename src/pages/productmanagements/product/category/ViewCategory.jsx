@@ -62,9 +62,9 @@ const ViewCategory = () => {
       <Breadcrumbs aria-label="breadcrumb">
         <Home />
         <CategoryList />
-        <Typography sx={{ color: 'text.primary' }}>View Role</Typography>
+        <Typography sx={{ color: 'text.primary' }}>View Category</Typography>
       </Breadcrumbs>
-      <PageTitle title={LABEL.PAGE_TITLE_VIEW.replace(':type', LABEL.CATEGORY) + category.name} />
+      <PageTitle title={LABEL.PAGE_TITLE_VIEW.replace(':type', LABEL.CATEGORY).replace(':name', category.name)} />
       <Container maxWidth="lg">
         <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
           <Grid2 container spacing={2}>

@@ -41,8 +41,8 @@ const CategoryList = () => {
         setLoading(false);
       })
       .catch((error) => {
-        console.error(MESSAGE.FEATCHING_ERROR.replace('type', LABEL.CATEGORY), error);
-        setError(MESSAGE.FEATCHING_ERROR_MSG.replace('type', LABEL.CATEGORY));
+        console.error(MESSAGE.FEATCHING_ERROR.replace(':type', LABEL.CATEGORY), error);
+        setError(MESSAGE.FEATCHING_ERROR_MSG.replace(':type', LABEL.CATEGORY));
         setLoading(false);
       });
   }, []);
@@ -51,8 +51,8 @@ const CategoryList = () => {
     CategoryService.deleteCategory(id)
       .then(() => setCategories(categories.filter((category) => category.categoryId !== id)))
       .catch((error) => {
-        console.error(MESSAGE.DELETE_ERROR.replace('type', LABEL.CATEGORY), error);
-        setError(MESSAGE.DELETE_ERROR_MSG.replace('type', LABEL.CATEGORY));
+        console.error(MESSAGE.DELETE_ERROR.replace(':type', LABEL.CATEGORY), error);
+        setError(MESSAGE.DELETE_ERROR_MSG.replace(':type', LABEL.CATEGORY));
       });
   };
 
@@ -137,12 +137,10 @@ const CategoryList = () => {
 
   return (
     <Container className={classes.mainContainer}>
-      <div role="presentation" onClick={handleClick}>
-        <Breadcrumbs aria-label="breadcrumb">
-          <Home />
-          <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Category List</Typography>
-        </Breadcrumbs>
-      </div>
+      <Breadcrumbs aria-label="breadcrumb">
+        <Home />
+        <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Category List</Typography>
+      </Breadcrumbs>
       <PageTitle title={LABEL.PAGE_TITLE_LIST.replace(':type', LABEL.CATEGORY)} />
       <div style={{ marginBottom: "10px" }}>
         <AddNewButton url={ROUTES.CATEGORY_CREATE} />
