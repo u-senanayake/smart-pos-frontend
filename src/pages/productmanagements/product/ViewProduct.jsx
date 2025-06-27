@@ -66,9 +66,9 @@ const ViewProduct = () => {
       <Breadcrumbs aria-label="breadcrumb">
         <Home />
         <ProductList />
-        <Typography sx={{ color: 'text.primary' }}>View Role</Typography>
+        <Typography sx={{ color: 'text.primary' }}>View Product</Typography>
       </Breadcrumbs>
-      <PageTitle title={LABEL.PAGE_TITLE_VIEW.replace(':type', LABEL.PRODUCT) + product.productId} />
+      <PageTitle title={LABEL.PAGE_TITLE_VIEW.replace(':type', LABEL.PRODUCT).replace(':name', product.productId)} />
       <Container maxWidth="lg">
         <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4, mb: 2 }}>
           <Grid2 container spacing={2}>

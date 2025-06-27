@@ -40,8 +40,8 @@ const ProductList = () => {
         setLoading(false);
       })
       .catch((error) => {
-        console.error(MESSAGE.FEATCHING_ERROR.replace('type', LABEL.PRODUCT), error);
-        setError(MESSAGE.FEATCHING_ERROR_MSG.replace('type', LABEL.PRODUCT));
+        console.error(MESSAGE.FEATCHING_ERROR.replace(':type', LABEL.PRODUCT), error);
+        setError(MESSAGE.FEATCHING_ERROR_MSG.replace(':type', LABEL.PRODUCT));
         setLoading(false);
       });
   }, []);
@@ -50,8 +50,8 @@ const ProductList = () => {
     ProductService.deleteProduct(id)
       .then(() => setProducts(products.filter((product) => product.productId !== id)))
       .catch((error) => {
-        console.error(MESSAGE.DELETE_ERROR.replace('type', LABEL.PRODUCT), error);
-        setError(MESSAGE.DELETE_ERROR_MSG.replace('type', LABEL.PRODUCT));
+        console.error(MESSAGE.DELETE_ERROR.replace(':type', LABEL.PRODUCT), error);
+        setError(MESSAGE.DELETE_ERROR_MSG.replace(':type', LABEL.PRODUCT));
       });
   }
 
@@ -143,12 +143,10 @@ const ProductList = () => {
 
   return (
     <Container className={classes.mainContainer}>
-      <div role="presentation" onClick={handleClick}>
-        <Breadcrumbs aria-label="breadcrumb">
-          <Home />
-          <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Product List</Typography>
-        </Breadcrumbs>
-      </div>
+      <Breadcrumbs aria-label="breadcrumb">
+        <Home />
+        <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Product List</Typography>
+      </Breadcrumbs>
       <PageTitle title={LABEL.PAGE_TITLE_LIST.replace(':type', LABEL.PRODUCT)} />
       <div style={{ marginBottom: "10px" }}>
         <AddNewButton url={ROUTES.PRODUCT_CREATE} />

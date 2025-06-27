@@ -239,12 +239,12 @@ const UpdateProduct = () => {
             <Breadcrumbs aria-label="breadcrumb">
                 <Home />
                 <ProductList />
-                <Typography sx={{ color: 'text.primary' }}>Edit Role</Typography>
+                <Typography sx={{ color: 'text.primary' }}>Edit Product</Typography>
             </Breadcrumbs>
-            <PageTitle title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.PRODUCT) + product.productId} />
+            <PageTitle title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.PRODUCT).replace(':name', product.productId)} />
             <Container maxWidth="lg">
                 <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
-                    <form onSubmit={handleSubmit}>
+                    <form>
                         <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
                         <ErrorAlert message={errorMessage} />
                         <Grid2 container spacing={2}>
