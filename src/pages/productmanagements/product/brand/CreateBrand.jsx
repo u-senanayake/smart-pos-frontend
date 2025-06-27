@@ -74,12 +74,12 @@ const CreateBrand = () => {
             <Breadcrumbs aria-label="breadcrumb">
                 <Home />
                 <BrandList />
-                <Typography sx={{ color: 'text.primary' }}>Create Role</Typography>
+                <Typography sx={{ color: 'text.primary' }}>Create Brand</Typography>
             </Breadcrumbs>
             <PageTitle title={LABEL.PAGE_TITLE_CREATE.replace(':type', LABEL.BRAND)} />
             <Container maxWidth="lg">
                 <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
-                    <form onSubmit={handleSubmit}>
+                    <form>
                         <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
                         <ErrorAlert message={errorMessage} />
                         <Grid2 container spacing={2}>
@@ -131,7 +131,6 @@ const CreateBrand = () => {
                                     label={LABEL.BRAND_ENABLED}
                                 />
                             </Grid2>
-                            <Grid2 size={6}></Grid2>
                         </Grid2>
                         <Box className={classes.formButtonsContainer}>
                             <SaveButton onClick={handleSubmit} isSaving={isSaving} />

@@ -41,8 +41,8 @@ const BrandList = () => {
         setLoading(false);
       })
       .catch((error) => {
-        console.error(MESSAGE.FEATCHING_ERROR.replace('type', LABEL.BRAND), error);
-        setError(MESSAGE.FEATCHING_ERROR_MSG.replace('type', LABEL.BRAND));
+        console.error(MESSAGE.FEATCHING_ERROR.replace(':type', LABEL.BRAND), error);
+        setError(MESSAGE.FEATCHING_ERROR_MSG.replace(':type', LABEL.BRAND));
         setLoading(false);
       });
   }, []);
@@ -51,8 +51,8 @@ const BrandList = () => {
     BrandService.deleteBrand(id)
       .then(() => setBrands(brands.filter((brand) => brand.brandId !== id)))
       .catch((error) => {
-        console.error(MESSAGE.DELETE_ERROR.replace('type', LABEL.BRAND), error);
-        setError(MESSAGE.DELETE_ERROR_MSG.replace('type', LABEL.BRAND));
+        console.error(MESSAGE.DELETE_ERROR.replace(':type', LABEL.BRAND), error);
+        setError(MESSAGE.DELETE_ERROR_MSG.replace(':type', LABEL.BRAND));
       });
   };
 
@@ -131,12 +131,10 @@ const BrandList = () => {
 
   return (
     <Container className={classes.mainContainer}>
-      <div role="presentation" onClick={handleClick}>
-        <Breadcrumbs aria-label="breadcrumb">
-          <Home />
-          <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Brand List</Typography>
-        </Breadcrumbs>
-      </div>
+      <Breadcrumbs aria-label="breadcrumb">
+        <Home />
+        <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Brand List</Typography>
+      </Breadcrumbs>
       <PageTitle title={LABEL.PAGE_TITLE_LIST.replace(':type', LABEL.BRAND)} />
       <div style={{ marginBottom: "10px" }}>
         <AddNewButton url={ROUTES.BRAND_CREATE} />

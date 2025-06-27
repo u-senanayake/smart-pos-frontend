@@ -64,9 +64,9 @@ const ViewBrand = () => {
       <Breadcrumbs aria-label="breadcrumb">
         <Home />
         <BrandList />
-        <Typography sx={{ color: 'text.primary' }}>View Role</Typography>
+        <Typography sx={{ color: 'text.primary' }}>View Brand</Typography>
       </Breadcrumbs>
-      <PageTitle title={LABEL.PAGE_TITLE_VIEW.replace(':type', LABEL.BRAND) + brand.name} />
+      <PageTitle title={LABEL.PAGE_TITLE_VIEW.replace(':type', LABEL.BRAND).replace(':name', brand.name)} />
       <Container maxWidth="lg">
         <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
           <Grid2 container spacing={2}>
