@@ -39,8 +39,8 @@ const CustomerList = () => {
                 setLoading(false);
             })
             .catch((error) => {
-                console.error(MESSAGE.FEATCHING_ERROR.replace('type', LABEL.CUSTOMER), error);
-                setError(MESSAGE.FEATCHING_ERROR_MSG.replace('type', LABEL.CUSTOMER));
+                console.error(MESSAGE.FEATCHING_ERROR.replace(':type', LABEL.CUSTOMER), error);
+                setError(MESSAGE.FEATCHING_ERROR_MSG.replace(':type', LABEL.CUSTOMER));
                 setLoading(false);
             });
     }, []);
@@ -50,14 +50,10 @@ const CustomerList = () => {
         CustomerService.deleteCustomer(id)
             .then(() => setCustomers(customers.filter((customer) => customer.customerId !== id)))
             .catch((error) => {
-                console.error(MESSAGE.DELETE_ERROR.replace('type', LABEL.CUSTOMER), error);
-                setError(MESSAGE.CREATE_ERROR_MSG.replace('type', LABEL.CUSTOMER));
+                console.error(MESSAGE.DELETE_ERROR.replace(':type', LABEL.CUSTOMER), error);
+                setError(MESSAGE.DELETE_ERROR_MSG.replace(':type', LABEL.CUSTOMER));
             });
     };
-
-    function handleClick(event) {
-        navigate(event.target.href);
-    }
 
     const columns = [
         {
@@ -139,12 +135,10 @@ const CustomerList = () => {
 
     return (
         <Container className={classes.mainContainer}>
-            <div role="presentation" onClick={handleClick}>
-                <Breadcrumbs aria-label="breadcrumb">
-                    <Home />
-                    <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Customer List</Typography>
-                </Breadcrumbs>
-            </div>
+            <Breadcrumbs aria-label="breadcrumb">
+                <Home />
+                <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Customer List</Typography>
+            </Breadcrumbs>
             <PageTitle title={LABEL.PAGE_TITLE_LIST.replace(':type', LABEL.CUSTOMER)} />
             <div style={{ marginBottom: "10px" }}>
                 <AddNewButton url={ROUTES.CUSTOMER_CREATE} />

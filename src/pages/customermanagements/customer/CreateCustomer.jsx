@@ -149,7 +149,7 @@ const CreateCustomer = () => {
             <PageTitle title={LABEL.PAGE_TITLE_CREATE.replace(':type', LABEL.CUSTOMER)} />
             <Container maxWidth="lg">
                 <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
-                    <form onSubmit={handleSubmit}>
+                    <form>
                         <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
                         <ErrorAlert message={errorMessage} />
                         <Grid2 container spacing={2}>
@@ -170,7 +170,7 @@ const CreateCustomer = () => {
                                     value={customer.customerGroup.customerGroupId}
                                     onChange={handleCustomerGroupChange}
                                     options={customerGroups.map((customerGroup) => ({ value: customerGroup.customerGroupId, label: customerGroup.name }))}
-                                    error={!!formError.customer}
+                                    error={!!formError.customerGroup}
                                     helperText={formError.customerGroup}
                                     required
                                 />

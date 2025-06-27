@@ -111,7 +111,7 @@ const UpdateCustomer = () => {
         }));
     };
 
-    const handleRoleChange = (e) => {
+    const handleCustomerGroupChange = (e) => {
         const { value } = e.target;
         setCustomer((prevCustomer) => ({
             ...prevCustomer,
@@ -142,7 +142,7 @@ const UpdateCustomer = () => {
                     if (error.response && error.response.data) {
                         setErrorMessage(error.response.data);
                     } else {
-                        setErrorMessage(MESSAGE.UPDATE_ERROR_MSG.replace(':type', LABEL.USER));
+                        setErrorMessage(MESSAGE.UPDATE_ERROR_MSG.replace(':type', LABEL.CUSTOMER));
                     }
                     console.error(MESSAGE.UPDATE_ERROR.replace(':type', LABEL.CUSTOMER), error.response);
                 })
@@ -161,12 +161,12 @@ const UpdateCustomer = () => {
             <Breadcrumbs aria-label="breadcrumb">
                 <Home />
                 <CustomerList />
-                <Typography sx={{ color: 'text.primary' }}>Edit Role</Typography>
+                <Typography sx={{ color: 'text.primary' }}>Edit Customer</Typography>
             </Breadcrumbs>
-            <PageTitle title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.CUSTOMER) + customer.firstName} />
+            <PageTitle title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.CUSTOMER).replace(':name', customer.firstName)} />
             <Container maxWidth="lg">
                 <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
-                    <form onSubmit={handleSubmit}>
+                    <form>
                         <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
                         <ErrorAlert message={errorMessage} />
                         <Grid2 container spacing={2}>
@@ -181,7 +181,7 @@ const UpdateCustomer = () => {
                                     label={LABEL.CUSTOMER_GROUP}
                                     name="customergroup"
                                     value={customer.customerGroup.customerGroupId}
-                                    onChange={handleRoleChange}
+                                    onChange={handleCustomerGroupChange}
                                     options={customerGroups.map((customerGroup) => ({ value: customerGroup.customerGroupId, label: customerGroup.name }))}
                                     error={!!formError.customerGroup}
                                     helperText={formError.customerGroup}

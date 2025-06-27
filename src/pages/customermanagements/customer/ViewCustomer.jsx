@@ -49,13 +49,13 @@ const ViewCustomer = () => {
 
     if (errorMessage) {
         return (
-          <ErrorMessage
-            message={errorMessage}
-            actionText="Retry"
-            onAction={() => window.location.reload()}
-          />
+            <ErrorMessage
+                message={errorMessage}
+                actionText="Retry"
+                onAction={() => window.location.reload()}
+            />
         );
-      }
+    }
 
     return (
         <Container className={classes.mainContainer}>
@@ -64,7 +64,7 @@ const ViewCustomer = () => {
                 <CustomerList />
                 <Typography sx={{ color: 'text.primary' }}>View Customer</Typography>
             </Breadcrumbs>
-            <PageTitle title={LABEL.PAGE_TITLE_VIEW.replace(':type', LABEL.CUSTOMER) + customer.firstName} />
+            <PageTitle title={LABEL.PAGE_TITLE_VIEW.replace(':type', LABEL.CUSTOMER).replace(':name', customer.firstName)} />
             <Container maxWidth="lg">
                 <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
                     <Grid2 container spacing={2}>
