@@ -64,9 +64,9 @@ const ViewUser = () => {
       <Breadcrumbs aria-label="breadcrumb">
         <Home />
         <UserList />
-        <Typography sx={{ color: 'text.primary' }}>View Role</Typography>
+        <Typography sx={{ color: 'text.primary' }}>View User</Typography>
       </Breadcrumbs>
-      <PageTitle title={LABEL.PAGE_TITLE_VIEW.replace(':type', LABEL.USER) + user.username} />
+      <PageTitle title={LABEL.PAGE_TITLE_VIEW.replace(':type', LABEL.USER).replace(':name', user.username)} />
       <Container maxWidth="lg">
         <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
           <Grid2 container spacing={2}>

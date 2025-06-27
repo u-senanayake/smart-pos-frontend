@@ -75,7 +75,7 @@ const UpdateUser = () => {
     //Role
     if (!validateRequired(user.role)) errors.role = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.USER_ROLE);
     // First name
-    if (!validateRequired(user.firstName)) errors.firstName = MESSAGE.FIELD_REQUIRED.replace('fieldName', LABEL.USER_FIRST_NAME);
+    if (!validateRequired(user.firstName)) errors.firstName = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.USER_FIRST_NAME);
     if (!validateLength(user.firstName, 1, 50)) errors.firstName = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.USER_FIRST_NAME).replace(':min', PROPERTY.USER_NAME_MIN).replace(':max', PROPERTY.USER_NAME_MAX);
     // Last name
     if (!validateRequired(user.lastName)) errors.lastName = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.USER_LAST_NAME);
@@ -155,13 +155,13 @@ const UpdateUser = () => {
       <Breadcrumbs aria-label="breadcrumb">
         <Home />
         <UserList />
-        <Typography sx={{ color: 'text.primary' }}>Edit Role</Typography>
+        <Typography sx={{ color: 'text.primary' }}>Edit User</Typography>
       </Breadcrumbs>
-      <PageTitle title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.USER) + user.username} />
+      <PageTitle title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.USER).replace(':name', user.username)} />
       <Container maxWidth="lg">
         <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
 
-          <form onSubmit={handleSubmit}>
+          <form>
             <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
             <ErrorAlert message={errorMessage} />
 
@@ -263,7 +263,7 @@ const UpdateUser = () => {
               <Grid2 size={6}>
                 <FormControlLabel
                   control={
-                    <Switch 
+                    <Switch
                       checked={user.locked}
                       onChange={handleCheckboxChange}
                       name="locked"

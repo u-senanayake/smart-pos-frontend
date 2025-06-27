@@ -52,7 +52,7 @@ const UserList = () => {
       .then(() => setUsers(users.filter((user) => user.userId !== id)))
       .catch((error) => {
         console.error(MESSAGE.DELETE_ERROR.replace(':type', LABEL.USER), error);
-        setError(MESSAGE.DELETE_ERROR_MSG.replace(':type', LABEL.USER), error);
+        setError(MESSAGE.DELETE_ERROR_MSG.replace(':type', LABEL.USER));
       });
   };
 
@@ -143,12 +143,10 @@ const UserList = () => {
 
   return (
     <Container className={classes.mainContainer}>
-      <div role="presentation" onClick={handleClick}>
-        <Breadcrumbs aria-label="breadcrumb">
-          <Home />
-          <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>User List</Typography>
-        </Breadcrumbs>
-      </div>
+      <Breadcrumbs aria-label="breadcrumb">
+        <Home />
+        <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>User List</Typography>
+      </Breadcrumbs>
       <PageTitle title={LABEL.PAGE_TITLE_LIST.replace(':type', LABEL.USER)} />
       <div style={{ marginBottom: "10px" }}>
         <AddNewButton url={ROUTES.USER_CREATE} />

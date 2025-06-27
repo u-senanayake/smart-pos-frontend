@@ -137,14 +137,14 @@ const CreateUser = () => {
       delete requestData.role; // Remove the role object
       UserService.createUser(requestData)
         .then(() => {
-          setSuccessMessage(MESSAGE.CREATE_SUCCESS.replace(':type', LABEL.ROLE)); // Set success message
+          setSuccessMessage(MESSAGE.CREATE_SUCCESS.replace(':type', LABEL.USER)); // Set success message
           setTimeout(() => navigate(ROUTES.USER_LIST), APP_PROPERTY.ALERT_TIMEOUT); // Delay navigation
         })
         .catch((error) => {
           if (error.response && error.response.data) {
             setErrorMessage(error.response.data);
           } else {
-            setErrorMessage(MESSAGE.CREATE_ERROR_MSG.replace(':type', LABEL.ROLE));
+            setErrorMessage(MESSAGE.CREATE_ERROR_MSG.replace(':type', LABEL.USER));
           }
           console.error(MESSAGE.CREATE_ERROR.replace(':type', LABEL.ROLE), error.response);
         })
@@ -169,7 +169,7 @@ const CreateUser = () => {
       <Container maxWidth="lg">
         <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
 
-          <form onSubmit={handleSubmit}>
+          <form>
 
             <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
             <ErrorAlert message={errorMessage} />
