@@ -16,7 +16,8 @@ import { Home, ProductList } from "../../../components/PageElements/BreadcrumbsL
 import { EditButton, CancelButton } from "../../../components/PageElements/Buttons";
 import { EnabledIcon, LockedIcon } from "../../../components/PageElements/IconButtons";
 import { useStyles } from "../../../style/makeStyle";
-
+import ImageSlider from '../../../components/PageElements/ImageSlider';
+import * as APP_PROPERTY from '../../../utils/const/AppProperty';
 import * as MESSAGE from '../../../utils/const/Message';
 import * as LABEL from '../../../utils/const/FieldLabels';
 import * as ROUTES from '../../../utils/const/RouteProperty';
@@ -40,6 +41,18 @@ const ViewProduct = () => {
         setErrorMessage(MESSAGE.FEATCHING_ERROR_MSG.replace(':type', LABEL.PRODUCT));
       }).finally(() => setLoading(false));
   }, [id]);
+
+  // Helper to get image URLs
+  const getImageUrls = () => {
+    if (!product || !product.images || !Array.isArray(product.images) || product.images.length === 0) return [];
+    return product.images
+      .filter(img => img && img.imageId)
+      .map(img =>
+        `${APP_PROPERTY.FILE_SERVER_URL}${APP_PROPERTY.PRODUCT_TYPE}/${product.id}/${img.imageId}`
+      );
+  };
+
+  const imageUrls = getImageUrls();
 
   const handleCancel = () => navigate(ROUTES.PRODUCT_LIST);
 
@@ -161,7 +174,9 @@ const ViewProduct = () => {
             <Grid2 size={6}>
               <ReadOnlyField label={LABEL.INVENTORY_LAST_UPDATED} value={formatDate(product.inventory.lastUpdated)} />
             </Grid2>
-            <Grid2 size={6}></Grid2>
+            <Grid2 size={6}>
+              <ImageSlider imageUrls={imageUrls} />
+            </Grid2>
           </Grid2>
         </Paper>
         <Box className={classes.formButtonsContainer}>

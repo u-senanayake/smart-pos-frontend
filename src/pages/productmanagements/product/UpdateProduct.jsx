@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Container, FormControlLabel, Grid2, Breadcrumbs, Switch } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 //Service
@@ -12,6 +12,7 @@ import { formatPrice, } from "../../../utils/utils";
 import AddStockDialog from '../inventory/AddStockDialog';
 import AdjustStockDialog from '../inventory/AdjustStockDialog';
 import UpdateStockAlertDialog from '../inventory/UpdateStockAlertDialog';
+
 
 import { Loading, } from '../../../components/PageElements/Loading';
 import { Home, ProductList } from "../../../components/PageElements/BreadcrumbsLinks";
@@ -64,6 +65,7 @@ const UpdateProduct = () => {
     const [openAddStockDialog, setOpenAddStockDialog] = useState(false);
     const [openAdjustStockDialog, setOpenAdjustStockDialog] = useState(false);
     const [openUpdateStockAlertDialog, setOpenUpdateStockAlertDialog] = useState(false);
+    const [file, setFile] = useState(null);
     const classes = useStyles();
     const navigate = useNavigate();
 
@@ -197,6 +199,10 @@ const UpdateProduct = () => {
         setFormError((prevErrors) => ({ ...prevErrors, distributor: undefined })); // Clear distributor error
     };
 
+    const handleFileChange = (e) => {
+        setFile(e.target.files[0]);
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         const validationErrors = validateForm(product);
@@ -209,9 +215,25 @@ const UpdateProduct = () => {
                 categoryId: product.category.categoryId, // Extract categoryId
                 distributorId: product.distributor.distributorId, // Extract distributorId
             };
-            delete requestData.category; // Remove the category object
-            delete requestData.distributor; // Remove the distributor object
-            ProductService.updateProduct(id, requestData)
+            delete requestData.category;
+            delete requestData.distributor;
+            delete requestData.inventory;
+            delete requestData.images;
+            delete requestData.id;
+            delete requestData.deleted;
+            delete requestData.productId;
+            delete requestData.createdAt;
+            delete requestData.updatedAt;
+            delete requestData.deletedAt;
+            delete requestData.createdUser
+            delete requestData.updatedUser
+            delete requestData.deletedUser
+
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("product", JSON.stringify(requestData));
+
+            ProductService.updateProduct(id, formData)
                 .then(() => {
                     setSuccessMessage(MESSAGE.UPDATE_SUCCESS.replace(':type', LABEL.PRODUCT)); // Set success message
                     setTimeout(() => navigate(ROUTES.PRODUCT_LIST), APP_PROPERTY.ALERT_TIMEOUT); // Delay navigation
@@ -420,6 +442,23 @@ const UpdateProduct = () => {
                                 productId={product.id}
                                 inventory={product.inventory}
                                 onStockAdjusted={handleStockAdded} />
+                        </Paper>
+                        <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
+                            <PageTitle2 title={"Images"} />
+                            <Grid2 container spacing={2}>
+                                <Grid2 size={6}>
+                                    <Paper elevation={1} className={classes.formContainer} sx={{ borderRadius: 4 }}>
+                                        <input type="file" accept="image/*" onChange={handleFileChange} />
+                                        {file && (
+                                            <Box mt={2}>
+                                                <Typography variant="body2">Selected: {file.name}</Typography>
+                                            </Box>
+                                        )}
+                                        
+                                    </Paper>
+                                </Grid2>
+                                <Grid2 size={6}></Grid2>
+                            </Grid2>
                         </Paper>
                         <Box className={classes.formButtonsContainer}>
                             <UpdateButton onClick={handleSubmit} isSaving={isSaving} />

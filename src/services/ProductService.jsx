@@ -2,6 +2,7 @@ import axios from 'axios';
 import AuthService from './AuthService';
 
 const API_URL = "/api/v1/product";
+const IMG_URL = "/api/v1/image";
 
 class ProductService {
 
@@ -36,7 +37,15 @@ class ProductService {
     // Update a product by ID
     async updateProduct(id, product) {
         AuthService.setAuthHeader();
-        const response = await axios.put(`${API_URL}/${id}`, product);
+        const response = await axios.put(
+            `${API_URL}/${id}`,
+            product,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                }
+            }
+        );
         return response;
     }
 
@@ -46,6 +55,16 @@ class ProductService {
         const response = await axios.delete(`${API_URL}/${id}`);
         return response;
     }
+
+    // Fetch product image by filename (returns a blob)
+    async fetchProductImage(filename) {
+    AuthService.setAuthHeader();
+    // const response = await axios.get(`${API_URL}/1`, {
+    //     responseType: 'blob'
+    // });
+    const response = await axios.get(`${API_URL}/image`);
+    return response.data;
+}
 
 }
 
