@@ -150,7 +150,8 @@ export const CUSTOMER_UPDATED_BY = "Updated By"
 export const CUSTOMER_DELETED_AT = "Deleted At"
 export const CUSTOMER_DELETED_BY = "Deleted By"
 
-
+//Image
+export const IMAGE = "Image"
 
 //Table Headers
 export const TABLE_ID = "ID"

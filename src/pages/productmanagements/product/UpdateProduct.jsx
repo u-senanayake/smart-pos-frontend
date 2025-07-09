@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Container, FormControlLabel, Grid2, Breadcrumbs, Switch } from '@mui/material';
+import { Box, Typography, Paper, Container, FormControlLabel, Grid2, Breadcrumbs, Switch, IconButton, Avatar } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
+import CloseIcon from '@mui/icons-material/Close';
 //Service
 import ProductService from '../../../services/ProductService';
 import CategoryService from '../../../services/CategoryService';
 import DistributorService from '../../../services/DistributorService';
+import ImageService from '../../../services/ImageService';
 //Utils
 import { validateRequired, validateLength, validateNumberField } from '../../../utils/Validations';
 import { formatDateToYYYYMMDD, formatDate } from '../../../utils/Dateutils';
@@ -12,21 +14,19 @@ import { formatPrice, } from "../../../utils/utils";
 import AddStockDialog from '../inventory/AddStockDialog';
 import AdjustStockDialog from '../inventory/AdjustStockDialog';
 import UpdateStockAlertDialog from '../inventory/UpdateStockAlertDialog';
-
-
+//Components
 import { Loading, } from '../../../components/PageElements/Loading';
 import { Home, ProductList } from "../../../components/PageElements/BreadcrumbsLinks";
 import { UpdateButton, CancelButton, AddStockButton, AdjustStockButton, UpdateStockButton } from "../../../components/PageElements/Buttons";
 import { EditableTextField, EditableDropDown, PageTitle, PageTitle2, ReadOnlyField } from "../../../components/PageElements/CommonElements";
 import { SuccessAlert, ErrorAlert, } from '../../../components/DialogBox/Alerts';
-
-import { useStyles } from "../../../style/makeStyle";
-
 import * as MESSAGE from '../../../utils/const/Message';
 import * as PROPERTY from '../../../utils/const/FieldProperty';
 import * as LABEL from '../../../utils/const/FieldLabels';
 import * as APP_PROPERTY from '../../../utils/const/AppProperty';
 import * as ROUTES from '../../../utils/const/RouteProperty';
+//Styles
+import { useStyles } from "../../../style/makeStyle";
 
 const UpdateProduct = () => {
     const { id } = useParams();
@@ -66,6 +66,8 @@ const UpdateProduct = () => {
     const [openAdjustStockDialog, setOpenAdjustStockDialog] = useState(false);
     const [openUpdateStockAlertDialog, setOpenUpdateStockAlertDialog] = useState(false);
     const [file, setFile] = useState(null);
+    const [images, setImages] = useState([]); // Add images state
+    const [isUploading, setIsUploading] = useState(false);
     const classes = useStyles();
     const navigate = useNavigate();
 
@@ -92,12 +94,18 @@ const UpdateProduct = () => {
             .then((res) => {
                 const product = res.data;
                 setProduct(product);
+                setImages(product.images || []); // Set images from product
             })
             .catch((error) => {
                 console.error(MESSAGE.FEATCHING_ERROR.replace(':type', LABEL.PRODUCT), error);
                 setErrorMessage(MESSAGE.FEATCHING_ERROR_MSG.replace(':type', LABEL.PRODUCT));
             }).finally(() => setLoading(false));
     }, [id]);
+
+    const createImageUrl = (image) => {
+        if (!image) return ''
+        return `${APP_PROPERTY.FILE_SERVER_URL}${APP_PROPERTY.PRODUCT_TYPE}/${product.id}/${image.imageId}`;
+    };
 
     const validateForm = (prodcut) => {
         const errors = {};
@@ -126,6 +134,7 @@ const UpdateProduct = () => {
 
         return errors;
     };
+
     const handleStockAdded = () => {
         ProductService.getProductById(product.id)
             .then((res) => {
@@ -158,6 +167,7 @@ const UpdateProduct = () => {
         setOpenUpdateStockAlertDialog(false);
     };
 
+    // Handle input change
     const handleChange = (e) => {
         const { name, value } = e.target;
         setProduct((prevProduct) => ({
@@ -169,6 +179,7 @@ const UpdateProduct = () => {
         setFormError((prevErrors) => ({ ...prevErrors, [name]: undefined })); // Clear specific field error
     };
 
+    // Handle checkbox change
     const handleCheckboxChange = (e) => {
         const { name, checked } = e.target;
         setProduct((prevProduct) => ({
@@ -177,6 +188,7 @@ const UpdateProduct = () => {
         }));
     };
 
+    // Handle category change
     const handleCategoryChange = (e) => {
         const { value } = e.target;
         setProduct((prevProduct) => ({
@@ -188,6 +200,7 @@ const UpdateProduct = () => {
         setFormError((prevErrors) => ({ ...prevErrors, category: undefined })); // Clear category error
     };
 
+    // Handle distributor change
     const handleDistributorChange = (e) => {
         const { value } = e.target;
         setProduct((prevProduct) => ({
@@ -203,6 +216,49 @@ const UpdateProduct = () => {
         setFile(e.target.files[0]);
     };
 
+    // Handle image removal
+    const handleRemoveImage = (index) => {
+        const imageToRemove = images[index];
+        if (imageToRemove && imageToRemove.imageId && product.id) {
+            ImageService.deleteImage(imageToRemove.imageId)
+                .then(() => {
+                    setSuccessMessage(MESSAGE.DELETE_SUCCESS.replace(':type', LABEL.IMAGE));
+                    ProductService.getProductById(product.id)
+                        .then((res) => setImages(res.data.images || []));
+                })
+                .catch((error) => {
+                    setErrorMessage(MESSAGE.DELETE_ERROR_MSG.replace(':type', LABEL.IMAGE));
+                    console.error(MESSAGE.DELETE_ERROR.replace(':type', LABEL.IMAGE), error);
+                });
+        }
+    };
+
+    // Add image upload handler
+    const handleAddImage = async () => {
+        if (!file || !product.id) return;
+        setIsUploading(true);
+        const formData = new FormData();
+        formData.append("file", file);
+        ImageService.uploadImage(formData, 'product', product.id)
+            .then(() => {
+                setSuccessMessage(MESSAGE.UPDATE_SUCCESS.replace(':type', LABEL.PRODUCT));
+                ProductService.getProductById(product.id)
+                    .then((res) => setImages(res.data.images || []));
+            })
+            .catch((error) => {
+                if (error.response && error.response.data) {
+                    setErrorMessage(error.response.data);
+                } else {
+                    setErrorMessage(MESSAGE.UPDATE_ERROR_MSG.replace(':type', LABEL.PRODUCT));
+                }
+                console.error(MESSAGE.UPDATE_ERROR.replace(':type', LABEL.PRODUCT), error.response);
+            })
+            .finally(() => {
+                setIsUploading(false);
+                setFile(null);
+            });
+    };
+    // Handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
         const validationErrors = validateForm(product);
@@ -229,11 +285,7 @@ const UpdateProduct = () => {
             delete requestData.updatedUser
             delete requestData.deletedUser
 
-            const formData = new FormData();
-            formData.append("file", file);
-            formData.append("product", JSON.stringify(requestData));
-
-            ProductService.updateProduct(id, formData)
+            ProductService.updateProduct(id, requestData)
                 .then(() => {
                     setSuccessMessage(MESSAGE.UPDATE_SUCCESS.replace(':type', LABEL.PRODUCT)); // Set success message
                     setTimeout(() => navigate(ROUTES.PRODUCT_LIST), APP_PROPERTY.ALERT_TIMEOUT); // Delay navigation
@@ -250,6 +302,7 @@ const UpdateProduct = () => {
         }
     };
 
+    // Handle cancel button click
     const handleCancel = () => { navigate(ROUTES.PRODUCT_LIST); };
 
     if (loading) {
@@ -448,16 +501,44 @@ const UpdateProduct = () => {
                             <Grid2 container spacing={2}>
                                 <Grid2 size={6}>
                                     <Paper elevation={1} className={classes.formContainer} sx={{ borderRadius: 4 }}>
-                                        <input type="file" accept="image/*" onChange={handleFileChange} />
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            <input type="file" accept="image/*" onChange={handleFileChange} />
+                                            <button
+                                                type="button"
+                                                onClick={handleAddImage}
+                                                disabled={!file || isUploading}
+                                                style={{ height: 36 }}
+                                            >
+                                                {isUploading ? "Uploading..." : "Add"}
+                                            </button>
+                                        </Box>
                                         {file && (
                                             <Box mt={2}>
                                                 <Typography variant="body2">Selected: {file.name}</Typography>
                                             </Box>
                                         )}
-                                        
                                     </Paper>
                                 </Grid2>
-                                <Grid2 size={6}></Grid2>
+                                <Grid2 size={6}>
+                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
+                                        {images.map((img, idx) => (
+                                            <Box key={idx} sx={{ display: 'flex', alignItems: 'center' }}>
+                                                <Avatar
+                                                    src={typeof img === 'string' ? img : createImageUrl(img)}
+                                                    variant="square"
+                                                    sx={{ width: 48, height: 48, mr: 1 }}
+                                                />
+                                                <IconButton
+                                                    size="small"
+                                                    onClick={() => handleRemoveImage(idx)}
+                                                    aria-label="delete"
+                                                >
+                                                    <CloseIcon fontSize="small" />
+                                                </IconButton>
+                                            </Box>
+                                        ))}
+                                    </Box>
+                                </Grid2>
                             </Grid2>
                         </Paper>
                         <Box className={classes.formButtonsContainer}>
