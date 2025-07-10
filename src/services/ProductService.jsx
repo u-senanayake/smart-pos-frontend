@@ -20,9 +20,13 @@ class ProductService {
     }
 
     // Create a new product
-    async createProduct(product) {
+    async createProduct(formData) {
         AuthService.setAuthHeader();
-        const response = await axios.post(API_URL, product);
+        const response = await axios.post(API_URL, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            }
+        });
         return response;
     }
 

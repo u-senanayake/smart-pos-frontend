@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
-    Box, Typography, Grid, Paper, TextField, Autocomplete, Button, Card, CardActionArea, CardMedia, CardContent,
-    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, Grid2, Dialog, DialogTitle, DialogContent, DialogActions, Alert
+    Box, Typography, Paper, TextField, Autocomplete, Button, Card, CardActionArea, CardMedia, CardContent,
+    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, Grid2,
 } from '@mui/material';
 import { Edit, Delete, Save, Cancel } from '@mui/icons-material';
 // Services
@@ -10,10 +10,10 @@ import CustomerService from "../../../services/CustomerService";
 import SaleService from "../../../services/SaleService";
 import SaleItemService from "../../../services/SaleItemService";
 // Style
-import { POSStyle } from "../../../style/POSStyle";
 import POSHeader from './POSHeader';
-import { ReadOnlyField, ErrorDialog } from '../../../utils/FieldUtils'
+import { ErrorDialog } from '../../../utils/FieldUtils'
 
+import * as APP_PROPERTY from '../../../utils/const/AppProperty';
 const PosPage = () => {
     const [products, setProducts] = useState([]);
     const [customers, setCustomers] = useState([]);
@@ -109,6 +109,12 @@ const PosPage = () => {
 
         fetchData();
     }, []);
+
+    // Create Image URL for Product
+    const createImageUrl = (product) => {
+        if (!product || !product.images || product.images.length === 0) return '';
+        return `${APP_PROPERTY.FILE_SERVER_URL}${APP_PROPERTY.PRODUCT_TYPE}/${product.id}/${product.images[0].imageId}`;
+    };
 
     // Handle Product Selection
     const handleProductChange = async (event, newValue) => {
@@ -363,7 +369,7 @@ const PosPage = () => {
             customerId: selectedCustomer.id,
             totalAmount: invoiceSummary.totalAmount,
             totalItemCount: invoiceSummary.itemCount,
-            payment:payment
+            payment: payment
         }
 
         SaleService.finalyzeSale(saleId, paymentData)
@@ -562,7 +568,7 @@ const PosPage = () => {
                                                 <CardMedia
                                                     component="img"
                                                     height="100"
-                                                    image={product.image}
+                                                    image={createImageUrl(product)}
                                                     alt={product.productName}
                                                 />
                                                 <CardContent>

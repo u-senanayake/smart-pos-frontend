@@ -21,6 +21,7 @@ import * as APP_PROPERTY from '../../../utils/const/AppProperty';
 import * as ROUTES from '../../../utils/const/RouteProperty';
 
 import { useStyles } from "../../../style/makeStyle";
+import ImageCreate from '../../../components/PageElements/ImageCreate';
 
 const CreateProduct = () => {
     const [product, setProduct] = useState({
@@ -47,14 +48,13 @@ const CreateProduct = () => {
     const [categories, setCategories] = useState([]);
     const [distributors, setDistributors] = useState([]);
     const [isSaving, setIsSaving] = useState(false);
-    const [errors, setErrors] = useState({});
-    const [serverErrors, setServerErrors] = useState({});
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');//Server error
     const [successMessage, setSuccessMessage] = useState(''); // State for success message
     const [formError, setFormError] = useState({});
     const classes = useStyles();
+    const [file, setFile] = useState(null);
 
     useEffect(() => {
         CategoryService.getCategories()
@@ -140,7 +140,7 @@ const CreateProduct = () => {
         //Stock Warning Level
         if (!validateNumberField(prodcut.stockWarningLevel)) formError.stockWarningLevel = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.INVENTORY_WAR_LEV);
         //Stock Alert Level
-        if (!validateNumberField(prodcut.stockAlertLevel)) formError.stockAlertLevel = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.INVENTORY_ALR_LEV); 
+        if (!validateNumberField(prodcut.stockAlertLevel)) formError.stockAlertLevel = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.INVENTORY_ALR_LEV);
         //Manufacture Date
         if (!validateRequired(prodcut.manufactureDate)) formError.manufactureDate = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.PRODUCT_MANUFACTURE_DATE);
         //Expiry Date
@@ -162,8 +162,13 @@ const CreateProduct = () => {
             };
             delete requestData.category; // Remove the category object
             delete requestData.distributor; // Remove the distributor object
+            const formData = new FormData();
+            formData.append('product', JSON.stringify(requestData)); // Append product data as JSON string
+            if (file) {
+                formData.append('file', file); // Append the file if it exists
+            }
             setIsSaving(true);
-            ProductService.createProduct(requestData)
+            ProductService.createProduct(formData)
                 .then(() => {
                     setSuccessMessage(MESSAGE.CREATE_SUCCESS.replace(':type', LABEL.PRODUCT)); // Set success message
                     setTimeout(() => navigate(ROUTES.PRODUCT_LIST), APP_PROPERTY.ALERT_TIMEOUT); // Delay navigation
@@ -184,8 +189,6 @@ const CreateProduct = () => {
     if (loading) {
         return <Loading />;
     }
-
-    const serverErrorMessages = Object.values(serverErrors);
 
     return (
         <Container className={classes.mainContainer}>
@@ -331,8 +334,6 @@ const CreateProduct = () => {
                                     error={!!formError.manufactureDate}
                                     helperText={formError.manufactureDate}
                                 />
-                            </Grid2>
-                            <Grid2 size={6}>
                                 <EditableTextField
                                     label={LABEL.PRODUCT_EXPIRE_DATE}
                                     name="expireDate"
@@ -341,6 +342,13 @@ const CreateProduct = () => {
                                     onChange={handleChange}
                                     error={!!formError.expireDate}
                                     helperText={formError.expireDate}
+                                />
+                            </Grid2>
+                            <Grid2 size={6}>
+                                <ImageCreate
+                                    classes={classes}
+                                    setFile={setFile}
+                                    file={file}
                                 />
                             </Grid2>
                             <Grid2 size={4}>

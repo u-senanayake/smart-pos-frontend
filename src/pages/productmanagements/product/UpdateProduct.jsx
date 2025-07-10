@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Container, FormControlLabel, Grid2, Breadcrumbs, Switch, IconButton, Avatar } from '@mui/material';
+import { Box, Typography, Paper, Container, FormControlLabel, Grid2, Breadcrumbs, Switch, } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-import CloseIcon from '@mui/icons-material/Close';
 //Service
 import ProductService from '../../../services/ProductService';
 import CategoryService from '../../../services/CategoryService';
 import DistributorService from '../../../services/DistributorService';
-import ImageService from '../../../services/ImageService';
 //Utils
 import { validateRequired, validateLength, validateNumberField } from '../../../utils/Validations';
 import { formatDateToYYYYMMDD, formatDate } from '../../../utils/Dateutils';
@@ -20,6 +18,9 @@ import { Home, ProductList } from "../../../components/PageElements/BreadcrumbsL
 import { UpdateButton, CancelButton, AddStockButton, AdjustStockButton, UpdateStockButton } from "../../../components/PageElements/Buttons";
 import { EditableTextField, EditableDropDown, PageTitle, PageTitle2, ReadOnlyField } from "../../../components/PageElements/CommonElements";
 import { SuccessAlert, ErrorAlert, } from '../../../components/DialogBox/Alerts';
+import ImageUpload from "./../../../components/PageElements/ImageUpload";
+import ImageListDisplay from '../../../components/PageElements/ImageListDisplay';
+
 import * as MESSAGE from '../../../utils/const/Message';
 import * as PROPERTY from '../../../utils/const/FieldProperty';
 import * as LABEL from '../../../utils/const/FieldLabels';
@@ -65,9 +66,7 @@ const UpdateProduct = () => {
     const [openAddStockDialog, setOpenAddStockDialog] = useState(false);
     const [openAdjustStockDialog, setOpenAdjustStockDialog] = useState(false);
     const [openUpdateStockAlertDialog, setOpenUpdateStockAlertDialog] = useState(false);
-    const [file, setFile] = useState(null);
     const [images, setImages] = useState([]); // Add images state
-    const [isUploading, setIsUploading] = useState(false);
     const classes = useStyles();
     const navigate = useNavigate();
 
@@ -101,11 +100,6 @@ const UpdateProduct = () => {
                 setErrorMessage(MESSAGE.FEATCHING_ERROR_MSG.replace(':type', LABEL.PRODUCT));
             }).finally(() => setLoading(false));
     }, [id]);
-
-    const createImageUrl = (image) => {
-        if (!image) return ''
-        return `${APP_PROPERTY.FILE_SERVER_URL}${APP_PROPERTY.PRODUCT_TYPE}/${product.id}/${image.imageId}`;
-    };
 
     const validateForm = (prodcut) => {
         const errors = {};
@@ -212,52 +206,13 @@ const UpdateProduct = () => {
         setFormError((prevErrors) => ({ ...prevErrors, distributor: undefined })); // Clear distributor error
     };
 
-    const handleFileChange = (e) => {
-        setFile(e.target.files[0]);
-    };
-
-    // Handle image removal
-    const handleRemoveImage = (index) => {
-        const imageToRemove = images[index];
-        if (imageToRemove && imageToRemove.imageId && product.id) {
-            ImageService.deleteImage(imageToRemove.imageId)
-                .then(() => {
-                    setSuccessMessage(MESSAGE.DELETE_SUCCESS.replace(':type', LABEL.IMAGE));
-                    ProductService.getProductById(product.id)
-                        .then((res) => setImages(res.data.images || []));
-                })
-                .catch((error) => {
-                    setErrorMessage(MESSAGE.DELETE_ERROR_MSG.replace(':type', LABEL.IMAGE));
-                    console.error(MESSAGE.DELETE_ERROR.replace(':type', LABEL.IMAGE), error);
-                });
-        }
-    };
-
-    // Add image upload handler
-    const handleAddImage = async () => {
-        if (!file || !product.id) return;
-        setIsUploading(true);
-        const formData = new FormData();
-        formData.append("file", file);
-        ImageService.uploadImage(formData, 'product', product.id)
-            .then(() => {
-                setSuccessMessage(MESSAGE.UPDATE_SUCCESS.replace(':type', LABEL.PRODUCT));
-                ProductService.getProductById(product.id)
-                    .then((res) => setImages(res.data.images || []));
+    const refreshImageList = () => {
+        ProductService.getProductById(product.id)
+            .then((res) => {
+                setImages(res.data.images || []);
             })
-            .catch((error) => {
-                if (error.response && error.response.data) {
-                    setErrorMessage(error.response.data);
-                } else {
-                    setErrorMessage(MESSAGE.UPDATE_ERROR_MSG.replace(':type', LABEL.PRODUCT));
-                }
-                console.error(MESSAGE.UPDATE_ERROR.replace(':type', LABEL.PRODUCT), error.response);
-            })
-            .finally(() => {
-                setIsUploading(false);
-                setFile(null);
-            });
-    };
+    }
+
     // Handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -500,44 +455,24 @@ const UpdateProduct = () => {
                             <PageTitle2 title={"Images"} />
                             <Grid2 container spacing={2}>
                                 <Grid2 size={6}>
-                                    <Paper elevation={1} className={classes.formContainer} sx={{ borderRadius: 4 }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                            <input type="file" accept="image/*" onChange={handleFileChange} />
-                                            <button
-                                                type="button"
-                                                onClick={handleAddImage}
-                                                disabled={!file || isUploading}
-                                                style={{ height: 36 }}
-                                            >
-                                                {isUploading ? "Uploading..." : "Add"}
-                                            </button>
-                                        </Box>
-                                        {file && (
-                                            <Box mt={2}>
-                                                <Typography variant="body2">Selected: {file.name}</Typography>
-                                            </Box>
-                                        )}
-                                    </Paper>
+                                    <ImageUpload
+                                        classes={classes}
+                                        imageType={'product'}
+                                        typeId={product.id}
+                                        setSuccessMessage={setSuccessMessage}
+                                        setErrorMessage={setErrorMessage}
+                                        refreshImageList={refreshImageList}
+                                    />
                                 </Grid2>
                                 <Grid2 size={6}>
-                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
-                                        {images.map((img, idx) => (
-                                            <Box key={idx} sx={{ display: 'flex', alignItems: 'center' }}>
-                                                <Avatar
-                                                    src={typeof img === 'string' ? img : createImageUrl(img)}
-                                                    variant="square"
-                                                    sx={{ width: 48, height: 48, mr: 1 }}
-                                                />
-                                                <IconButton
-                                                    size="small"
-                                                    onClick={() => handleRemoveImage(idx)}
-                                                    aria-label="delete"
-                                                >
-                                                    <CloseIcon fontSize="small" />
-                                                </IconButton>
-                                            </Box>
-                                        ))}
-                                    </Box>
+                                    <ImageListDisplay
+                                        imageType={'product'}
+                                        images={images}
+                                        typeId={product.id}
+                                        setSuccessMessage={setSuccessMessage}
+                                        setErrorMessage={setErrorMessage}
+                                        refreshImageList={refreshImageList}
+                                    />
                                 </Grid2>
                             </Grid2>
                         </Paper>
