@@ -27,7 +27,12 @@ function ImageUpload({ classes, imageType, typeId, setSuccessMessage, setErrorMe
             })
             .catch((error) => {
                 if (error.response && error.response.data) {
-                    setErrorMessage(error.response.data);
+                    // If error.response.data is an object, stringify it for display
+                    const errData = error.response.data;
+                    const errMsg = typeof errData === 'string'
+                        ? errData
+                        : (errData.message || JSON.stringify(errData));
+                    setErrorMessage(errMsg);
                 } else {
                     setErrorMessage(MESSAGE.UPDATE_ERROR_MSG.replace(':type', LABEL.PRODUCT));
                 }

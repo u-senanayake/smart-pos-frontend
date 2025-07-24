@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Typography, Stack, Container, Breadcrumbs } from "@mui/material";
+import { Typography, Stack, Container, Breadcrumbs, Avatar } from "@mui/material";
 
 import DataTable from "../../../components/PageElements/DataTable";
 import { AddNewButton } from "../../../components/PageElements/Buttons";
@@ -65,15 +65,30 @@ const UserList = () => {
       field: 'name',
       headerName: LABEL.TABLE_NAME,
       flex: 1,
-      valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
+      renderCell: (params) => {
+        const { firstName, lastName, avatarUrl } = params.row;
+        const initials = `${firstName?.[0] || ''}${lastName?.[0] || ''}`;
+        return (
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <Avatar
+              src={avatarUrl || undefined}
+              alt={firstName + ' ' + lastName}
+              sx={{ width: 32, height: 32, fontSize: 16 }}
+            >
+              {initials}
+            </Avatar>
+            <span>{`${firstName || ''} ${lastName || ''}`}</span>
+          </Stack>
+        );
+      },
     },
-    { field: 'email', headerName: LABEL.TABLE_EMAIL, flex: 1.5, },
-    {
-      field: 'phone',
-      headerName: LABEL.TABLE_PHONE,
-      flex: 1,
-      valueGetter: (value, row) => formatPhoneNumber(row.phoneNo1),
-    },
+    // { field: 'email', headerName: LABEL.TABLE_EMAIL, flex: 1.5, },
+    // {
+    //   field: 'phone',
+    //   headerName: LABEL.TABLE_PHONE,
+    //   flex: 1,
+    //   valueGetter: (value, row) => formatPhoneNumber(row.phoneNo1),
+    // },
     {
       field: 'role',
       headerName: LABEL.TABLE_ROLE,

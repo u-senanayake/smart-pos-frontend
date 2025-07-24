@@ -1,4 +1,4 @@
-import { TextField, Typography, MenuItem } from "@mui/material";
+import { TextField, Typography, MenuItem, Grid2 } from "@mui/material";
 import React from "react";
 import IconButton from '@mui/material/IconButton';
 import Input from '@mui/material/Input';
@@ -9,7 +9,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 
-
+/** used TextField to display text as read only field*/
 export const ReadOnlyField = ({ label, value }) => {
     return (
         <TextField
@@ -22,6 +22,42 @@ export const ReadOnlyField = ({ label, value }) => {
             size="small"
             sx={{ padding: 1, }}
         />
+    );
+};
+
+export const ReadOnlyField2 = ({ label, value }) => {
+    return (
+        <TextField
+            label={label}
+            value={value || "N/A"}
+            fullWidth
+            slotProps={{ input: { readOnly: true } }}
+            variant="standard"
+            margin="none"
+            size="small"
+            sx={{ padding: 1, }}
+        />
+    );
+};
+
+/** Used Typography to display read only fields */
+export const ReadOnlyField3 = ({ label, value }) => {
+    return (
+        <Grid2 container spacing={2}>
+            <Typography
+                variant="body2"
+                sx={{ marginBottom: 0 }}
+            >
+                {label ? label + " :" : ""} 
+            </Typography>
+            <Typography
+                variant="body1"
+                sx={{ color: 'text.secondary', marginBottom: 1 }}
+            >
+                {value || "N/A"}
+            </Typography>
+        </Grid2>
+
     );
 };
 
@@ -92,7 +128,7 @@ export const PasswordField = ({ label, name, value, onChange, error, helperText,
             <InputLabel htmlFor="standard-adornment-password">{label}</InputLabel>
             <Input
                 variant="outlined"
-                 margin="normal"
+                margin="normal"
                 id={name}
                 type={showPassword ? 'text' : 'password'}
                 value={value}
@@ -138,12 +174,12 @@ export const PageTitle = ({ title }) => {
 export const PageTitle2 = ({ title }) => {
     return (
         <Typography
-            variant="h7"
+            variant="h6"
             fontWeight={"bold"}
             textAlign={"left"}
             marginBottom={2}
             textTransform={"uppercase"}
-            style={{ mt:4 }}
+            style={{ mt: 4 }}
         >
             {title}
         </Typography>
@@ -162,6 +198,18 @@ export const DialogTitle = ({ title }) => {
             style={{ padding: 10, }}
         >
             {title}
+        </Typography>
+    );
+};
+
+export const NameTitle = ({ value }) => {
+    return (
+        <Typography
+            variant="h7"
+            textAlign={"left"}
+            style={{ padding: 10, }}
+        >
+            {value || "N/A"}
         </Typography>
     );
 };

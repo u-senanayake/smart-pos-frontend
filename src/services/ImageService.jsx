@@ -7,14 +7,12 @@ class ImageService {
 
     // Upload an image
     async uploadImage(formData, imgType, typeId) {
+        if (!imgType || !typeId) {
+            throw new Error('imgType and typeId are required');
+        }
         const response = await axios.post(
-            `${API_URL}/upload` + `?imgType=${imgType}&typeId=${typeId}`,
-            formData,
-            {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                }
-            }
+            `${API_URL}/upload?imgType=${encodeURIComponent(imgType)}&typeId=${encodeURIComponent(typeId)}`,
+            formData
         );
         return response;
     }
