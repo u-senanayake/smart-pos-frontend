@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, } from "react-router-dom";
-import { Container, Typography, Box, Paper, Grid2, Breadcrumbs, Avatar, } from "@mui/material";
+import { Container, Typography, Box, Paper, Grid2, Breadcrumbs, } from "@mui/material";
 //Service
 import ProductService from '../../../services/ProductService';
 //Utils
@@ -15,6 +15,7 @@ import { EditButton, CancelButton } from "../../../components/PageElements/Butto
 import { EnabledIcon, } from "../../../components/PageElements/IconButtons";
 import { useStyles } from "../../../style/makeStyle";
 import ImageSlider from '../../../components/PageElements/ImageSlider';
+import {ImageAvatar} from '../../../components/PageElements/ImageAvatar';
 import * as APP_PROPERTY from '../../../utils/const/AppProperty';
 import * as MESSAGE from '../../../utils/const/Message';
 import * as LABEL from '../../../utils/const/FieldLabels';
@@ -50,7 +51,7 @@ const ViewProduct = () => {
       );
   };
 
-  const imageUrls = getImageUrls();
+  const productImageUrls = getImageUrls();
 
   const handleCancel = () => navigate(ROUTES.PRODUCT_LIST);
 
@@ -85,19 +86,19 @@ const ViewProduct = () => {
             <Grid2 size={4}>
               <Grid2 container spacing={2} >
                 <Grid2 size={12} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}><NameTitle value={product.productName} /></Grid2>
-                <Grid2 size={12}><ImageSlider imageUrls={imageUrls} /></Grid2>
+                <Grid2 size={12}><ImageSlider imageUrls={productImageUrls} /></Grid2>
               </Grid2>
             </Grid2>
             <Grid2 size={8}>
               <Grid2 container spacing={2}>
                 <Grid2 size={6}><ReadOnlyField2 label={LABEL.PRODUCT_ID} value={`${product.productId}(${product.id})`} /></Grid2>
                 <Grid2 size={6}><ReadOnlyField2 label={LABEL.PRODUCT_SKU} value={product.sku} /></Grid2>
-                <Grid2 size={12}><ReadOnlyField2 label={LABEL.PRODUCT_DESC} value={product.description} /></Grid2>
                 <Grid2 size={12}><ReadOnlyField2 label={LABEL.PRODUCT_CATEGORY} value={product.category.name} /></Grid2>
                 <Grid2 size={4}><ReadOnlyField2 label={LABEL.PRODUCT_SELL_PRICE} value={formatPrice(product.price)} /></Grid2>
                 <Grid2 size={4}><ReadOnlyField2 label={LABEL.PRODUCT_COST_PRICE} value={formatPrice(product.costPrice)} /></Grid2>
                 <Grid2 size={4}><ReadOnlyField2 label={LABEL.PRODUCT_MIN_PRICE} value={formatPrice(product.minPrice)} /></Grid2>
                 <Grid2 size={12}><EnabledIcon enabled={product.enabled} /></Grid2>
+                <Grid2 size={12}><ReadOnlyField3 label={LABEL.PRODUCT_DESC} value={product.description} /></Grid2>
               </Grid2>
             </Grid2>
           </Grid2>
@@ -106,7 +107,9 @@ const ViewProduct = () => {
         <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4, mb: 2 }} >
           <PageTitle2 title={LABEL.DISTRIBUTOR} />
           <Grid2 container spacing={2}>
-            <Grid2 size={3} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}><Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" sx={{ width: 100, height: 100 }} /></Grid2>
+            <Grid2 size={3} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <ImageAvatar type={APP_PROPERTY.DISTRIBUTOR_TYPE} typeId={product.distributor.distributorId} imageId={product.distributor.image.imageId} />
+            </Grid2>
             <Grid2 size={3}><ReadOnlyField2 label={LABEL.DISTRIBUTOR_ID} value={product.distributor.distributorId} /></Grid2>
             <Grid2 size={6}><ReadOnlyField2 label={LABEL.DISTRIBUTOR_COMPANYNAME} value={product.distributor.companyName} /></Grid2>
             <Grid2 size={6}><ReadOnlyField2 label={LABEL.DISTRIBUTOR_EMAIL} value={product.distributor.email} /></Grid2>

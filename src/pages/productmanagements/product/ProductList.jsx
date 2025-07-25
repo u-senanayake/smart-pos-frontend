@@ -65,18 +65,21 @@ const ProductList = () => {
       headerName: LABEL.TABLE_ID,
       flex: 0.5,
       headerClassName: 'super-app-theme--header',
+      headerAlign: 'center',
     },
     {
       field: 'productName',
       headerName: LABEL.TABLE_NAME,
       flex: 2,
       headerClassName: 'super-app-theme--header',
+      headerAlign: 'center',
     },
     {
       field: 'category',
       headerName: LABEL.TABLE_CATEGORY,
       flex: 1.5,
       headerClassName: 'super-app-theme--header',
+      headerAlign: 'center',
       valueGetter: (value, row) => `${row.category.name}`,
     },
     {
@@ -84,6 +87,8 @@ const ProductList = () => {
       headerName: LABEL.TABLE_PRICE,
       flex: 1,
       headerClassName: 'super-app-theme--header',
+      headerAlign: 'center',
+      align: 'right',
     },
     {
       field: 'active',
@@ -91,7 +96,13 @@ const ProductList = () => {
       flex: 0.8,
       filterable: false,
       headerClassName: 'super-app-theme--header',
-      renderCell: (params) => renderStatusIcon(params.row.enabled),
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => (
+        <Stack alignItems="center" justifyContent="center" width="100%" height="100%" sx={{ minHeight: '100%' }}>
+          {renderStatusIcon(params.row.enabled)}
+        </Stack>
+      ),
     },
     {
       field: 'action',
@@ -100,6 +111,7 @@ const ProductList = () => {
       sortable: false,
       filterable: false,
       headerClassName: 'super-app-theme--header',
+      headerAlign: 'center',
       disableClickEventBubbling: true,
       renderCell: (params) => {
         const onClick = (e) => {

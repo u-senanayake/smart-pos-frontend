@@ -10,6 +10,7 @@ import { EditIcon, DeleteIcon, PreviewIcon } from "../../../../components/PageEl
 import { Home } from "../../../../components/PageElements/BreadcrumbsLinks";
 import ErrorMessage from "../../../../components/DialogBox/ErrorMessage";
 import DeleteConfirmDialog from "../../../../components/DialogBox/DeleteConfirmDialog";
+import {IconAvatar} from '../../../../components/PageElements/ImageAvatar';
 
 //Service
 import DistributorService from "../../../../services/DistributorService";
@@ -19,6 +20,7 @@ import { renderStatusIcon } from "../../../../utils/utils";
 import * as LABEL from '../../../../utils/const/FieldLabels';
 import * as MESSAGE from '../../../../utils/const/Message';
 import * as ROUTES from '../../../../utils/const/RouteProperty';
+import * as APP_PROPERTY from '../../../../utils/const/AppProperty';
 
 //Style
 import { useStyles } from "../../../../style/makeStyle";
@@ -56,21 +58,30 @@ const DistributorList = () => {
       });
   };
 
-  function handleClick(event) {
-    navigate(event.target.href);
-  }
   const columns = [
     {
       field: 'companyName',
       headerName: LABEL.TABLE_COM_NAME,
-      flex: 1,
+      flex: 2,
       headerClassName: 'super-app-theme--header',
+      headerAlign: 'center',
+      renderCell: (params) => (
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <IconAvatar
+            type={APP_PROPERTY.DISTRIBUTOR_TYPE}
+            typeId={params.row.distributorId}
+            imageId={params.row.image?.imageId}
+          />
+          <span>{params.row.companyName}</span>
+        </Stack>
+      ),
     },
     {
       field: 'email',
       headerName: LABEL.TABLE_EMAIL,
       flex: 1.2,
       headerClassName: 'super-app-theme--header',
+      headerAlign: 'center',
     },
     {
       field: 'phoneNo1',
@@ -78,6 +89,7 @@ const DistributorList = () => {
       flex: 0.8,
       filterable: false,
       headerClassName: 'super-app-theme--header',
+      headerAlign: 'center',
     },
     {
       field: 'active',
@@ -85,7 +97,13 @@ const DistributorList = () => {
       flex: 0.8,
       filterable: false,
       headerClassName: 'super-app-theme--header',
-      renderCell: (params) => renderStatusIcon(params.row.enabled),
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => (
+        <Stack alignItems="center" justifyContent="center" width="100%" height="100%" sx={{ minHeight: '100%' }}>
+          {renderStatusIcon(params.row.enabled)}
+        </Stack>
+      ),
     },
     {
       field: 'action',
@@ -94,12 +112,9 @@ const DistributorList = () => {
       sortable: false,
       filterable: false,
       headerClassName: 'super-app-theme--header',
+      headerAlign: 'center',
       disableClickEventBubbling: true,
       renderCell: (params) => {
-        const onClick = (e) => {
-          const currentRow = params.row;
-          return alert(JSON.stringify(currentRow, null, 4));
-        };
         return (
           <Stack direction="row" spacing={2}>
             <EditIcon url={ROUTES.DISTRIBUTOR_UPDATE.replace(':distributorId', params.row.distributorId)} />
@@ -147,7 +162,7 @@ const DistributorList = () => {
         <AddNewButton url={ROUTES.DISTRIBUTOR_CREATE} />
       </div >
       <DataTable rows={distributors} columns={columns} getRowId={(row) => row.distributorId} />
-      <DeleteConfirmDialog open={dialogOpen} onDelete={deleteDistributor} onCancel={() => setDialogOpen(false)} id={selectedId} type={LABEL.DISTRIBUTOR}/>
+      <DeleteConfirmDialog open={dialogOpen} onDelete={deleteDistributor} onCancel={() => setDialogOpen(false)} id={selectedId} type={LABEL.DISTRIBUTOR} />
     </Container>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Typography } from '@mui/material';
-import ProductUpdateImage from './Image';
+import Image from './Image';
 
 const ImageSlider = ({ imageUrls }) => {
     const [currentImage, setCurrentImage] = useState(0);
@@ -30,7 +30,7 @@ const ImageSlider = ({ imageUrls }) => {
                     background: '#fafafa'
                 }}
             >
-                <ProductUpdateImage imgSrc={imageUrls[currentImage]} />
+                <Image imgSrc={imageUrls[currentImage]} />
             </Box>
             <Box mt={1} display="flex" alignItems="center" gap={2}>
                 <button type="button" onClick={handlePrevImage} disabled={imageUrls.length <= 1}>

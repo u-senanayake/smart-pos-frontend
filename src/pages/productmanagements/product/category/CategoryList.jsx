@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Typography, Stack, Container, Breadcrumbs } from "@mui/material";
 
@@ -10,6 +10,7 @@ import { EditIcon, DeleteIcon, PreviewIcon } from "../../../../components/PageEl
 import { Home } from "../../../../components/PageElements/BreadcrumbsLinks";
 import ErrorMessage from "../../../../components/DialogBox/ErrorMessage";
 import DeleteConfirmDialog from "../../../../components/DialogBox/DeleteConfirmDialog";
+import {IconAvatar} from '../../../../components/PageElements/ImageAvatar';
 
 //Service
 import CategoryService from "../../../../services/CategoryService";
@@ -19,6 +20,7 @@ import { renderStatusIcon } from "../../../../utils/utils";
 import * as LABEL from '../../../../utils/const/FieldLabels';
 import * as MESSAGE from '../../../../utils/const/Message';
 import * as ROUTES from '../../../../utils/const/RouteProperty';
+import * as APP_PROPERTY from '../../../../utils/const/AppProperty';
 
 //Style
 import { useStyles } from "../../../../style/makeStyle";
@@ -66,18 +68,37 @@ const CategoryList = () => {
       headerName: LABEL.TABLE_NAME,
       flex: 1,
       headerClassName: 'super-app-theme--header',
+      headerAlign: 'center',
+      renderCell: (params) => (
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <IconAvatar
+            type={APP_PROPERTY.CATEGORY_TYPE}
+            typeId={params.row.categoryId}
+            imageId={params.row.image?.imageId}
+          />
+          <span>{params.row.name}</span>
+        </Stack>
+      ),
     },
     {
       field: 'description',
       headerName: LABEL.TABLE_DESCRIPTION,
       flex: 2,
       headerClassName: 'super-app-theme--header',
+      headerAlign: 'center',
     },
     {
       field: 'catPrefix',
       headerName: LABEL.TABLE_CAT_PRFX,
       flex: 0.7,
       headerClassName: 'super-app-theme--header',
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: (params) => (
+        <Stack alignItems="center" justifyContent="center" width="100%" height="100%" sx={{ minHeight: '100%' }}>
+          {params.row.catPrefix}
+        </Stack>
+      ),
     },
     {
       field: 'active',
@@ -85,7 +106,13 @@ const CategoryList = () => {
       flex: 0.5,
       filterable: false,
       headerClassName: 'super-app-theme--header',
-      renderCell: (params) => renderStatusIcon(params.row.enabled),
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: (params) => (
+        <Stack alignItems="center" justifyContent="center" width="100%" height="100%" sx={{ minHeight: '100%' }}>
+          {renderStatusIcon(params.row.enabled)}
+        </Stack>
+      ),
     },
     {
       field: 'action',
@@ -94,6 +121,7 @@ const CategoryList = () => {
       sortable: false,
       filterable: false,
       headerClassName: 'super-app-theme--header',
+      headerAlign: 'center',
       disableClickEventBubbling: true,
       renderCell: (params) => {
         const onClick = (e) => {

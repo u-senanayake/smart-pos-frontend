@@ -8,16 +8,18 @@ import { formatDate } from "../../../../utils/Dateutils";
 
 import { Loading, } from "../../../../components/PageElements/Loading";
 import ErrorMessage from "../../../../components/DialogBox/ErrorMessage";
-import { ReadOnlyField, PageTitle } from "../../../../components/PageElements/CommonElements";
+import { ReadOnlyField2, ReadOnlyField3, NameTitle } from "../../../../components/PageElements/CommonElements";
 import { Home, BrandList } from "../../../../components/PageElements/BreadcrumbsLinks";
 import { EditButton, CancelButton } from "../../../../components/PageElements/Buttons";
 import { EnabledIcon, } from "../../../../components/PageElements/IconButtons";
+import { ImageAvatar } from '../../../../components/PageElements/ImageAvatar';
 
 import { useStyles } from "../../../../style/makeStyle";
 
 import * as MESSAGE from '../../../../utils/const/Message';
 import * as LABEL from '../../../../utils/const/FieldLabels';
 import * as ROUTES from '../../../../utils/const/RouteProperty';
+import * as APP_PROPERTY from '../../../../utils/const/AppProperty';
 
 const ViewBrand = () => {
 
@@ -66,51 +68,44 @@ const ViewBrand = () => {
         <BrandList />
         <Typography sx={{ color: 'text.primary' }}>View Brand</Typography>
       </Breadcrumbs>
-      <PageTitle title={LABEL.PAGE_TITLE_VIEW.replace(':type', LABEL.BRAND).replace(':name', brand.name)} />
       <Container maxWidth="lg">
         <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
           <Grid2 container spacing={2}>
-            <Grid2 size={4}>
-              <ReadOnlyField label={LABEL.BRAND_ID} value={brand.brandId} />
+            <Grid2 size={3}>
+              <Grid2 size={12} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}><ImageAvatar type={APP_PROPERTY.BRAND_TYPE} typeId={brand.brandId} imageId={brand.image.imageId} /></Grid2>
+              <Grid2 size={12} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}><NameTitle value={brand.name} /></Grid2>
             </Grid2>
-            <Grid2 size={8}>
-              <ReadOnlyField label={LABEL.BRAND_NAME} value={brand.name} />
+            <Grid2 size={9}>
+              <Grid2 container spacing={2}>
+                <Grid2 size={4}><ReadOnlyField2 label={LABEL.BRAND_ID} value={brand.brandId} /></Grid2>
+                <Grid2 size={6} sx={{ display: 'flex', alignItems: 'center' }}><EnabledIcon enabled={brand.enabled} /></Grid2>
+                <Grid2 size={12}><ReadOnlyField3 label={LABEL.BRAND_DESC} value={brand.description} /></Grid2>
+              </Grid2>
             </Grid2>
-            <Grid2 size={12}>
-              <ReadOnlyField label={LABEL.BRAND_DESC} value={brand.description} />
-            </Grid2>
-            <Grid2 size={6}>
-              <EnabledIcon enabled={brand.enabled} />
-            </Grid2>
-            <Grid2 size={6}></Grid2>
-            <Grid2 size={6}>
-              <ReadOnlyField label={LABEL.BRAND_CREATED_AT} value={formatDate(brand.createdAt)} />
-            </Grid2>
-            <Grid2 size={6}>
-              <ReadOnlyField label={LABEL.BRAND_CREATED_BY} value={`${brand.createdUser.firstName} ${brand.createdUser.lastName} (${brand.createdUser.username})`} />
-            </Grid2>
-            <Grid2 size={6}>
-              <ReadOnlyField label={LABEL.BRAND_UPDATED_AT} value={formatDate(brand.updatedAt)} />
-            </Grid2>
-            <Grid2 size={6}>
-              <ReadOnlyField label={LABEL.BRAND_UPDATED_BY} value={`${brand.updatedUser.firstName} ${brand.updatedUser.lastName} (${brand.updatedUser.username})`} />
-            </Grid2>
+          </Grid2>
+        </Paper>
+        <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
+          <Grid2 container spacing={2}>
+            <Grid2 size={6}><ReadOnlyField3 label={LABEL.BRAND_CREATED_AT} value={formatDate(brand.createdAt)} /></Grid2>
+            <Grid2 size={6}><ReadOnlyField3 label={LABEL.BRAND_CREATED_BY} value={`${brand.createdUser.firstName} ${brand.createdUser.lastName} (${brand.createdUser.username})`} /></Grid2>
+            <Grid2 size={6}><ReadOnlyField3 label={LABEL.BRAND_UPDATED_AT} value={formatDate(brand.updatedAt)} /></Grid2>
+            <Grid2 size={6}><ReadOnlyField3 label={LABEL.BRAND_UPDATED_BY} value={`${brand.updatedUser.firstName} ${brand.updatedUser.lastName} (${brand.updatedUser.username})`} /></Grid2>
             {brand.deleted && (
               <>
                 <Grid2 size={6}>
-                  <ReadOnlyField label={LABEL.BRAND_DELETED_AT} value={formatDate(brand.deletedAt)} />
+                  <ReadOnlyField3 label={LABEL.BRAND_DELETED_AT} value={formatDate(brand.deletedAt)} />
                 </Grid2>
                 <Grid2 size={6}>
-                  <ReadOnlyField label={LABEL.BRAND_DELETED_BY} value={`${brand.deletedUser?.firstName} ${brand.deletedUser?.lastName} (${brand.deletedUser?.username})`} />
+                  <ReadOnlyField3 label={LABEL.BRAND_DELETED_BY} value={`${brand.deletedUser?.firstName} ${brand.deletedUser?.lastName} (${brand.deletedUser?.username})`} />
                 </Grid2>
               </>
             )}
           </Grid2>
-          <Box className={classes.formButtonsContainer}>
-            <EditButton onClick={handleUpdate} />
-            <CancelButton onClick={handleCancel} />
-          </Box>
         </Paper>
+        <Box className={classes.formButtonsContainer}>
+          <EditButton onClick={handleUpdate} />
+          <CancelButton onClick={handleCancel} />
+        </Box>
       </Container>
     </Container>
   );

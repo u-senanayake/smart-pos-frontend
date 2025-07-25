@@ -10,7 +10,7 @@ import { EditIcon, DeleteIcon, PreviewIcon } from "../../../../components/PageEl
 import { Home } from "../../../../components/PageElements/BreadcrumbsLinks";
 import ErrorMessage from "../../../../components/DialogBox/ErrorMessage";
 import DeleteConfirmDialog from "../../../../components/DialogBox/DeleteConfirmDialog";
-
+import {IconAvatar} from '../../../../components/PageElements/ImageAvatar';
 //Service
 import BrandService from "../../../../services/BrandService";
 //Utils
@@ -19,6 +19,7 @@ import { renderStatusIcon } from "../../../../utils/utils";
 import * as LABEL from '../../../../utils/const/FieldLabels';
 import * as MESSAGE from '../../../../utils/const/Message';
 import * as ROUTES from '../../../../utils/const/RouteProperty';
+import * as APP_PROPERTY from '../../../../utils/const/AppProperty';
 
 //Style
 import { useStyles } from "../../../../style/makeStyle";
@@ -66,12 +67,24 @@ const BrandList = () => {
       headerName: LABEL.TABLE_NAME,
       flex: 1,
       headerClassName: 'super-app-theme--header',
+      headerAlign: 'center',
+      renderCell: (params) => (
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <IconAvatar
+            type={APP_PROPERTY.BRAND_TYPE}
+            typeId={params.row.brandId}
+            imageId={params.row.image?.imageId}
+          />
+          <span>{params.row.name}</span>
+        </Stack>
+      ),
     },
     {
       field: 'description',
       headerName: LABEL.TABLE_DESCRIPTION,
       flex: 2,
       headerClassName: 'super-app-theme--header',
+      headerAlign: 'center',
     },
     {
       field: 'active',
@@ -79,7 +92,13 @@ const BrandList = () => {
       flex: 0.5,
       filterable: false,
       headerClassName: 'super-app-theme--header',
-      renderCell: (params) => renderStatusIcon(params.row.enabled),
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: (params) => (
+        <Stack alignItems="center" justifyContent="center" width="100%" height="100%" sx={{ minHeight: '100%' }}>
+          {renderStatusIcon(params.row.enabled)}
+        </Stack>
+      ),
     },
     {
       field: 'action',
@@ -88,12 +107,9 @@ const BrandList = () => {
       sortable: false,
       filterable: false,
       headerClassName: 'super-app-theme--header',
+      headerAlign: 'center',
       disableClickEventBubbling: true,
       renderCell: (params) => {
-        const onClick = (e) => {
-          const currentRow = params.row;
-          return alert(JSON.stringify(currentRow, null, 4));
-        };
         return (
           <Stack direction="row" spacing={2}>
             <EditIcon url={ROUTES.BRAND_UPDATE.replace(':brandId', params.row.brandId)} />
@@ -140,7 +156,7 @@ const BrandList = () => {
         <AddNewButton url={ROUTES.BRAND_CREATE} />
       </div >
       <DataTable rows={brands} columns={columns} getRowId={(row) => row.brandId} />
-      <DeleteConfirmDialog open={dialogOpen} onDelete={deleteBrand} onCancel={() => setDialogOpen(false)} id={selectedId} type={LABEL.BRAND}/>
+      <DeleteConfirmDialog open={dialogOpen} onDelete={deleteBrand} onCancel={() => setDialogOpen(false)} id={selectedId} type={LABEL.BRAND} />
     </Container>
   );
 };
