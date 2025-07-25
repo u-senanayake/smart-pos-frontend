@@ -1,23 +1,20 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Box, Typography, Paper, Container, FormControlLabel, Grid2, Breadcrumbs, Switch } from '@mui/material';
-//Service
+import React, {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {Box, Breadcrumbs, Container, FormControlLabel, Grid2, Paper, Switch, Typography} from '@mui/material';
 import BrandService from '../../../../services/BrandService';
-//Utils
-import { validateRequired, validateLength } from '../../../../utils/Validations';
 
-import { EditableTextField, PageTitle } from "../../../../components/PageElements/CommonElements";
-import { SaveButton, CancelButton } from "../../../../components/PageElements/Buttons";
-import { Home, BrandList } from "../../../../components/PageElements/BreadcrumbsLinks";
-import { SuccessAlert, ErrorAlert, } from '../../../../components/DialogBox/Alerts';
+import {EditableTextField, PageTitle} from "../../../../components/PageElements/CommonElements";
+import {CancelButton, SaveButton} from "../../../../components/PageElements/Buttons";
+import {BrandList, Home} from "../../../../components/PageElements/BreadcrumbsLinks";
+import {ErrorAlert, SuccessAlert,} from '../../../../components/DialogBox/Alerts';
+import {validateForm} from './utils/validateBrandForm';
 
-import * as LABEL from '../../../../utils/const/FieldLabels';
+import * as LABEL from './utils/brandLabel';
 import * as MESSAGE from '../../../../utils/const/Message';
-import * as PROPERTY from '../../../../utils/const/FieldProperty';
 import * as APP_PROPERTY from '../../../../utils/const/AppProperty';
 import * as ROUTES from '../../../../utils/const/RouteProperty';
 
-import { useStyles } from "../../../../style/makeStyle";
+import {useStyles} from "../../../../style/makeStyle";
 
 const CreateBrand = () => {
 
@@ -31,21 +28,10 @@ const CreateBrand = () => {
     const [successMessage, setSuccessMessage] = useState(''); // State for success message
     const navigate = useNavigate();
 
-    const validateForm = (brand) => {
-        const errors = {};
-        //Name
-        if (!validateRequired(brand.name)) errors.name = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.BRAND_NAME);
-        if (!validateLength(brand.name, PROPERTY.BRAND_NAME_MIN, PROPERTY.BRAND_NAME_MAX)) errors.name = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.BRAND_NAME).replace(':min', PROPERTY.BRAND_NAME_MIN).replace(':max', PROPERTY.BRAND_NAME_MAX);
-        //Description
-        if (!validateRequired(brand.description)) errors.description = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.BRAND_DESC);
-        if (!validateLength(brand.description, PROPERTY.BRAND_DESC_MIN, PROPERTY.BRAND_DESC_MAX)) errors.description = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.BRAND_DESC).replace(':min', PROPERTY.BRAND_DESC_MIN).replace(':max', PROPERTY.BRAND_DESC_MAX);
-
-        return errors;
-    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const brand = { name, description, enabled };
+        const brand = {name, description, enabled};
         const validationErrors = validateForm(brand);
         if (Object.keys(validationErrors).length > 0) {
             setFormError(validationErrors);
@@ -67,25 +53,27 @@ const CreateBrand = () => {
         }
     };
 
-    const handleCancel = () => { navigate(ROUTES.BRAND_LIST); };
+    const handleCancel = () => {
+        navigate(ROUTES.BRAND_LIST);
+    };
 
     return (
         <Container className={classes.mainContainer}>
             <Breadcrumbs aria-label="breadcrumb">
-                <Home />
-                <BrandList />
-                <Typography sx={{ color: 'text.primary' }}>Create Brand</Typography>
+                <Home/>
+                <BrandList/>
+                <Typography sx={{color: 'text.primary'}}>Create Brand</Typography>
             </Breadcrumbs>
-            <PageTitle title={LABEL.PAGE_TITLE_CREATE.replace(':type', LABEL.BRAND)} />
+            <PageTitle title={LABEL.PAGE_TITLE_CREATE.replace(':type', LABEL.BRAND)}/>
             <Container maxWidth="lg">
-                <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
+                <Paper elevation={4} className={classes.formContainer} sx={{borderRadius: 4}}>
                     <form>
-                        <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
-                        <ErrorAlert message={errorMessage} />
+                        <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')}/>
+                        <ErrorAlert message={errorMessage}/>
                         <Grid2 container spacing={2}>
                             <Grid2 size={6}>
                                 <EditableTextField
-                                    label={LABEL.BRAND_NAME}
+                                    label={LABEL.NAME}
                                     name="name"
                                     value={name}
                                     onChange={(e) => {
@@ -103,7 +91,7 @@ const CreateBrand = () => {
                             <Grid2 size={6}></Grid2>
                             <Grid2 size={12}>
                                 <EditableTextField
-                                    label={LABEL.BRAND_DESC}
+                                    label={LABEL.DESCRIPTION}
                                     name="description"
                                     value={description}
                                     onChange={(e) => {
@@ -128,13 +116,13 @@ const CreateBrand = () => {
                                             color="primary"
                                         />
                                     }
-                                    label={LABEL.BRAND_ENABLED}
+                                    label={LABEL.ENABLED}
                                 />
                             </Grid2>
                         </Grid2>
                         <Box className={classes.formButtonsContainer}>
-                            <SaveButton onClick={handleSubmit} isSaving={isSaving} />
-                            <CancelButton onClick={handleCancel} />
+                            <SaveButton onClick={handleSubmit} isSaving={isSaving}/>
+                            <CancelButton onClick={handleCancel}/>
                         </Box>
                     </form>
                 </Paper>

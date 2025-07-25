@@ -1,26 +1,26 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Typography, Container, Stack, Breadcrumbs } from "@mui/material";
+import React, {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {Breadcrumbs, Container, Stack, Typography} from "@mui/material";
 
 import DataTable from "../../../components/PageElements/DataTable";
-import { AddNewButton } from "../../../components/PageElements/Buttons";
-import { PageTitle } from "../../../components/PageElements/CommonElements";
-import { SkeletonLoading } from "../../../components/PageElements/Loading";
-import { EditIcon, DeleteIcon, PreviewIcon } from "../../../components/PageElements/IconButtons";
-import { Home } from "../../../components/PageElements/BreadcrumbsLinks";
+import {AddNewButton} from "../../../components/PageElements/Buttons";
+import {PageTitle} from "../../../components/PageElements/CommonElements";
+import {SkeletonLoading} from "../../../components/PageElements/Loading";
+import {DeleteIcon, EditIcon, PreviewIcon} from "../../../components/PageElements/IconButtons";
+import {Home} from "../../../components/PageElements/BreadcrumbsLinks";
 import ErrorMessage from "../../../components/DialogBox/ErrorMessage";
 import DeleteConfirmDialog from "../../../components/DialogBox/DeleteConfirmDialog";
 
 //Service
 import CustomerService from "../../../services/CustomerService";
 //Utils
-import { renderStatusIcon, renderLockIcon, formatPhoneNumber } from "../../../utils/utils";
+import {formatPhoneNumber, renderLockIcon, renderStatusIcon} from "../../../utils/utils";
 
-import * as LABEL from '../../../utils/const/FieldLabels';
+import * as LABEL from './utils/customerLabels';
 import * as MESSAGE from '../../../utils/const/Message';
 import * as ROUTES from '../../../utils/const/RouteProperty';
 //Style
-import { useStyles } from "../../../style/makeStyle";
+import {useStyles} from "../../../style/makeStyle";
 
 const CustomerList = () => {
     const [customers, setCustomers] = useState([]);
@@ -28,8 +28,7 @@ const CustomerList = () => {
     const [error, setError] = useState(null);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [selectedId, setSelectedId] = useState(null);
-    const navigate = useNavigate();
-
+    useNavigate();
     const classes = useStyles();
 
     useEffect(() => {
@@ -94,20 +93,16 @@ const CustomerList = () => {
             headerClassName: 'super-app-theme--header',
             disableClickEventBubbling: true,
             renderCell: (params) => {
-                const onClick = (e) => {
-                    const currentRow = params.row;
-                    return alert(JSON.stringify(currentRow, null, 4));
-                };
                 return (
                     <Stack direction="row" spacing={2}>
-                        <EditIcon url={ROUTES.CUSTOMER_UPDATE.replace(':customerId', params.row.customerId)} />
+                        <EditIcon url={ROUTES.CUSTOMER_UPDATE.replace(':customerId', params.row.customerId)}/>
                         <DeleteIcon
                             onClick={() => {
                                 setSelectedId(params.row.customerId);
                                 setDialogOpen(true);
                             }}
                         />
-                        <PreviewIcon url={ROUTES.CUSTOMER_VIEW.replace(':customerId', params.row.customerId)} />
+                        <PreviewIcon url={ROUTES.CUSTOMER_VIEW.replace(':customerId', params.row.customerId)}/>
                     </Stack>
                 );
             },
@@ -115,12 +110,12 @@ const CustomerList = () => {
     ];
 
     if (loading) {
-        return <SkeletonLoading />;
+        return <SkeletonLoading/>;
     }
 
     if (error) {
         return (
-            <ErrorMessage message={error} actionText="Retry" onAction={() => window.location.reload()} />
+            <ErrorMessage message={error} actionText="Retry" onAction={() => window.location.reload()}/>
         );
     }
 
@@ -128,7 +123,7 @@ const CustomerList = () => {
         return (
             <div className={classes.errorTitle}>
                 <Typography variant="h6">{MESSAGE.LIST_EMPTY.replace('type', LABEL.CUSTOMER)}</Typography>
-                <AddNewButton url={ROUTES.CUSTOMER_CREATE} />
+                <AddNewButton url={ROUTES.CUSTOMER_CREATE}/>
             </div>
         );
     }
@@ -136,15 +131,16 @@ const CustomerList = () => {
     return (
         <Container className={classes.mainContainer}>
             <Breadcrumbs aria-label="breadcrumb">
-                <Home />
-                <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Customer List</Typography>
+                <Home/>
+                <Typography sx={{color: 'text.primary'}} onClick={(e) => e.stopPropagation()}>Customer List</Typography>
             </Breadcrumbs>
-            <PageTitle title={LABEL.PAGE_TITLE_LIST.replace(':type', LABEL.CUSTOMER)} />
-            <div style={{ marginBottom: "10px" }}>
-                <AddNewButton url={ROUTES.CUSTOMER_CREATE} />
-            </div >
-            <DataTable rows={customers} columns={columns} getRowId={(row) => row.customerId} />
-            <DeleteConfirmDialog open={dialogOpen} onDelete={deleteCustomer} onCancel={() => setDialogOpen(false)} id={selectedId} type={LABEL.CUSTOMER}/>
+            <PageTitle title={LABEL.PAGE_TITLE_LIST.replace(':type', LABEL.CUSTOMER)}/>
+            <div style={{marginBottom: "10px"}}>
+                <AddNewButton url={ROUTES.CUSTOMER_CREATE}/>
+            </div>
+            <DataTable rows={customers} columns={columns} getRowId={(row) => row.customerId}/>
+            <DeleteConfirmDialog open={dialogOpen} onDelete={deleteCustomer} onCancel={() => setDialogOpen(false)}
+                                 id={selectedId} type={LABEL.CUSTOMER}/>
         </Container>
     );
 };

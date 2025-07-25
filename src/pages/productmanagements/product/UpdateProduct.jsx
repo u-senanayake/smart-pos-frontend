@@ -1,36 +1,43 @@
-import { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Container, FormControlLabel, Grid2, Breadcrumbs, Switch, } from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
-//Service
+import {useEffect, useState} from 'react';
+import {Box, Breadcrumbs, Container, FormControlLabel, Grid2, Paper, Switch, Typography,} from '@mui/material';
+import {useNavigate, useParams} from 'react-router-dom';
 import ProductService from '../../../services/ProductService';
 import CategoryService from '../../../services/CategoryService';
 import DistributorService from '../../../services/DistributorService';
-//Utils
-import { validateRequired, validateLength, validateNumberField } from '../../../utils/Validations';
-import { formatDateToYYYYMMDD, formatDate } from '../../../utils/Dateutils';
-import { formatPrice, } from "../../../utils/utils";
+import {formatDate, formatDateToYYYYMMDD} from '../../../utils/Dateutils';
+import {formatPrice,} from "../../../utils/utils";
 import AddStockDialog from '../inventory/AddStockDialog';
 import AdjustStockDialog from '../inventory/AdjustStockDialog';
 import UpdateStockAlertDialog from '../inventory/UpdateStockAlertDialog';
-//Components
-import { Loading, } from '../../../components/PageElements/Loading';
-import { Home, ProductList } from "../../../components/PageElements/BreadcrumbsLinks";
-import { UpdateButton, CancelButton, AddStockButton, AdjustStockButton, UpdateStockButton } from "../../../components/PageElements/Buttons";
-import { EditableTextField, EditableDropDown, PageTitle, PageTitle2, ReadOnlyField } from "../../../components/PageElements/CommonElements";
-import { SuccessAlert, ErrorAlert, } from '../../../components/DialogBox/Alerts';
+import {Loading,} from '../../../components/PageElements/Loading';
+import {Home, ProductList} from "../../../components/PageElements/BreadcrumbsLinks";
+import {
+    AddStockButton,
+    AdjustStockButton,
+    CancelButton,
+    UpdateButton,
+    UpdateStockButton
+} from "../../../components/PageElements/Buttons";
+import {
+    EditableDropDown,
+    EditableTextField,
+    PageTitle,
+    PageTitle2,
+    ReadOnlyField
+} from "../../../components/PageElements/CommonElements";
+import {ErrorAlert, SuccessAlert,} from '../../../components/DialogBox/Alerts';
 import ImageUpload from "./../../../components/PageElements/ImageUpload";
 import ImageListDisplay from '../../../components/PageElements/ImageListDisplay';
-
+import {validateForm} from './utils/validateProductForm';
+import * as LABEL from './utils/productLabel';
 import * as MESSAGE from '../../../utils/const/Message';
-import * as PROPERTY from '../../../utils/const/FieldProperty';
-import * as LABEL from '../../../utils/const/FieldLabels';
 import * as APP_PROPERTY from '../../../utils/const/AppProperty';
 import * as ROUTES from '../../../utils/const/RouteProperty';
 //Styles
-import { useStyles } from "../../../style/makeStyle";
+import {useStyles} from "../../../style/makeStyle";
 
 const UpdateProduct = () => {
-    const { id } = useParams();
+    const {id} = useParams();
     const [product, setProduct] = useState({
         productName: '',
         description: '',
@@ -101,33 +108,6 @@ const UpdateProduct = () => {
             }).finally(() => setLoading(false));
     }, [id]);
 
-    const validateForm = (prodcut) => {
-        const errors = {};
-        //Product Name
-        if (!validateRequired(prodcut.productName)) errors.productName = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.PRODUCT_NAME);
-        if (!validateLength(prodcut.productName, PROPERTY.PRODUCT_NAME_MIN, PROPERTY.PRODUCT_NAME_MAX)) errors.productName = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.PRODUCT_NAME).replace(':min', PROPERTY.PRODUCT_NAME_MIN).replace(':max', PROPERTY.PRODUCT_NAME_MAX);
-        //Description
-        if (!validateRequired(prodcut.description)) errors.description = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.PRODUCT_DESC);
-        if (!validateLength(prodcut.description, PROPERTY.PRODUCT_DESC_MIN, PROPERTY.PRODUCT_DESC_MAX)) errors.description = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.PRODUCT_DESC).replace(':min', PROPERTY.PRODUCT_DESC_MIN).replace(':max', PROPERTY.PRODUCT_DESC_MAX);
-        //SKU
-        if (!validateRequired(prodcut.sku)) errors.sku = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.PRODUCT_SKU);
-        //Category
-        if (!validateRequired(prodcut.category)) errors.category = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.PRODUCT_CATEGORY);
-        //Distributor
-        if (!validateRequired(prodcut.distributor)) errors.distributor = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.PRODUCT_DISTRIBUTOR);
-        //Price
-        if (!validateNumberField(prodcut.price)) errors.price = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.PRODUCT_SELL_PRICE);;
-        //Cost Price
-        if (!validateNumberField(prodcut.costPrice)) errors.costPrice = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.PRODUCT_COST_PRICE);;
-        //Max Discount
-        if (!validateNumberField(prodcut.minPrice)) errors.minPrice = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.PRODUCT_MIN_PRICE);;
-        //Manufacture Date
-        if (!validateRequired(prodcut.manufactureDate)) errors.manufactureDate = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.PRODUCT_MANUFACTURE_DATE);;
-        //Expiry Date
-        if (!validateRequired(prodcut.expireDate)) errors.expireDate = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.PRODUCT_EXPIRE_DATE);;;
-
-        return errors;
-    };
 
     const handleStockAdded = () => {
         ProductService.getProductById(product.id)
@@ -163,19 +143,19 @@ const UpdateProduct = () => {
 
     // Handle input change
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setProduct((prevProduct) => ({
             ...prevProduct,
             [name]: ['price', 'costPrice', 'minPrice', 'inventory.quantity', 'inventory.stockWarningLevel', 'inventory.stockAlertLevel'].includes(name)
                 ? Number(value) // Parse number fields as Number
                 : value
         }));
-        setFormError((prevErrors) => ({ ...prevErrors, [name]: undefined })); // Clear specific field error
+        setFormError((prevErrors) => ({...prevErrors, [name]: undefined})); // Clear specific field error
     };
 
     // Handle checkbox change
     const handleCheckboxChange = (e) => {
-        const { name, checked } = e.target;
+        const {name, checked} = e.target;
         setProduct((prevProduct) => ({
             ...prevProduct,
             [name]: checked
@@ -184,26 +164,26 @@ const UpdateProduct = () => {
 
     // Handle category change
     const handleCategoryChange = (e) => {
-        const { value } = e.target;
+        const {value} = e.target;
         setProduct((prevProduct) => ({
             ...prevProduct,
             category: {
                 categoryId: value
             }
         }));
-        setFormError((prevErrors) => ({ ...prevErrors, category: undefined })); // Clear category error
+        setFormError((prevErrors) => ({...prevErrors, category: undefined})); // Clear category error
     };
 
     // Handle distributor change
     const handleDistributorChange = (e) => {
-        const { value } = e.target;
+        const {value} = e.target;
         setProduct((prevProduct) => ({
             ...prevProduct,
             distributor: {
                 distributorId: value
             }
         }));
-        setFormError((prevErrors) => ({ ...prevErrors, distributor: undefined })); // Clear distributor error
+        setFormError((prevErrors) => ({...prevErrors, distributor: undefined})); // Clear distributor error
     };
 
     const refreshImageList = () => {
@@ -258,31 +238,34 @@ const UpdateProduct = () => {
     };
 
     // Handle cancel button click
-    const handleCancel = () => { navigate(ROUTES.PRODUCT_LIST); };
+    const handleCancel = () => {
+        navigate(ROUTES.PRODUCT_LIST);
+    };
 
     if (loading) {
-        return <Loading />;
+        return <Loading/>;
     }
 
     return (
         <Container className={classes.mainContainer}>
             <Breadcrumbs aria-label="breadcrumb">
-                <Home />
-                <ProductList />
-                <Typography sx={{ color: 'text.primary' }}>Edit Product</Typography>
+                <Home/>
+                <ProductList/>
+                <Typography sx={{color: 'text.primary'}}>Edit Product</Typography>
             </Breadcrumbs>
-            <PageTitle title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.PRODUCT).replace(':name', product.productId)} />
+            <PageTitle
+                title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.PRODUCT).replace(':name', product.productId)}/>
             <Container maxWidth="lg">
-                <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
+                <Paper elevation={4} className={classes.formContainer} sx={{borderRadius: 4}}>
                     <form>
-                        <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
-                        <ErrorAlert message={errorMessage} />
+                        <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')}/>
+                        <ErrorAlert message={errorMessage}/>
                         <Grid2 container spacing={2}>
                             <Grid2 size={4}>
-                                <ReadOnlyField label={LABEL.PRODUCT_ID} value={product.id} />
+                                <ReadOnlyField label={LABEL.PRODUCT_ID} value={product.id}/>
                             </Grid2>
                             <Grid2 size={4}>
-                                <ReadOnlyField label={LABEL.PRODUCT_PRODUCT_ID} value={product.productId} />
+                                <ReadOnlyField label={LABEL.PRODUCT_PRODUCT_ID} value={product.productId}/>
                             </Grid2>
                             <Grid2 size={4}>
                                 <EditableTextField
@@ -320,7 +303,10 @@ const UpdateProduct = () => {
                                     name="category"
                                     value={product.category.categoryId}
                                     onChange={handleCategoryChange}
-                                    options={categories.map((category) => ({ value: category.categoryId, label: category.name }))}
+                                    options={categories.map((category) => ({
+                                        value: category.categoryId,
+                                        label: category.name
+                                    }))}
                                     error={!!formError.category}
                                     helperText={formError.category}
                                     required
@@ -332,7 +318,10 @@ const UpdateProduct = () => {
                                     name="distributor"
                                     value={product.distributor.distributorId}
                                     onChange={handleDistributorChange}
-                                    options={distributors.map((distributor) => ({ value: distributor.distributorId, label: distributor.companyName }))}
+                                    options={distributors.map((distributor) => ({
+                                        value: distributor.distributorId,
+                                        label: distributor.companyName
+                                    }))}
                                     error={!!formError.distributor}
                                     helperText={formError.distributor}
                                     required
@@ -408,25 +397,28 @@ const UpdateProduct = () => {
                             </Grid2>
                             <Grid2 size={6}></Grid2>
                         </Grid2>
-                        <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
-                            <PageTitle2 title={LABEL.INVENTORY} />
+                        <Paper elevation={4} className={classes.formContainer} sx={{borderRadius: 4}}>
+                            <PageTitle2 title={LABEL.INVENTORY}/>
                             <Grid2 container spacing={2}>
                                 <Grid2 size={6}>
-                                    <Paper elevation={1} className={classes.formContainer} sx={{ borderRadius: 4 }}>
-                                        <ReadOnlyField label={LABEL.INVENTORY_QTY} value={product.inventory.quantity} />
+                                    <Paper elevation={1} className={classes.formContainer} sx={{borderRadius: 4}}>
+                                        <ReadOnlyField label={LABEL.INVENTORY_QTY} value={product.inventory.quantity}/>
                                         <Box className={classes.formButtonsContainer}>
-                                            <AddStockButton onClick={handleOpenAddStockDialog} />
-                                            <AdjustStockButton onClick={handleOpenAdjustStockDialog} />
+                                            <AddStockButton onClick={handleOpenAddStockDialog}/>
+                                            <AdjustStockButton onClick={handleOpenAdjustStockDialog}/>
                                         </Box>
                                     </Paper>
-                                    <ReadOnlyField label={LABEL.INVENTORY_LAST_UPDATED} value={formatDate(product.inventory.lastUpdated)} />
+                                    <ReadOnlyField label={LABEL.INVENTORY_LAST_UPDATED}
+                                                   value={formatDate(product.inventory.lastUpdated)}/>
                                 </Grid2>
                                 <Grid2 size={6}>
-                                    <Paper elevation={1} className={classes.formContainer} sx={{ borderRadius: 4 }}>
-                                        <ReadOnlyField label={LABEL.INVENTORY_WAR_LEV} value={formatPrice(product.inventory.stockWarningLevel)} />
-                                        <ReadOnlyField label={LABEL.INVENTORY_ALR_LEV} value={formatPrice(product.inventory.stockAlertLevel)} />
+                                    <Paper elevation={1} className={classes.formContainer} sx={{borderRadius: 4}}>
+                                        <ReadOnlyField label={LABEL.INVENTORY_WAR_LEV}
+                                                       value={formatPrice(product.inventory.stockWarningLevel)}/>
+                                        <ReadOnlyField label={LABEL.INVENTORY_ALR_LEV}
+                                                       value={formatPrice(product.inventory.stockAlertLevel)}/>
                                         <Box className={classes.formButtonsContainer}>
-                                            <UpdateStockButton onClick={handleOpenUpdateStockAlertDialog} />
+                                            <UpdateStockButton onClick={handleOpenUpdateStockAlertDialog}/>
                                         </Box>
                                     </Paper>
                                 </Grid2>
@@ -443,16 +435,16 @@ const UpdateProduct = () => {
                                 onClose={handleCloseAddStockDialog}
                                 productId={product.id}
                                 inventory={product.inventory}
-                                onStockAdded={handleStockAdded} />
+                                onStockAdded={handleStockAdded}/>
                             <AdjustStockDialog
                                 open={openAdjustStockDialog}
                                 onClose={handleCloseAdjustStockDialog}
                                 productId={product.id}
                                 inventory={product.inventory}
-                                onStockAdjusted={handleStockAdded} />
+                                onStockAdjusted={handleStockAdded}/>
                         </Paper>
-                        <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
-                            <PageTitle2 title={"Images"} />
+                        <Paper elevation={4} className={classes.formContainer} sx={{borderRadius: 4}}>
+                            <PageTitle2 title={"Images"}/>
                             <Grid2 container spacing={2}>
                                 <Grid2 size={6}>
                                     <ImageUpload
@@ -477,8 +469,8 @@ const UpdateProduct = () => {
                             </Grid2>
                         </Paper>
                         <Box className={classes.formButtonsContainer}>
-                            <UpdateButton onClick={handleSubmit} isSaving={isSaving} />
-                            <CancelButton onClick={handleCancel} />
+                            <UpdateButton onClick={handleSubmit} isSaving={isSaving}/>
+                            <CancelButton onClick={handleCancel}/>
                         </Box>
                     </form>
                 </Paper>

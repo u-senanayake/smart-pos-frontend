@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
+import React, {useEffect, useState} from 'react';
+import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@mui/material';
 import InventoryService from '../../../services/InventoryService'
-import { validateNumberField } from '../../../utils/Validations'
-import { SuccessAlert, ErrorAlert, } from '../../../components/DialogBox/Alerts';
-import * as LABEL from '../../../utils/const/FieldLabels';
+import {validateNumberField} from '../../../utils/Validations'
+import {ErrorAlert, SuccessAlert,} from '../../../components/DialogBox/Alerts';
+import * as LABEL from './utils/inventoryLabel';
 import * as MESSAGE from '../../../utils/const/Message';
 import * as APP_PROPERTY from '../../../utils/const/AppProperty';
-import { EditableTextField, ReadOnlyField } from "../../../components/PageElements/CommonElements";
+import {EditableTextField, ReadOnlyField} from "../../../components/PageElements/CommonElements";
 
-const AddStockDialog = ({ open, onClose, productId, inventory, onStockAdded }) => {
+const AddStockDialog = ({open, onClose, productId, inventory, onStockAdded}) => {
     const [quantity, setQuantity] = useState('');
     const [isSaving, setIsSaving] = useState(false);
     const [formError, setFormError] = useState({});
     const [errorMessage, setErrorMessage] = useState(null);//Error message for user
-    const [successMessage, setSuccessMessage] = useState(''); // State for success message
+    const [successMessage, setSuccessMessage] = useState(''); // State for a success message
 
-    //Clear form when open dialogbox
+    //Clear form when open dialog
     useEffect(() => {
         if (open) {
             setQuantity('');
@@ -28,9 +28,9 @@ const AddStockDialog = ({ open, onClose, productId, inventory, onStockAdded }) =
     const validateForm = (inventory) => {
         const formError = {};
         if (!validateNumberField(inventory.quantity)) {
-            formError.quantity = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.INVENTORY_QTY);
+            formError.quantity = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.QTY);
         } else if (isNaN(inventory.quantity) || Number(inventory.quantity) <= 0) {
-            formError.quantity = MESSAGE.NUMBER_POSITIVE.replace(':fieldName', LABEL.INVENTORY_QTY);
+            formError.quantity = MESSAGE.NUMBER_POSITIVE.replace(':fieldName', LABEL.QTY);
         }
         return formError;
     };
@@ -38,7 +38,7 @@ const AddStockDialog = ({ open, onClose, productId, inventory, onStockAdded }) =
     //Add stock
     const handleAddStock = () => {
         setIsSaving(true);
-        const newInventory = { quantity: Number(quantity) }; // Ensure quantity is a number
+        const newInventory = {quantity: Number(quantity)}; // Ensure quantity is a number
         const validationErrors = validateForm(newInventory);
         if (Object.keys(validationErrors).length > 0) {
             setFormError(validationErrors);
@@ -69,12 +69,12 @@ const AddStockDialog = ({ open, onClose, productId, inventory, onStockAdded }) =
                 <DialogContentText>
                     Enter the details to add stock for the product (Product ID: {productId}).
                 </DialogContentText>
-                <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
-                <ErrorAlert message={errorMessage} />
-                <ReadOnlyField label={LABEL.INVENTORY_QTY_CRNT} value={inventory?.quantity} />
+                <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')}/>
+                <ErrorAlert message={errorMessage}/>
+                <ReadOnlyField label={LABEL.QTY_CURRENT} value={inventory?.quantity}/>
 
                 <EditableTextField
-                    label={LABEL.INVENTORY_QTY}
+                    label={LABEL.QTY}
                     name="quantity"
                     type={"number"}
                     value={quantity}

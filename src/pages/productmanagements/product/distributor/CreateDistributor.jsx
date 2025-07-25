@@ -1,23 +1,20 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Box, Typography, Paper, Container, TextField, Button, FormControlLabel, Checkbox, Grid2, Breadcrumbs } from '@mui/material';
+import React, {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {Box, Breadcrumbs, Checkbox, Container, FormControlLabel, Grid2, Paper, Typography} from '@mui/material';
 //Service
 import DistributorService from '../../../../services/DistributorService';
-import { validateRequired, validateLength, validateEmail, validateExactLength } from '../../../../utils/Validations';
+import {DistributorList, Home} from "../../../../components/PageElements/BreadcrumbsLinks";
+import {EditableTextField, PageTitle} from "../../../../components/PageElements/CommonElements";
+import {CancelButton, SaveButton} from "../../../../components/PageElements/Buttons";
+import {ErrorAlert, SuccessAlert,} from '../../../../components/DialogBox/Alerts';
+import {validateForm} from './utils/validateDistributorForm';
 
-import { Loading } from '../../../../components/PageElements/Loading';
-import { Home, DistributorList } from "../../../../components/PageElements/BreadcrumbsLinks";
-import { EditableTextField, EditableDropDown, PageTitle } from "../../../../components/PageElements/CommonElements";
-import { SaveButton, CancelButton } from "../../../../components/PageElements/Buttons";
-import { SuccessAlert, ErrorAlert, } from '../../../../components/DialogBox/Alerts';
-
-import * as LABEL from '../../../../utils/const/FieldLabels';
+import * as LABEL from './utils/distributorLabel';
 import * as MESSAGE from '../../../../utils/const/Message';
-import * as PROPERTY from '../../../../utils/const/FieldProperty';
 import * as APP_PROPERTY from '../../../../utils/const/AppProperty';
 import * as ROUTES from '../../../../utils/const/RouteProperty';
 
-import { useStyles } from "../../../../style/makeStyle";
+import {useStyles} from "../../../../style/makeStyle";
 
 const CreateDistributor = () => {
 
@@ -35,28 +32,9 @@ const CreateDistributor = () => {
     const navigate = useNavigate();
     const classes = useStyles();
 
-    const validateForm = (distributor) => {
-        const formError = {};
-        //Name
-        if (!validateRequired(distributor.companyName)) formError.companyName = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.DISTRIBUTOR_COMPANYNAME);
-        if (!validateLength(distributor.companyName, PROPERTY.DISTRIBUTOR_COMPANYNAME_MIN, PROPERTY.DISTRIBUTOR_COMPANYNAME_MAX)) formError.companyName = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.DISTRIBUTOR_COMPANYNAME).replace(':min', PROPERTY.DISTRIBUTOR_COMPANYNAME_MIN).replace(':max', PROPERTY.DISTRIBUTOR_COMPANYNAME_MAX);
-        //Email
-        if (!validateRequired(distributor.email)) formError.email = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.DISTRIBUTOR_EMAIL);
-        if (!validateEmail(distributor.email)) formError.email = MESSAGE.INVALID_EMAIL;
-        //Phone 1
-        if (!validateRequired(distributor.phoneNo1)) formError.phoneNo1 = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.DISTRIBUTOR_PHONE1);
-        if (!validateExactLength(distributor.phoneNo1, PROPERTY.DISTRIBUTOR_PHONE_LENGTH)) formError.phoneNo1 = MESSAGE.FIELD_LENGTH.replace(':fieldName', LABEL.DISTRIBUTOR_PHONE1).replace(':number', PROPERTY.DISTRIBUTOR_PHONE_LENGTH);
-        //Phone 2
-        if (distributor.phoneNo2 && !validateExactLength(distributor.phoneNo2, PROPERTY.DISTRIBUTOR_PHONE_LENGTH)) formError.phoneNo2 = MESSAGE.FIELD_LENGTH.replace(':fieldName', LABEL.DISTRIBUTOR_PHONE2).replace(':number', PROPERTY.DISTRIBUTOR_PHONE_LENGTH);
-        //Address
-        if (!validateRequired(distributor.address)) formError.address = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.DISTRIBUTOR_ADDRESS);
-        if (!validateLength(distributor.address, PROPERTY.DISTRIBUTOR_ADDRESS_MIN, PROPERTY.DISTRIBUTOR_ADDRESS_MAX)) formError.address = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.DISTRIBUTOR_COMPANYNAME).replace(':min', PROPERTY.DISTRIBUTOR_ADDRESS_MIN).replace(':max', PROPERTY.DISTRIBUTOR_ADDRESS_MAX);;
-        return formError;
-    };
-
     const handleSubmit = (e) => {
         e.preventDefault();
-        const distributor = { companyName, email, phoneNo1, phoneNo2, address, enabled };
+        const distributor = {companyName, email, phoneNo1, phoneNo2, address, enabled};
         const validationErrors = validateForm(distributor);
         if (Object.keys(validationErrors).length > 0) {
             setFormError(validationErrors);
@@ -78,25 +56,27 @@ const CreateDistributor = () => {
         }
     };
 
-    const handleCancel = () => { navigate(ROUTES.DISTRIBUTOR_LIST); };
+    const handleCancel = () => {
+        navigate(ROUTES.DISTRIBUTOR_LIST);
+    };
 
     return (
         <Container className={classes.mainContainer}>
             <Breadcrumbs aria-label="breadcrumb">
-                <Home />
-                <DistributorList />
-                <Typography sx={{ color: 'text.primary' }}>Create Distributor</Typography>
+                <Home/>
+                <DistributorList/>
+                <Typography sx={{color: 'text.primary'}}>Create Distributor</Typography>
             </Breadcrumbs>
-            <PageTitle title={LABEL.PAGE_TITLE_CREATE.replace(':type', LABEL.DISTRIBUTOR)} />
+            <PageTitle title={LABEL.PAGE_TITLE_CREATE.replace(':type', LABEL.DISTRIBUTOR)}/>
             <Container maxWidth="md">
-                <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
+                <Paper elevation={4} className={classes.formContainer} sx={{borderRadius: 4}}>
                     <form>
-                        <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
-                        <ErrorAlert message={errorMessage} />
+                        <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')}/>
+                        <ErrorAlert message={errorMessage}/>
                         <Grid2 container spacing={2}>
                             <Grid2 size={6}>
                                 <EditableTextField
-                                    label={LABEL.DISTRIBUTOR_COMPANYNAME}
+                                    label={LABEL.COMPANY_NAME}
                                     name="companyName"
                                     value={companyName}
                                     onChange={(e) => {
@@ -113,7 +93,7 @@ const CreateDistributor = () => {
                             </Grid2>
                             <Grid2 size={6}>
                                 <EditableTextField
-                                    label={LABEL.DISTRIBUTOR_EMAIL}
+                                    label={LABEL.EMAIL}
                                     name="email"
                                     value={email}
                                     onChange={(e) => {
@@ -130,7 +110,7 @@ const CreateDistributor = () => {
                             </Grid2>
                             <Grid2 size={6}>
                                 <EditableTextField
-                                    label={LABEL.DISTRIBUTOR_PHONE1}
+                                    label={LABEL.PHONE1}
                                     name="phoneNo1"
                                     value={phoneNo1}
                                     onChange={(e) => {
@@ -147,7 +127,7 @@ const CreateDistributor = () => {
                             </Grid2>
                             <Grid2 size={6}>
                                 <EditableTextField
-                                    label={LABEL.DISTRIBUTOR_PHONE2}
+                                    label={LABEL.PHONE2}
                                     name="phoneNo2"
                                     value={phoneNo2}
                                     onChange={(e) => {
@@ -163,7 +143,7 @@ const CreateDistributor = () => {
                             </Grid2>
                             <Grid2 size={12}>
                                 <EditableTextField
-                                    label={LABEL.DISTRIBUTOR_ADDRESS}
+                                    label={LABEL.ADDRESS}
                                     name="address"
                                     value={address}
                                     onChange={(e) => {
@@ -187,13 +167,13 @@ const CreateDistributor = () => {
                                             color="primary"
                                         />
                                     }
-                                    label={LABEL.DISTRIBUTOR_ENABLED}
+                                    label={LABEL.ENABLED}
                                 />
                             </Grid2>
                         </Grid2>
                         <Box className={classes.formButtonsContainer}>
-                            <SaveButton onClick={handleSubmit} isSaving={isSaving} />
-                            <CancelButton onClick={handleCancel} />
+                            <SaveButton onClick={handleSubmit} isSaving={isSaving}/>
+                            <CancelButton onClick={handleCancel}/>
                         </Box>
                     </form>
                 </Paper>

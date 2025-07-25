@@ -1,27 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Container, Switch, FormControlLabel, Grid2, Breadcrumbs } from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
-//Service
+import React, {useEffect, useState} from 'react';
+import {Box, Breadcrumbs, Container, FormControlLabel, Grid2, Paper, Switch, Typography} from '@mui/material';
+import {useNavigate, useParams} from 'react-router-dom';
 import CategoryService from '../../../../services/CategoryService';
-//Utils
-import { validateRequired, validateLength, validateExactLength } from '../../../../utils/Validations';
 
-import { Loading, } from '../../../../components/PageElements/Loading';
-import { Home, CategoryList } from "../../../../components/PageElements/BreadcrumbsLinks";
-import { UpdateButton, CancelButton } from "../../../../components/PageElements/Buttons";
-import { EditableTextField, PageTitle, ReadOnlyField } from "../../../../components/PageElements/CommonElements";
-import { SuccessAlert, ErrorAlert, } from '../../../../components/DialogBox/Alerts';
+import {Loading,} from '../../../../components/PageElements/Loading';
+import {CategoryList, Home} from "../../../../components/PageElements/BreadcrumbsLinks";
+import {CancelButton, UpdateButton} from "../../../../components/PageElements/Buttons";
+import {EditableTextField, PageTitle, ReadOnlyField} from "../../../../components/PageElements/CommonElements";
+import {ErrorAlert, SuccessAlert,} from '../../../../components/DialogBox/Alerts';
+import {validateForm} from './utils/validateCategoryForm';
 
-import { useStyles } from "../../../../style/makeStyle";
+import {useStyles} from "../../../../style/makeStyle";
 
+import * as LABEL from './utils/categoryLabel';
 import * as MESSAGE from '../../../../utils/const/Message';
-import * as PROPERTY from '../../../../utils/const/FieldProperty';
-import * as LABEL from '../../../../utils/const/FieldLabels';
 import * as APP_PROPERTY from '../../../../utils/const/AppProperty';
 import * as ROUTES from '../../../../utils/const/RouteProperty';
 
 const UpdateCategory = () => {
-    const { categoryId } = useParams();
+    const {categoryId} = useParams();
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [catPrefix, setCatPrefix] = useState('');
@@ -49,24 +46,9 @@ const UpdateCategory = () => {
             }).finally(() => setLoading(false));
     }, [categoryId]);
 
-    const validateForm = (category) => {
-        const formError = {};
-        //Name
-        if (!validateRequired(category.name)) formError.name = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.CATEGORY_NAME);
-        if (!validateLength(category.name, PROPERTY.CATEGORY_NAME_MIN, PROPERTY.CATEGORY_NAME_MAX)) formError.name = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.CATEGORY_NAME).replace(':min', PROPERTY.CATEGORY_NAME_MIN).replace(':max', PROPERTY.CATEGORY_NAME_MAX);
-        //Description
-        if (!validateRequired(category.description)) formError.description = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.CATEGORY_DESC);
-        if (!validateLength(category.description, PROPERTY.CATEGORY_DESC_MIN, PROPERTY.CATEGORY_DESC_MAX)) formError.description = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.CATEGORY_DESC).replace(':min', PROPERTY.CATEGORY_DESC_MIN).replace(':max', PROPERTY.CATEGORY_DESC_MAX);
-        //Category prefix
-        if (!validateRequired(category.catPrefix)) formError.catPrefix = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.CATEGORY_PREFX);
-        if (!validateExactLength(category.catPrefix, PROPERTY.CATEGORY_PRFX_LENGTH)) formError.catPrefix = MESSAGE.FIELD_LENGTH.replace(':fieldName', LABEL.CATEGORY_PREFX).replace(':number', PROPERTY.CATEGORY_PRFX_LENGTH);
-
-        return formError;
-    };
-
     const handleSubmit = (e) => {
         e.preventDefault();
-        const category = { name, description, catPrefix, enabled };
+        const category = {name, description, catPrefix, enabled};
         const validationErrors = validateForm(category);
         if (Object.keys(validationErrors).length > 0) {
             setFormError(validationErrors);
@@ -89,32 +71,34 @@ const UpdateCategory = () => {
         }
     };
 
-    const handleCancel = () => { navigate(ROUTES.CATEGORY_LIST); };
+    const handleCancel = () => {
+        navigate(ROUTES.CATEGORY_LIST);
+    };
 
     if (loading) {
-        return <Loading />;
+        return <Loading/>;
     }
 
     return (
         <Container className={classes.mainContainer}>
             <Breadcrumbs aria-label="breadcrumb">
-                <Home />
-                <CategoryList />
-                <Typography sx={{ color: 'text.primary' }}>Edit Role</Typography>
+                <Home/>
+                <CategoryList/>
+                <Typography sx={{color: 'text.primary'}}>Edit Role</Typography>
             </Breadcrumbs>
-            <PageTitle title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.CATEGORY).replace(':name', name)} />
+            <PageTitle title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.CATEGORY).replace(':name', name)}/>
             <Container maxWidth="lg">
-                <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
+                <Paper elevation={4} className={classes.formContainer} sx={{borderRadius: 4}}>
                     <form>
-                        <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
-                        <ErrorAlert message={errorMessage} />
+                        <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')}/>
+                        <ErrorAlert message={errorMessage}/>
                         <Grid2 container spacing={2}>
                             <Grid2 size={4}>
-                                <ReadOnlyField label={LABEL.CATEGORY_ID} value={categoryId} />
+                                <ReadOnlyField label={LABEL.ID} value={categoryId}/>
                             </Grid2>
                             <Grid2 size={4}>
                                 <EditableTextField
-                                    label={LABEL.CATEGORY_NAME}
+                                    label={LABEL.NAME}
                                     name="name"
                                     value={name}
                                     onChange={(e) => {
@@ -131,7 +115,7 @@ const UpdateCategory = () => {
                             </Grid2>
                             <Grid2 size={4}>
                                 <EditableTextField
-                                    label={LABEL.CATEGORY_PREFX}
+                                    label={LABEL.PREFIX}
                                     name="catPrefix"
                                     value={catPrefix}
                                     onChange={(e) => {
@@ -148,7 +132,7 @@ const UpdateCategory = () => {
                             </Grid2>
                             <Grid2 size={12}>
                                 <EditableTextField
-                                    label={LABEL.CATEGORY_DESC}
+                                    label={LABEL.DESCRIPTION}
                                     name="description"
                                     value={description}
                                     onChange={(e) => {
@@ -179,13 +163,13 @@ const UpdateCategory = () => {
                                             color="primary"
                                         />
                                     }
-                                    label={LABEL.CATEGORY_ENABLE}
+                                    label={LABEL.ENABLE}
                                 />
                             </Grid2>
                         </Grid2>
                         <Box className={classes.formButtonsContainer}>
-                            <UpdateButton onClick={handleSubmit} isSaving={isSaving} />
-                            <CancelButton onClick={handleCancel} />
+                            <UpdateButton onClick={handleSubmit} isSaving={isSaving}/>
+                            <CancelButton onClick={handleCancel}/>
                         </Box>
                     </form>
                 </Paper>

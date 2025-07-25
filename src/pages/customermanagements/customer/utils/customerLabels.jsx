@@ -1,0 +1,36 @@
+//Page Titles
+export const PAGE_TITLE_CREATE = "Create :type"
+export const PAGE_TITLE_UPDATE = "Update :type ':name'"
+export const PAGE_TITLE_VIEW = "View :type ':name'"
+export const PAGE_TITLE_LIST = ":type List"
+
+
+//Customer Group
+export const CUSTOMER_GROUP = "Customer Group"
+//Customer
+export const CUSTOMER = "Customer"
+export const CUSTOMER_ID = "ID"
+export const CUSTOMER_USERNAME = "Username"
+export const CUSTOMER_NAME = "Name"
+export const CUSTOMER_FIRST_NAME = "First Name"
+export const CUSTOMER_LAST_NAME = "Last Name"
+export const CUSTOMER_EMAIL = "Email"
+export const CUSTOMER_PHONE1 = "Phone Number 1"
+export const CUSTOMER_PHONE2 = "Phone Number 2"
+export const CUSTOMER_PHONE = "Phone Number"
+export const CUSTOMER_ADDRS = "Address"
+export const CUSTOMER_ENABLED = "Enabled"
+export const CUSTOMER_LOCKED = "Locked"
+export const CUSTOMER_PASS = "Password"
+export const CUSTOMER_CREATED_AT = "Created At"
+export const CUSTOMER_CREATED_BY = "Created By"
+export const CUSTOMER_UPDATED_AT = "Updated At"
+export const CUSTOMER_UPDATED_BY = "Updated By"
+export const CUSTOMER_DELETED_AT = "Deleted At"
+export const CUSTOMER_DELETED_BY = "Deleted By"
+
+export const TABLE_NAME = "Name"
+export const TABLE_PHONE = "Phone"
+export const TABLE_LOCK_STATUS = "Locked"
+export const TABLE_STATUS = "Active"
+export const TABLE_ACTION = "Actions"

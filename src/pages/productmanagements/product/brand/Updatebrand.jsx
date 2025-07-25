@@ -1,27 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Container, FormControlLabel, Grid2, Breadcrumbs, Switch } from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
-//Service
+import React, {useEffect, useState} from 'react';
+import {Box, Breadcrumbs, Container, FormControlLabel, Grid2, Paper, Switch, Typography} from '@mui/material';
+import {useNavigate, useParams} from 'react-router-dom';
 import BrandService from '../../../../services/BrandService';
 
-import { Loading, } from '../../../../components/PageElements/Loading';
-import { validateRequired, validateLength, } from '../../../../utils/Validations';
-import { Home, BrandList } from "../../../../components/PageElements/BreadcrumbsLinks";
-import { UpdateButton, CancelButton } from "../../../../components/PageElements/Buttons";
-import { EditableTextField, PageTitle, ReadOnlyField } from "../../../../components/PageElements/CommonElements";
-import { SuccessAlert, ErrorAlert, } from '../../../../components/DialogBox/Alerts';
+import {Loading,} from '../../../../components/PageElements/Loading';
+import {BrandList, Home} from "../../../../components/PageElements/BreadcrumbsLinks";
+import {CancelButton, UpdateButton} from "../../../../components/PageElements/Buttons";
+import {EditableTextField, PageTitle, ReadOnlyField} from "../../../../components/PageElements/CommonElements";
+import {ErrorAlert, SuccessAlert,} from '../../../../components/DialogBox/Alerts';
+import {validateForm} from './utils/validateBrandForm';
+import {useStyles} from "../../../../style/makeStyle";
 
-import { useStyles } from "../../../../style/makeStyle";
-
+import * as LABEL from './utils/brandLabel';
 import * as MESSAGE from '../../../../utils/const/Message';
-import * as PROPERTY from '../../../../utils/const/FieldProperty';
-import * as LABEL from '../../../../utils/const/FieldLabels';
 import * as APP_PROPERTY from '../../../../utils/const/AppProperty';
 import * as ROUTES from '../../../../utils/const/RouteProperty';
 
 const UpdateBrand = () => {
 
-    const { brandId } = useParams();
+    const {brandId} = useParams();
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [enabled, setEnabled] = useState(true);
@@ -47,20 +44,10 @@ const UpdateBrand = () => {
             }).finally(() => setLoading(false));
     }, [brandId]);
 
-    const validateForm = (brand) => {
-        const formError = {};
-        //Name
-        if (!validateRequired(brand.name)) formError.name = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.BRAND_NAME);
-        if (!validateLength(brand.name, PROPERTY.BRAND_NAME_MIN, PROPERTY.BRAND_NAME_MAX)) formError.name = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.BRAND_NAME).replace(':min', PROPERTY.BRAND_NAME_MIN).replace(':max', PROPERTY.BRAND_NAME_MAX);
-        //Description
-        if (!validateRequired(brand.description)) formError.description = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.BRAND_DESC);
-        if (!validateLength(brand.description, PROPERTY.BRAND_DESC_MIN, PROPERTY.BRAND_DESC_MAX)) formError.description = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.BRAND_DESC).replace(':min', PROPERTY.BRAND_DESC_MIN).replace(':max', PROPERTY.BRAND_DESC_MAX);
-        return formError;
-    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const brand = { name, description, enabled };
+        const brand = {name, description, enabled};
         const validationErrors = validateForm(brand);
         if (Object.keys(validationErrors).length > 0) {
             setFormError(validationErrors);
@@ -83,32 +70,34 @@ const UpdateBrand = () => {
         }
     };
 
-    const handleCancel = () => { navigate(ROUTES.BRAND_LIST); };
+    const handleCancel = () => {
+        navigate(ROUTES.BRAND_LIST);
+    };
 
     if (loading) {
-        return <Loading />;
+        return <Loading/>;
     }
 
     return (
         <Container className={classes.mainContainer}>
             <Breadcrumbs aria-label="breadcrumb">
-                <Home />
-                <BrandList />
-                <Typography sx={{ color: 'text.primary' }}>Edit Brand</Typography>
+                <Home/>
+                <BrandList/>
+                <Typography sx={{color: 'text.primary'}}>Edit Brand</Typography>
             </Breadcrumbs>
-            <PageTitle title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.BRAND).replace(':name', name)} />
+            <PageTitle title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.BRAND).replace(':name', name)}/>
             <Container maxWidth="lg">
-                <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
+                <Paper elevation={4} className={classes.formContainer} sx={{borderRadius: 4}}>
                     <form>
-                        <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
-                        <ErrorAlert message={errorMessage} />
+                        <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')}/>
+                        <ErrorAlert message={errorMessage}/>
                         <Grid2 container spacing={2}>
                             <Grid2 size={4}>
-                                <ReadOnlyField label={LABEL.BRAND_ID} value={brandId} />
+                                <ReadOnlyField label={LABEL.ID} value={brandId}/>
                             </Grid2>
                             <Grid2 size={8}>
                                 <EditableTextField
-                                    label={LABEL.BRAND_NAME}
+                                    label={LABEL.NAME}
                                     name="name"
                                     value={name}
                                     onChange={(e) => {
@@ -125,7 +114,7 @@ const UpdateBrand = () => {
                             </Grid2>
                             <Grid2 size={12}>
                                 <EditableTextField
-                                    label={LABEL.BRAND_DESC}
+                                    label={LABEL.DESCRIPTION}
                                     name="description"
                                     value={description}
                                     onChange={(e) => {
@@ -151,13 +140,13 @@ const UpdateBrand = () => {
                                             color="primary"
                                         />
                                     }
-                                    label={LABEL.BRAND_ENABLED}
+                                    label={LABEL.ENABLED}
                                 />
                             </Grid2>
                         </Grid2>
                         <Box className={classes.formButtonsContainer}>
-                            <UpdateButton onClick={handleSubmit} isSaving={isSaving} />
-                            <CancelButton onClick={handleCancel} />
+                            <UpdateButton onClick={handleSubmit} isSaving={isSaving}/>
+                            <CancelButton onClick={handleCancel}/>
                         </Box>
                     </form>
                 </Paper>

@@ -1,28 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Container, FormControlLabel, Switch, Grid2, Breadcrumbs } from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
-//Service
+import React, {useEffect, useState} from 'react';
+import {Box, Breadcrumbs, Container, FormControlLabel, Grid2, Paper, Switch, Typography} from '@mui/material';
+import {useNavigate, useParams} from 'react-router-dom';
 import DistributorService from '../../../../services/DistributorService';
 
-import { Loading, } from '../../../../components/PageElements/Loading';
-import { validateRequired, validateLength, validateEmail, validateExactLength } from '../../../../utils/Validations';
-import { Home, DistributorList } from "../../../../components/PageElements/BreadcrumbsLinks";
-import { UpdateButton, CancelButton } from "../../../../components/PageElements/Buttons";
-import { EditableTextField, PageTitle, ReadOnlyField } from "../../../../components/PageElements/CommonElements";
-import { SuccessAlert, ErrorAlert, } from '../../../../components/DialogBox/Alerts';
+import {Loading,} from '../../../../components/PageElements/Loading';
+import {DistributorList, Home} from "../../../../components/PageElements/BreadcrumbsLinks";
+import {CancelButton, UpdateButton} from "../../../../components/PageElements/Buttons";
+import {EditableTextField, PageTitle, ReadOnlyField} from "../../../../components/PageElements/CommonElements";
+import {ErrorAlert, SuccessAlert,} from '../../../../components/DialogBox/Alerts';
+import {validateForm} from './utils/validateDistributorForm';
 
-import { useStyles } from "../../../../style/makeStyle";
+import {useStyles} from "../../../../style/makeStyle";
 
+import * as LABEL from './utils/distributorLabel';
 import * as MESSAGE from '../../../../utils/const/Message';
-import * as PROPERTY from '../../../../utils/const/FieldProperty';
-import * as LABEL from '../../../../utils/const/FieldLabels';
 import * as APP_PROPERTY from '../../../../utils/const/AppProperty';
 import * as ROUTES from '../../../../utils/const/RouteProperty';
 
 const UpdateDistributor = () => {
 
     const classes = useStyles();
-    const { distributorId } = useParams();
+    const {distributorId} = useParams();
     const [companyName, setCompanyName] = useState('');
     const [email, setEmail] = useState('');
     const [phoneNo1, setPhone1] = useState('');
@@ -53,28 +51,9 @@ const UpdateDistributor = () => {
             }).finally(() => setLoading(false));
     }, [distributorId]);
 
-    const validateForm = (distributor) => {
-        const formError = {};
-        //Name
-        if (!validateRequired(distributor.companyName)) formError.companyName = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.DISTRIBUTOR_COMPANYNAME);
-        if (!validateLength(distributor.companyName, PROPERTY.DISTRIBUTOR_COMPANYNAME_MIN, PROPERTY.DISTRIBUTOR_COMPANYNAME_MAX)) formError.companyName = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.DISTRIBUTOR_COMPANYNAME).replace(':min', PROPERTY.DISTRIBUTOR_COMPANYNAME_MIN).replace(':max', PROPERTY.DISTRIBUTOR_COMPANYNAME_MAX);
-        //Email
-        if (!validateRequired(distributor.email)) formError.email = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.DISTRIBUTOR_EMAIL);
-        if (!validateEmail(distributor.email)) formError.email = MESSAGE.INVALID_EMAIL;
-        //Phone 1
-        if (!validateRequired(distributor.phoneNo1)) formError.phoneNo1 = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.DISTRIBUTOR_PHONE1);
-        if (!validateExactLength(distributor.phoneNo1, PROPERTY.DISTRIBUTOR_PHONE_LENGTH)) formError.phoneNo1 = MESSAGE.FIELD_LENGTH.replace(':fieldName', LABEL.DISTRIBUTOR_PHONE1).replace(':number', PROPERTY.DISTRIBUTOR_PHONE_LENGTH);
-        //Phone 2
-        if (distributor.phoneNo2 && !validateExactLength(distributor.phoneNo2, PROPERTY.DISTRIBUTOR_PHONE_LENGTH)) formError.phoneNo2 = MESSAGE.FIELD_LENGTH.replace(':fieldName', LABEL.DISTRIBUTOR_PHONE2).replace(':number', PROPERTY.DISTRIBUTOR_PHONE_LENGTH);
-        //Address
-        if (!validateRequired(distributor.address)) formError.address = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.DISTRIBUTOR_ADDRESS);
-        if (!validateLength(distributor.address, PROPERTY.DISTRIBUTOR_ADDRESS_MIN, PROPERTY.DISTRIBUTOR_ADDRESS_MAX)) formError.address = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.DISTRIBUTOR_COMPANYNAME).replace(':min', PROPERTY.DISTRIBUTOR_ADDRESS_MIN).replace(':max', PROPERTY.DISTRIBUTOR_ADDRESS_MAX);;
-        return formError;
-    };
-
     const handleSubmit = (e) => {
         e.preventDefault();
-        const distributor = { companyName, email, phoneNo1, phoneNo2, address, enabled };
+        const distributor = {companyName, email, phoneNo1, phoneNo2, address, enabled};
         const validationErrors = validateForm(distributor);
         if (Object.keys(validationErrors).length > 0) {
             setFormError(validationErrors);
@@ -97,33 +76,35 @@ const UpdateDistributor = () => {
         }
     };
 
-    const handleCancel = () => { navigate(ROUTES.DISTRIBUTOR_LIST); };
+    const handleCancel = () => {
+        navigate(ROUTES.DISTRIBUTOR_LIST);
+    };
 
     if (loading) {
-        return <Loading />;
+        return <Loading/>;
     }
 
     return (
         <Container className={classes.mainContainer}>
             <Breadcrumbs aria-label="breadcrumb">
-                <Home />
-                <DistributorList />
-                <Typography sx={{ color: 'text.primary' }}>Update Distributor</Typography>
+                <Home/>
+                <DistributorList/>
+                <Typography sx={{color: 'text.primary'}}>Update Distributor</Typography>
             </Breadcrumbs>
-            <PageTitle title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.DISTRIBUTOR) + companyName} />
+            <PageTitle title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.DISTRIBUTOR) + companyName}/>
             <Container maxWidth="lg">
 
-                <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
+                <Paper elevation={4} className={classes.formContainer} sx={{borderRadius: 4}}>
                     <form>
-                        <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
-                        <ErrorAlert message={errorMessage} />
+                        <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')}/>
+                        <ErrorAlert message={errorMessage}/>
                         <Grid2 container spacing={2}>
                             <Grid2 size={4}>
-                                <ReadOnlyField label={LABEL.DISTRIBUTOR_ID} value={distributorId} />
+                                <ReadOnlyField label={LABEL.ID} value={distributorId}/>
                             </Grid2>
                             <Grid2 size={8}>
                                 <EditableTextField
-                                    label={LABEL.DISTRIBUTOR_COMPANYNAME}
+                                    label={LABEL.COMPANY_NAME}
                                     name="companyName"
                                     value={companyName}
                                     onChange={(e) => {
@@ -140,7 +121,7 @@ const UpdateDistributor = () => {
                             </Grid2>
                             <Grid2 size={12}>
                                 <EditableTextField
-                                    label={LABEL.DISTRIBUTOR_EMAIL}
+                                    label={LABEL.EMAIL}
                                     name="email"
                                     value={email}
                                     onChange={(e) => {
@@ -157,7 +138,7 @@ const UpdateDistributor = () => {
                             </Grid2>
                             <Grid2 size={6}>
                                 <EditableTextField
-                                    label={LABEL.DISTRIBUTOR_PHONE1}
+                                    label={LABEL.PHONE1}
                                     name="phoneNo1"
                                     value={phoneNo1}
                                     onChange={(e) => {
@@ -174,7 +155,7 @@ const UpdateDistributor = () => {
                             </Grid2>
                             <Grid2 size={6}>
                                 <EditableTextField
-                                    label={LABEL.DISTRIBUTOR_PHONE2}
+                                    label={LABEL.PHONE2}
                                     name="phoneNo2"
                                     value={phoneNo2}
                                     onChange={(e) => {
@@ -191,7 +172,7 @@ const UpdateDistributor = () => {
                             </Grid2>
                             <Grid2 size={12}>
                                 <EditableTextField
-                                    label={LABEL.DISTRIBUTOR_ADDRESS}
+                                    label={LABEL.ADDRESS}
                                     name="address"
                                     value={address}
                                     onChange={(e) => {
@@ -216,13 +197,13 @@ const UpdateDistributor = () => {
                                             color="primary"
                                         />
                                     }
-                                    label={LABEL.DISTRIBUTOR_ENABLED}
+                                    label={LABEL.ENABLED}
                                 />
                             </Grid2>
                         </Grid2>
                         <Box className={classes.formButtonsContainer}>
-                            <UpdateButton onClick={handleSubmit} isSaving={isSaving} />
-                            <CancelButton onClick={handleCancel} />
+                            <UpdateButton onClick={handleSubmit} isSaving={isSaving}/>
+                            <CancelButton onClick={handleCancel}/>
                         </Box>
                     </form>
                 </Paper>

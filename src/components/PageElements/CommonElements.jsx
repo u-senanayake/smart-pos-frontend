@@ -9,7 +9,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 
-/** used TextField to display text as read only field*/
+/** used TextField to display text as a read-only field*/
 export const ReadOnlyField = ({ label, value }) => {
     return (
         <TextField
@@ -40,7 +40,7 @@ export const ReadOnlyField2 = ({ label, value }) => {
     );
 };
 
-/** Used Typography to display read only fields */
+/** Used Typography to display read-only fields */
 export const ReadOnlyField3 = ({ label, value }) => {
     return (
         <Grid2 container spacing={2}>

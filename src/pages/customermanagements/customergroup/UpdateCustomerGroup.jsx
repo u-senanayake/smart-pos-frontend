@@ -1,27 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Container, FormControlLabel, Grid2, Breadcrumbs, Switch } from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
-//Service
+import React, {useEffect, useState} from 'react';
+import {Box, Breadcrumbs, Container, FormControlLabel, Grid2, Paper, Switch, Typography} from '@mui/material';
+import {useNavigate, useParams} from 'react-router-dom';
 import CustomerGroupService from '../../../services/CustomerGroupService';
 
-import { Loading, } from '../../../components/PageElements/Loading';
-import { validateRequired, validateLength, } from '../../../utils/Validations';
-import { Home, CustomerGroupList } from "../../../components/PageElements/BreadcrumbsLinks";
-import { UpdateButton, CancelButton } from "../../../components/PageElements/Buttons";
-import { EditableTextField, PageTitle, ReadOnlyField } from "../../../components/PageElements/CommonElements";
-import { SuccessAlert, ErrorAlert, } from '../../../components/DialogBox/Alerts';
-
-import { useStyles } from "../../../style/makeStyle";
+import {Loading,} from '../../../components/PageElements/Loading';
+import {CustomerGroupList, Home} from "../../../components/PageElements/BreadcrumbsLinks";
+import {CancelButton, UpdateButton} from "../../../components/PageElements/Buttons";
+import {EditableTextField, PageTitle, ReadOnlyField} from "../../../components/PageElements/CommonElements";
+import {ErrorAlert, SuccessAlert,} from '../../../components/DialogBox/Alerts';
+import {useStyles} from "../../../style/makeStyle";
 
 import * as MESSAGE from '../../../utils/const/Message';
-import * as PROPERTY from '../../../utils/const/FieldProperty';
-import * as LABEL from '../../../utils/const/FieldLabels';
+import * as LABEL from './utils/customerGroupLabels';
 import * as APP_PROPERTY from '../../../utils/const/AppProperty';
 import * as ROUTES from '../../../utils/const/RouteProperty';
+import {validateForm} from "./utils/validateCustomerGroupForm";
 
 const UpdateCustomerGroup = () => {
 
-    const { customerGroupId } = useParams();
+    const {customerGroupId} = useParams();
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [enabled, setEnabled] = useState(true);
@@ -42,26 +39,14 @@ const UpdateCustomerGroup = () => {
                 setEnabled(customerGroup.enabled);
             })
             .catch((error) => {
-                console.error(MESSAGE.FEATCHING_ERROR.replace(':type', LABEL.CUSTGRP), error.response.data);
-                setErrorMessage(MESSAGE.FEATCHING_ERROR_MSG.replace(':type', LABEL.CUSTGRP));
+                console.error(MESSAGE.FEATCHING_ERROR.replace(':type', LABEL.CUSTOMER_GROUP), error.response.data);
+                setErrorMessage(MESSAGE.FEATCHING_ERROR_MSG.replace(':type', LABEL.CUSTOMER_GROUP));
             }).finally(() => setLoading(false));
     }, [customerGroupId]);
 
-    const validateForm = (customergroup) => {
-        const errors = {};
-        //Name
-        if (!validateRequired(customergroup.name)) errors.name = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.CUSTGRP_NAME);
-        if (!validateLength(customergroup.name, PROPERTY.CUSTGRP_NAME_MIN, PROPERTY.CUSTGRP_NAME_MAX)) errors.name = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.CUSTGRP_NAME).replace(':min', PROPERTY.CUSTGRP_NAME_MIN).replace(':max', PROPERTY.CUSTGRP_NAME_MAX);
-        //Description
-        if (!validateRequired(customergroup.description)) errors.description = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.CUSTGRP_DESC);
-        if (!validateLength(customergroup.description, PROPERTY.CUSTGRP_DESC_MIN, PROPERTY.CUSTGRP_DESC_MAX)) errors.description = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.CUSTGRP_DESC).replace(':min', PROPERTY.CUSTGRP_DESC_MIN).replace(':max', PROPERTY.CUSTGRP_DESC_MAX);
-
-        return errors;
-    };
-
     const handleSubmit = (e) => {
         e.preventDefault();
-        const customerGroup = { name, description, enabled };
+        const customerGroup = {name, description, enabled};
         const validationErrors = validateForm(customerGroup);
         if (Object.keys(validationErrors).length > 0) {
             setFormError(validationErrors);
@@ -69,47 +54,49 @@ const UpdateCustomerGroup = () => {
             setIsSaving(true);
             CustomerGroupService.updateCustomerGroup(customerGroupId, customerGroup)
                 .then(() => {
-                    setSuccessMessage(MESSAGE.UPDATE_SUCCESS.replace(':type', LABEL.CUSTGRP)); // Set success message
+                    setSuccessMessage(MESSAGE.UPDATE_SUCCESS.replace(':type', LABEL.CUSTOMER_GROUP)); // Set success message
                     setTimeout(() => navigate(ROUTES.CST_GRP_LIST), APP_PROPERTY.ALERT_TIMEOUT); // Delay navigation
                 })
                 .catch((error) => {
                     if (error.response && error.response.data) {
                         setErrorMessage(error.response.data);
                     } else {
-                        setErrorMessage(MESSAGE.UPDATE_ERROR_MSG.replace(':type', LABEL.CUSTGRP));
+                        setErrorMessage(MESSAGE.UPDATE_ERROR_MSG.replace(':type', LABEL.CUSTOMER_GROUP));
                     }
-                    console.error(MESSAGE.UPDATE_ERROR.replace(':type', LABEL.CUSTGRP), error.response);
+                    console.error(MESSAGE.UPDATE_ERROR.replace(':type', LABEL.CUSTOMER_GROUP), error.response);
                 })
                 .finally(() => setIsSaving(false));
         }
     };
 
-    const handleCancel = () => { navigate(ROUTES.CST_GRP_LIST); };
+    const handleCancel = () => {
+        navigate(ROUTES.CST_GRP_LIST);
+    };
 
     if (loading) {
-        return <Loading />;
+        return <Loading/>;
     }
 
     return (
         <Container className={classes.mainContainer}>
             <Breadcrumbs aria-label="breadcrumb">
-                <Home />
-                <CustomerGroupList />
-                <Typography sx={{ color: 'text.primary' }}>Edit Customer Group</Typography>
+                <Home/>
+                <CustomerGroupList/>
+                <Typography sx={{color: 'text.primary'}}>Edit Customer Group</Typography>
             </Breadcrumbs>
-            <PageTitle title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.CUSTGRP) + name} />
+            <PageTitle title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.CUSTOMER_GROUP) + name}/>
             <Container maxWidth="lg">
-                <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
+                <Paper elevation={4} className={classes.formContainer} sx={{borderRadius: 4}}>
                     <form>
-                        <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
-                        <ErrorAlert message={errorMessage} />
+                        <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')}/>
+                        <ErrorAlert message={errorMessage}/>
                         <Grid2 container spacing={2}>
                             <Grid2 size={4}>
-                                <ReadOnlyField label={LABEL.CUSTGRP_ID} value={customerGroupId} />
+                                <ReadOnlyField label={LABEL.ID} value={customerGroupId}/>
                             </Grid2>
                             <Grid2 size={8}>
                                 <EditableTextField
-                                    label={LABEL.CUSTGRP_NAME}
+                                    label={LABEL.NAME}
                                     name="name"
                                     value={name}
                                     onChange={(e) => {
@@ -126,7 +113,7 @@ const UpdateCustomerGroup = () => {
                             </Grid2>
                             <Grid2 size={12}>
                                 <EditableTextField
-                                    label={LABEL.CUSTGRP_DESC}
+                                    label={LABEL.DESC}
                                     name="description"
                                     value={description}
                                     onChange={(e) => {
@@ -151,13 +138,13 @@ const UpdateCustomerGroup = () => {
                                             color="primary"
                                         />
                                     }
-                                    label={LABEL.CUSTGRP_ENABLED}
+                                    label={LABEL.ENABLED}
                                 />
                             </Grid2>
                         </Grid2>
                         <Box className={classes.formButtonsContainer}>
-                            <UpdateButton onClick={handleSubmit} isSaving={isSaving} />
-                            <CancelButton onClick={handleCancel} />
+                            <UpdateButton onClick={handleSubmit} isSaving={isSaving}/>
+                            <CancelButton onClick={handleCancel}/>
                         </Box>
                     </form>
                 </Paper>

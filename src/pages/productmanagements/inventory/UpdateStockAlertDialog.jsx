@@ -1,27 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, } from '@mui/material';
-
+import React, {useEffect, useState} from 'react';
+import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,} from '@mui/material';
 import InventoryService from '../../../services/InventoryService'
-import { validateNumberField } from '../../../utils/Validations'
-import { SuccessAlert, ErrorAlert, } from '../../../components/DialogBox/Alerts';
-import * as LABEL from '../../../utils/const/FieldLabels';
+import {validateNumberField} from '../../../utils/Validations'
+import {ErrorAlert, SuccessAlert,} from '../../../components/DialogBox/Alerts';
+import * as LABEL from './utils/inventoryLabel';
 import * as MESSAGE from '../../../utils/const/Message';
 import * as APP_PROPERTY from '../../../utils/const/AppProperty';
-import { EditableTextField, } from "../../../components/PageElements/CommonElements";
+import {EditableTextField,} from "../../../components/PageElements/CommonElements";
 
-const UpdateStockAlertDialog = ({ open, onClose, productId, inventory, onStockAdded }) => {
+const UpdateStockAlertDialog = ({open, onClose, productId, inventory, onStockAdded}) => {
 
     const [isSaving, setIsSaving] = useState(false);
     const [stockAlertLevel, setStockAlertLevel] = useState('');
     const [stockWarningLevel, setStockWarningLevel] = useState('');
     const [formError, setFormError] = useState({});
     const [errorMessage, setErrorMessage] = useState(null);//Error message for user
-    const [successMessage, setSuccessMessage] = useState(''); // State for success message
+    const [successMessage, setSuccessMessage] = useState(''); // State for a success message
 
     useEffect(() => {
         if (open) {
-            setStockAlertLevel(inventory?.stockAlertLevel || ''); // Set initial value from inventory
-            setStockWarningLevel(inventory?.stockWarningLevel || ''); // Set initial value from inventory
+            setStockAlertLevel(inventory?.stockAlertLevel || ''); // Set the initial value from inventory
+            setStockWarningLevel(inventory?.stockWarningLevel || ''); // Set the initial value from inventory
             setFormError({});
             setErrorMessage(null); // Clear error message
             setSuccessMessage(''); // Clear success message
@@ -31,15 +30,15 @@ const UpdateStockAlertDialog = ({ open, onClose, productId, inventory, onStockAd
     const validateForm = (newInventory) => {
         const formError = {};
         if (!validateNumberField(newInventory.stockAlertLevel)) {
-            formError.stockAlertLevel = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.INVENTORY_ALR_LEV);
+            formError.stockAlertLevel = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.ALERT_LEVEL);
         } else if (isNaN(newInventory.stockAlertLevel) || Number(newInventory.stockAlertLevel) <= 0) {
-            formError.stockAlertLevel = MESSAGE.NUMBER_POSITIVE.replace(':fieldName', LABEL.INVENTORY_ALR_LEV);
+            formError.stockAlertLevel = MESSAGE.NUMBER_POSITIVE.replace(':fieldName', LABEL.ALERT_LEVEL);
         }
 
         if (!validateNumberField(newInventory.stockWarningLevel)) {
-            formError.stockWarningLevel = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.INVENTORY_WAR_LEV);
+            formError.stockWarningLevel = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.WARNING_LEVEL);
         } else if (isNaN(newInventory.stockWarningLevel) || Number(newInventory.stockAlertLevel) <= 0) {
-            formError.stockWarningLevel = MESSAGE.NUMBER_POSITIVE.replace(':fieldName', LABEL.INVENTORY_WAR_LEV);
+            formError.stockWarningLevel = MESSAGE.NUMBER_POSITIVE.replace(':fieldName', LABEL.WARNING_LEVEL);
         }
         return formError;
     };
@@ -47,7 +46,7 @@ const UpdateStockAlertDialog = ({ open, onClose, productId, inventory, onStockAd
     const handleUpdateStockAlerts = () => {
 
         setIsSaving(true);
-        const newInventory = { stockAlertLevel: Number(stockAlertLevel), stockWarningLevel: Number(stockWarningLevel) };
+        const newInventory = {stockAlertLevel: Number(stockAlertLevel), stockWarningLevel: Number(stockWarningLevel)};
         const validationErrors = validateForm(newInventory);
         if (Object.keys(validationErrors).length > 0) {
             setFormError(validationErrors);
@@ -77,10 +76,10 @@ const UpdateStockAlertDialog = ({ open, onClose, productId, inventory, onStockAd
                 <DialogContentText>
                     Enter the details to add stock for the product (Product ID: {productId}).
                 </DialogContentText>
-                <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
-                <ErrorAlert message={errorMessage} />
+                <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')}/>
+                <ErrorAlert message={errorMessage}/>
                 <EditableTextField
-                    label={LABEL.INVENTORY_WAR_LEV}
+                    label={LABEL.WARNING_LEVEL}
                     name="stockWarningLevel"
                     type={"number"}
                     value={stockWarningLevel} // Use state variable
@@ -89,7 +88,7 @@ const UpdateStockAlertDialog = ({ open, onClose, productId, inventory, onStockAd
                     helperText={formError.stockWarningLevel}
                 />
                 <EditableTextField
-                    label={LABEL.INVENTORY_ALR_LEV}
+                    label={LABEL.ALERT_LEVEL}
                     name="stockAlertLevel"
                     type={"number"}
                     value={stockAlertLevel} // Use state variable

@@ -1,22 +1,19 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Box, Typography, Paper, Container, Grid2, FormControlLabel, Breadcrumbs, Switch } from '@mui/material';
-//Service
+import React, {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {Box, Breadcrumbs, Container, FormControlLabel, Grid2, Paper, Switch, Typography} from '@mui/material';
 import CustomerGroupService from '../../../services/CustomerGroupService';
-//Utils
-import { validateRequired, validateLength } from '../../../utils/Validations';
-import { EditableTextField, PageTitle } from "../../../components/PageElements/CommonElements";
-import { SaveButton, CancelButton } from "../../../components/PageElements/Buttons";
-import { Home, CustomerGroupList } from "../../../components/PageElements/BreadcrumbsLinks";
-import { SuccessAlert, ErrorAlert, } from '../../../components/DialogBox/Alerts';
+import {EditableTextField, PageTitle} from "../../../components/PageElements/CommonElements";
+import {CancelButton, SaveButton} from "../../../components/PageElements/Buttons";
+import {CustomerGroupList, Home} from "../../../components/PageElements/BreadcrumbsLinks";
+import {ErrorAlert, SuccessAlert,} from '../../../components/DialogBox/Alerts';
+import {validateForm} from './utils/validateCustomerGroupForm';
 
-import * as LABEL from '../../../utils/const/FieldLabels';
+import * as LABEL from './utils/customerGroupLabels';
 import * as MESSAGE from '../../../utils/const/Message';
-import * as PROPERTY from '../../../utils/const/FieldProperty';
 import * as APP_PROPERTY from '../../../utils/const/AppProperty';
 import * as ROUTES from '../../../utils/const/RouteProperty';
 
-import { useStyles } from "../../../style/makeStyle";
+import {useStyles} from "../../../style/makeStyle";
 
 const CreateCustomerGroup = () => {
     const [name, setName] = useState('');
@@ -25,26 +22,15 @@ const CreateCustomerGroup = () => {
     const [isSaving, setIsSaving] = useState(false);
     const [formError, setFormError] = useState({});
     const [errorMessage, setErrorMessage] = useState('');//Server error
-    const [successMessage, setSuccessMessage] = useState(''); // State for success message
+    const [successMessage, setSuccessMessage] = useState(''); // State for a success message
 
     const navigate = useNavigate();
     const classes = useStyles();
 
-    const validateForm = (customergroup) => {
-        const errors = {};
-        //Name
-        if (!validateRequired(customergroup.name)) errors.name = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.CUSTGRP_NAME);
-        if (!validateLength(customergroup.name, PROPERTY.CUSTGRP_NAME_MIN, PROPERTY.CUSTGRP_NAME_MAX)) errors.name = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.CUSTGRP_NAME).replace(':min', PROPERTY.CUSTGRP_NAME_MIN).replace(':max', PROPERTY.CUSTGRP_NAME_MAX);
-        //Description
-        if (!validateRequired(customergroup.description)) errors.description = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.CUSTGRP_DESC);
-        if (!validateLength(customergroup.description, PROPERTY.CUSTGRP_DESC_MIN, PROPERTY.CUSTGRP_DESC_MAX)) errors.description = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.CUSTGRP_DESC).replace(':min', PROPERTY.CUSTGRP_DESC_MIN).replace(':max', PROPERTY.CUSTGRP_DESC_MAX);
-
-        return errors;
-    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const customerGroup = { name, description, enabled };
+        const customerGroup = {name, description, enabled};
         const validationErrors = validateForm(customerGroup);
         if (Object.keys(validationErrors).length > 0) {
             setFormError(validationErrors);
@@ -52,39 +38,41 @@ const CreateCustomerGroup = () => {
             setIsSaving(true);
             CustomerGroupService.createCustomerGroup(customerGroup)
                 .then(() => {
-                    setSuccessMessage(MESSAGE.CREATE_SUCCESS.replace(':type', LABEL.CUSTGRP)); // Set success message
+                    setSuccessMessage(MESSAGE.CREATE_SUCCESS.replace(':type', LABEL.CUSTOMER_GROUP)); // Set success message
                     setTimeout(() => navigate(ROUTES.CST_GRP_LIST), APP_PROPERTY.ALERT_TIMEOUT); // Delay navigation
                 })
                 .catch((error) => {
                     if (error.response && error.response.data) {
                         setErrorMessage(error.response.data);
                     } else {
-                        setErrorMessage(MESSAGE.CREATE_ERROR_MSG.replace(':type', LABEL.CUSTGRP));
+                        setErrorMessage(MESSAGE.CREATE_ERROR_MSG.replace(':type', LABEL.CUSTOMER_GROUP));
                     }
-                    console.error(MESSAGE.CREATE_ERROR.replace(':type', LABEL.CUSTGRP), error.response);
+                    console.error(MESSAGE.CREATE_ERROR.replace(':type', LABEL.CUSTOMER_GROUP), error.response);
                 });
         }
     };
 
-    const handleCancel = () => { navigate(ROUTES.CST_GRP_LIST); };
+    const handleCancel = () => {
+        navigate(ROUTES.CST_GRP_LIST);
+    };
 
     return (
         <Container className={classes.mainContainer}>
             <Breadcrumbs aria-label="breadcrumb">
-                <Home />
-                <CustomerGroupList />
-                <Typography sx={{ color: 'text.primary' }}>Create Customer Group</Typography>
+                <Home/>
+                <CustomerGroupList/>
+                <Typography sx={{color: 'text.primary'}}>Create Customer Group</Typography>
             </Breadcrumbs>
-            <PageTitle title={LABEL.PAGE_TITLE_CREATE.replace(':type', LABEL.CUSTGRP)} />
+            <PageTitle title={LABEL.PAGE_TITLE_CREATE.replace(':type', LABEL.CUSTOMER_GROUP)}/>
             <Container maxWidth="lg">
-                <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
+                <Paper elevation={4} className={classes.formContainer} sx={{borderRadius: 4}}>
                     <form>
-                        <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
-                        <ErrorAlert message={errorMessage} />
+                        <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')}/>
+                        <ErrorAlert message={errorMessage}/>
                         <Grid2 container spacing={2}>
                             <Grid2 size={12}>
                                 < EditableTextField
-                                    label={LABEL.CUSTGRP_NAME}
+                                    label={LABEL.NAME}
                                     name="name"
                                     value={name}
                                     onChange={(e) => {
@@ -100,7 +88,7 @@ const CreateCustomerGroup = () => {
                             </Grid2>
                             <Grid2 size={12}>
                                 < EditableTextField
-                                    label={LABEL.CUSTGRP_DESC}
+                                    label={LABEL.DESC}
                                     name="description"
                                     value={description}
                                     onChange={(e) => {
@@ -124,13 +112,13 @@ const CreateCustomerGroup = () => {
                                             color="primary"
                                         />
                                     }
-                                    label={LABEL.CUSTGRP_ENABLED}
+                                    label={LABEL.ENABLED}
                                 />
                             </Grid2>
                         </Grid2>
                         <Box className={classes.formButtonsContainer}>
-                            <SaveButton onClick={handleSubmit} isSaving={isSaving} />
-                            <CancelButton onClick={handleCancel} />
+                            <SaveButton onClick={handleSubmit} isSaving={isSaving}/>
+                            <CancelButton onClick={handleCancel}/>
                         </Box>
                     </form>
                 </Paper>

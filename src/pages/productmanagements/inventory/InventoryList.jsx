@@ -1,23 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Typography, Stack, Container, Breadcrumbs } from "@mui/material";
-
-//Service
+import React, {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {Breadcrumbs, Container, Stack, Typography} from "@mui/material";
 import InventoryService from "../../../services/InventoryService";
-
-//Style
-import { formatDateToYYYYMMDD } from '../../../utils/Dateutils';
-import * as LABEL from '../../../utils/const/FieldLabels';
+import {formatDateToYYYYMMDD} from '../../../utils/Dateutils';
+import * as LABEL from './utils/inventoryLabel';
 import * as MESSAGE from '../../../utils/const/Message';
 import * as ROUTES from '../../../utils/const/RouteProperty';
 import DataTable from "../../../components/PageElements/DataTable";
-import { AddNewButton } from "../../../components/PageElements/Buttons";
-import { PageTitle } from "../../../components/PageElements/CommonElements";
-import { SkeletonLoading } from "../../../components/PageElements/Loading";
-import { PreviewIcon } from "../../../components/PageElements/IconButtons";
-import { Home } from "../../../components/PageElements/BreadcrumbsLinks";
+import {AddNewButton} from "../../../components/PageElements/Buttons";
+import {PageTitle} from "../../../components/PageElements/CommonElements";
+import {SkeletonLoading} from "../../../components/PageElements/Loading";
+import {PreviewIcon} from "../../../components/PageElements/IconButtons";
+import {Home} from "../../../components/PageElements/BreadcrumbsLinks";
 import ErrorMessage from "../../../components/DialogBox/ErrorMessage";
-import { useStyles } from "../../../style/makeStyle";
+import {useStyles} from "../../../style/makeStyle";
 
 const InventoryList = () => {
 
@@ -103,13 +99,9 @@ const InventoryList = () => {
             headerClassName: 'super-app-theme--header',
             disableClickEventBubbling: true,
             renderCell: (params) => {
-                const onClick = (e) => {
-                    const currentRow = params.row;
-                    return alert(JSON.stringify(currentRow, null, 4));
-                };
                 return (
                     <Stack direction="row" spacing={2}>
-                        <PreviewIcon url={ROUTES.PRODUCT_VIEW.replace(':id', params.row.product.id)} />
+                        <PreviewIcon url={ROUTES.PRODUCT_VIEW.replace(':id', params.row.product.id)}/>
                     </Stack>
                 );
             },
@@ -131,12 +123,12 @@ const InventoryList = () => {
     }
 
     if (loading) {
-        return <SkeletonLoading />;
+        return <SkeletonLoading/>;
     }
 
     if (error) {
         return (
-            <ErrorMessage message={error} actionText="Retry" onAction={() => window.location.reload()} />
+            <ErrorMessage message={error} actionText="Retry" onAction={() => window.location.reload()}/>
         );
     }
 
@@ -144,7 +136,7 @@ const InventoryList = () => {
         return (
             <div className={classes.errorTitle}>
                 <Typography variant="h6">{MESSAGE.LIST_EMPTY.replace('type', LABEL.INVENTORY)}</Typography>
-                <AddNewButton url={ROUTES.PRODUCT_CREATE} />
+                <AddNewButton url={ROUTES.PRODUCT_CREATE}/>
             </div>
         );
     }
@@ -153,16 +145,17 @@ const InventoryList = () => {
         <Container className={classes.mainContainer}>
             <div role="presentation" onClick={handleClick}>
                 <Breadcrumbs aria-label="breadcrumb">
-                    <Home />
-                    <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Product List</Typography>
+                    <Home/>
+                    <Typography sx={{color: 'text.primary'}} onClick={(e) => e.stopPropagation()}>Product
+                        List</Typography>
                 </Breadcrumbs>
             </div>
-            <PageTitle title={LABEL.PAGE_TITLE_LIST.replace(':type', LABEL.INVENTORY)} />
-            <div style={{ marginBottom: "10px" }}>
-                <AddNewButton url={ROUTES.PRODUCT_CREATE} />
-            </div >
-            <DataTable rows={inventories} columns={columns} getRowId={(row) => row.inventoryId} />
-        </Container >
+            <PageTitle title={LABEL.PAGE_TITLE_LIST.replace(':type', LABEL.INVENTORY)}/>
+            <div style={{marginBottom: "10px"}}>
+                <AddNewButton url={ROUTES.PRODUCT_CREATE}/>
+            </div>
+            <DataTable rows={inventories} columns={columns} getRowId={(row) => row.inventoryId}/>
+        </Container>
     );
 };
 

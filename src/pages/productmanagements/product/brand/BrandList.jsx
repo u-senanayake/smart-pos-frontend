@@ -1,164 +1,163 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Typography, Stack, Container, Breadcrumbs } from "@mui/material";
+import React, {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {Breadcrumbs, Container, Stack, Typography} from "@mui/material";
 
 import DataTable from "../../../../components/PageElements/DataTable";
-import { AddNewButton } from "../../../../components/PageElements/Buttons";
-import { PageTitle } from "../../../../components/PageElements/CommonElements";
-import { SkeletonLoading } from "../../../../components/PageElements/Loading";
-import { EditIcon, DeleteIcon, PreviewIcon } from "../../../../components/PageElements/IconButtons";
-import { Home } from "../../../../components/PageElements/BreadcrumbsLinks";
+import {AddNewButton} from "../../../../components/PageElements/Buttons";
+import {PageTitle} from "../../../../components/PageElements/CommonElements";
+import {SkeletonLoading} from "../../../../components/PageElements/Loading";
+import {DeleteIcon, EditIcon, PreviewIcon} from "../../../../components/PageElements/IconButtons";
+import {Home} from "../../../../components/PageElements/BreadcrumbsLinks";
 import ErrorMessage from "../../../../components/DialogBox/ErrorMessage";
 import DeleteConfirmDialog from "../../../../components/DialogBox/DeleteConfirmDialog";
 import {IconAvatar} from '../../../../components/PageElements/ImageAvatar';
-//Service
 import BrandService from "../../../../services/BrandService";
-//Utils
-import { renderStatusIcon } from "../../../../utils/utils";
+import {renderStatusIcon} from "../../../../utils/utils";
 
-import * as LABEL from '../../../../utils/const/FieldLabels';
+import * as LABEL from './utils/brandLabel';
 import * as MESSAGE from '../../../../utils/const/Message';
 import * as ROUTES from '../../../../utils/const/RouteProperty';
 import * as APP_PROPERTY from '../../../../utils/const/AppProperty';
 
 //Style
-import { useStyles } from "../../../../style/makeStyle";
+import {useStyles} from "../../../../style/makeStyle";
 
 const BrandList = () => {
 
-  const [brands, setBrands] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState(null);
-  const navigate = useNavigate();
+    const [brands, setBrands] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [selectedId, setSelectedId] = useState(null);
+    const navigate = useNavigate();
 
-  const classes = useStyles();
+    const classes = useStyles();
 
-  useEffect(() => {
-    BrandService.getBrands()
-      .then((res) => {
-        setBrands(res.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error(MESSAGE.FEATCHING_ERROR.replace(':type', LABEL.BRAND), error);
-        setError(MESSAGE.FEATCHING_ERROR_MSG.replace(':type', LABEL.BRAND));
-        setLoading(false);
-      });
-  }, []);
+    useEffect(() => {
+        BrandService.getBrands()
+            .then((res) => {
+                setBrands(res.data);
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.error(MESSAGE.FEATCHING_ERROR.replace(':type', LABEL.BRAND), error);
+                setError(MESSAGE.FEATCHING_ERROR_MSG.replace(':type', LABEL.BRAND));
+                setLoading(false);
+            });
+    }, []);
 
-  const deleteBrand = (id) => {
-    BrandService.deleteBrand(id)
-      .then(() => setBrands(brands.filter((brand) => brand.brandId !== id)))
-      .catch((error) => {
-        console.error(MESSAGE.DELETE_ERROR.replace(':type', LABEL.BRAND), error);
-        setError(MESSAGE.DELETE_ERROR_MSG.replace(':type', LABEL.BRAND));
-      });
-  };
+    const deleteBrand = (id) => {
+        BrandService.deleteBrand(id)
+            .then(() => setBrands(brands.filter((brand) => brand.brandId !== id)))
+            .catch((error) => {
+                console.error(MESSAGE.DELETE_ERROR.replace(':type', LABEL.BRAND), error);
+                setError(MESSAGE.DELETE_ERROR_MSG.replace(':type', LABEL.BRAND));
+            });
+    };
 
-  function handleClick(event) {
-    navigate(event.target.href);
-  }
+    function handleClick(event) {
+        navigate(event.target.href);
+    }
 
-  const columns = [
-    {
-      field: 'name',
-      headerName: LABEL.TABLE_NAME,
-      flex: 1,
-      headerClassName: 'super-app-theme--header',
-      headerAlign: 'center',
-      renderCell: (params) => (
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <IconAvatar
-            type={APP_PROPERTY.BRAND_TYPE}
-            typeId={params.row.brandId}
-            imageId={params.row.image?.imageId}
-          />
-          <span>{params.row.name}</span>
-        </Stack>
-      ),
-    },
-    {
-      field: 'description',
-      headerName: LABEL.TABLE_DESCRIPTION,
-      flex: 2,
-      headerClassName: 'super-app-theme--header',
-      headerAlign: 'center',
-    },
-    {
-      field: 'active',
-      headerName: LABEL.TABLE_STATUS,
-      flex: 0.5,
-      filterable: false,
-      headerClassName: 'super-app-theme--header',
-      align: 'center',
-      headerAlign: 'center',
-      renderCell: (params) => (
-        <Stack alignItems="center" justifyContent="center" width="100%" height="100%" sx={{ minHeight: '100%' }}>
-          {renderStatusIcon(params.row.enabled)}
-        </Stack>
-      ),
-    },
-    {
-      field: 'action',
-      headerName: LABEL.TABLE_ACTION,
-      flex: 1,
-      sortable: false,
-      filterable: false,
-      headerClassName: 'super-app-theme--header',
-      headerAlign: 'center',
-      disableClickEventBubbling: true,
-      renderCell: (params) => {
+    const columns = [
+        {
+            field: 'name',
+            headerName: LABEL.TABLE_NAME,
+            flex: 1,
+            headerClassName: 'super-app-theme--header',
+            headerAlign: 'center',
+            renderCell: (params) => (
+                <Stack direction="row" alignItems="center" spacing={1}>
+                    <IconAvatar
+                        type={APP_PROPERTY.BRAND_TYPE}
+                        typeId={params.row.brandId}
+                        imageId={params.row.image?.imageId}
+                    />
+                    <span>{params.row.name}</span>
+                </Stack>
+            ),
+        },
+        {
+            field: 'description',
+            headerName: LABEL.TABLE_DESCRIPTION,
+            flex: 2,
+            headerClassName: 'super-app-theme--header',
+            headerAlign: 'center',
+        },
+        {
+            field: 'active',
+            headerName: LABEL.TABLE_STATUS,
+            flex: 0.5,
+            filterable: false,
+            headerClassName: 'super-app-theme--header',
+            align: 'center',
+            headerAlign: 'center',
+            renderCell: (params) => (
+                <Stack alignItems="center" justifyContent="center" width="100%" height="100%" sx={{minHeight: '100%'}}>
+                    {renderStatusIcon(params.row.enabled)}
+                </Stack>
+            ),
+        },
+        {
+            field: 'action',
+            headerName: LABEL.TABLE_ACTION,
+            flex: 1,
+            sortable: false,
+            filterable: false,
+            headerClassName: 'super-app-theme--header',
+            headerAlign: 'center',
+            disableClickEventBubbling: true,
+            renderCell: (params) => {
+                return (
+                    <Stack direction="row" spacing={2}>
+                        <EditIcon url={ROUTES.BRAND_UPDATE.replace(':brandId', params.row.brandId)}/>
+                        <DeleteIcon
+                            onClick={() => {
+                                setSelectedId(params.row.brandId);
+                                setDialogOpen(true);
+                            }}
+                        />
+                        <PreviewIcon url={ROUTES.BRAND_VIEW.replace(':brandId', params.row.brandId)}/>
+                    </Stack>
+                );
+            },
+        },
+    ];
+
+    if (loading) {
+        return <SkeletonLoading/>;
+    }
+
+    if (error) {
         return (
-          <Stack direction="row" spacing={2}>
-            <EditIcon url={ROUTES.BRAND_UPDATE.replace(':brandId', params.row.brandId)} />
-            <DeleteIcon
-              onClick={() => {
-                setSelectedId(params.row.brandId);
-                setDialogOpen(true);
-              }}
-            />
-            <PreviewIcon url={ROUTES.BRAND_VIEW.replace(':brandId', params.row.brandId)} />
-          </Stack>
+            <ErrorMessage message={error} actionText="Retry" onAction={() => window.location.reload()}/>
         );
-      },
-    },
-  ];
+    }
 
-  if (loading) {
-    return <SkeletonLoading />;
-  }
+    if (brands.length === 0) {
+        return (
+            <div className={classes.errorTitle}>
+                <Typography variant="h6">{MESSAGE.LIST_EMPTY.replace('type', LABEL.BRAND)}</Typography>
+                <AddNewButton url={ROUTES.BRAND_CREATE}/>
+            </div>
+        );
+    }
 
-  if (error) {
     return (
-      <ErrorMessage message={error} actionText="Retry" onAction={() => window.location.reload()} />
+        <Container className={classes.mainContainer}>
+            <Breadcrumbs aria-label="breadcrumb">
+                <Home/>
+                <Typography sx={{color: 'text.primary'}} onClick={(e) => e.stopPropagation()}>Brand List</Typography>
+            </Breadcrumbs>
+            <PageTitle title={LABEL.PAGE_TITLE_LIST.replace(':type', LABEL.BRAND)}/>
+            <div style={{marginBottom: "10px"}}>
+                <AddNewButton url={ROUTES.BRAND_CREATE}/>
+            </div>
+            <DataTable rows={brands} columns={columns} getRowId={(row) => row.brandId}/>
+            <DeleteConfirmDialog open={dialogOpen} onDelete={deleteBrand} onCancel={() => setDialogOpen(false)}
+                                 id={selectedId} type={LABEL.BRAND}/>
+        </Container>
     );
-  }
-
-  if (brands.length === 0) {
-    return (
-      <div className={classes.errorTitle}>
-        <Typography variant="h6">{MESSAGE.LIST_EMPTY.replace('type', LABEL.BRAND)}</Typography>
-        <AddNewButton url={ROUTES.BRAND_CREATE} />
-      </div>
-    );
-  }
-
-  return (
-    <Container className={classes.mainContainer}>
-      <Breadcrumbs aria-label="breadcrumb">
-        <Home />
-        <Typography sx={{ color: 'text.primary' }} onClick={(e) => e.stopPropagation()}>Brand List</Typography>
-      </Breadcrumbs>
-      <PageTitle title={LABEL.PAGE_TITLE_LIST.replace(':type', LABEL.BRAND)} />
-      <div style={{ marginBottom: "10px" }}>
-        <AddNewButton url={ROUTES.BRAND_CREATE} />
-      </div >
-      <DataTable rows={brands} columns={columns} getRowId={(row) => row.brandId} />
-      <DeleteConfirmDialog open={dialogOpen} onDelete={deleteBrand} onCancel={() => setDialogOpen(false)} id={selectedId} type={LABEL.BRAND} />
-    </Container>
-  );
 };
 
 export default BrandList;

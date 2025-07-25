@@ -1,29 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Container, FormControlLabel, Grid2, Breadcrumbs, Switch } from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
-//Service
+import React, {useEffect, useState} from 'react';
+import {Box, Breadcrumbs, Container, FormControlLabel, Grid2, Paper, Switch, Typography} from '@mui/material';
+import {useNavigate, useParams} from 'react-router-dom';
 import CustomerService from '../../../services/CustomerService';
 import CustomerGroupService from '../../../services/CustomerGroupService';
-//Utils
-import { validateEmail, validateRequired, validateLength, validateExactLength } from '../../../utils/Validations';
+import {Loading,} from '../../../components/PageElements/Loading';
+import {CustomerList, Home} from "../../../components/PageElements/BreadcrumbsLinks";
+import {CancelButton, UpdateButton} from "../../../components/PageElements/Buttons";
+import {
+    EditableDropDown,
+    EditableTextField,
+    PageTitle,
+    ReadOnlyField
+} from "../../../components/PageElements/CommonElements";
+import {ErrorAlert, SuccessAlert,} from '../../../components/DialogBox/Alerts';
 
-import { Loading, } from '../../../components/PageElements/Loading';
-import { Home, CustomerList } from "../../../components/PageElements/BreadcrumbsLinks";
-import { UpdateButton, CancelButton } from "../../../components/PageElements/Buttons";
-import { EditableTextField, EditableDropDown, PageTitle, ReadOnlyField } from "../../../components/PageElements/CommonElements";
-import { SuccessAlert, ErrorAlert, } from '../../../components/DialogBox/Alerts';
-
-import { useStyles } from "../../../style/makeStyle";
+import {useStyles} from "../../../style/makeStyle";
 
 import * as MESSAGE from '../../../utils/const/Message';
-import * as PROPERTY from '../../../utils/const/FieldProperty';
-import * as LABEL from '../../../utils/const/FieldLabels';
+import * as LABEL from './utils/customerLabels';
 import * as APP_PROPERTY from '../../../utils/const/AppProperty';
 import * as ROUTES from '../../../utils/const/RouteProperty';
+import {validateForm} from "./utils/validateCustomerForm";
 
 const UpdateCustomer = () => {
 
-    const { customerId } = useParams();
+    const {customerId} = useParams();
     const [customer, setCustomer] = useState({
         username: '',
         firstName: '',
@@ -53,8 +54,8 @@ const UpdateCustomer = () => {
         CustomerGroupService.getCustomerGroups()
             .then((res) => setCustomerGroups(res.data))
             .catch((error) => {
-                console.error(MESSAGE.FEATCHING_ERROR.replace(':type', LABEL.CUSTGRP), error);
-                setErrorMessage(MESSAGE.FEATCHING_ERROR_MSG.replace(':type', LABEL.CUSTGRP));
+                console.error(MESSAGE.FEATCHING_ERROR.replace(':type', LABEL.CUSTOMER_GROUP), error);
+                setErrorMessage(MESSAGE.FEATCHING_ERROR_MSG.replace(':type', LABEL.CUSTOMER_GROUP));
             }).finally(() => setLoading(false));
     }, []);
 
@@ -70,33 +71,9 @@ const UpdateCustomer = () => {
             }).finally(() => setLoading(false));
     }, [customerId]);
 
-    const validateForm = (customer) => {
-        const errors = {};
-        //Username
-        if (!validateRequired(customer.username)) errors.username = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.CUSTOMER_USERNAME);
-        if (!validateLength(customer.username, PROPERTY.CUSTOMER_USERNAME_MIN, PROPERTY.CUSTOMER_USERNAME_MAX)) errors.username = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.CUSTOMER_USERNAME).replace(':min', PROPERTY.CUSTOMER_USERNAME_MIN).replace(':max', PROPERTY.CUSTOMER_USERNAME_MAX);
-        //First Name
-        if (!validateRequired(customer.firstName)) errors.firstName = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.CUSTOMER_FIRST_NAME);
-        if (!validateLength(customer.firstName, PROPERTY.CUSTOMER_NAME_MIN, PROPERTY.CUSTOMER_NAME_MAX)) errors.firstName = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.CUSTOMER_FIRST_NAME).replace(':min', PROPERTY.CUSTOMER_NAME_MIN).replace(':max', PROPERTY.CUSTOMER_NAME_MAX);
-        //Last Name
-        if (!validateRequired(customer.lastName)) errors.lastName = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.CUSTOMER_LAST_NAME);
-        if (!validateLength(customer.lastName, PROPERTY.CUSTOMER_NAME_MIN, PROPERTY.CUSTOMER_NAME_MAX)) errors.lastName = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.CUSTOMER_LAST_NAME).replace(':min', PROPERTY.CUSTOMER_NAME_MIN).replace(':max', PROPERTY.CUSTOMER_NAME_MAX);
-        //Email
-        if (!validateRequired(customer.email)) errors.email = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.CUSTOMER_EMAIL);
-        if (!validateEmail(customer.email)) errors.email = MESSAGE.INVALID_EMAIL;
-        //Phone Number
-        if (!validateRequired(customer.phoneNo1)) errors.phoneNo1 = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.CUSTOMER_PHONE);
-        if (!validateExactLength(customer.phoneNo1, PROPERTY.USER_PHONE_LENGTH)) errors.phoneNo1 = MESSAGE.FIELD_LENGTH.replace(':fieldName', LABEL.CUSTOMER_PHONE1).replace(':number', PROPERTY.USER_PHONE_LENGTH);
-        //Address
-        if (!validateRequired(customer.address)) errors.address = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.CUSTOMER_ADDRS);
-        if (!validateLength(customer.address, PROPERTY.CUSTOMER_ADDRESS_MIN, PROPERTY.CUSTOMER_ADDRESS_MAX)) errors.address = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.CUSTOMER_ADDRS).replace(':min', PROPERTY.CUSTOMER_ADDRESS_MIN).replace(':max', PROPERTY.CUSTOMER_ADDRESS_MAX);
-        //Customer Group
-        if (!validateRequired(customer.customerGroup)) errors.customerGroup = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.CUSTOMER_GROUP);
-        return errors;
-    };
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setCustomer((prevCustomer) => ({
             ...prevCustomer,
             [name]: value
@@ -104,7 +81,7 @@ const UpdateCustomer = () => {
     };
 
     const handleCheckboxChange = (e) => {
-        const { name, checked } = e.target;
+        const {name, checked} = e.target;
         setCustomer((prevCustomer) => ({
             ...prevCustomer,
             [name]: checked
@@ -112,7 +89,7 @@ const UpdateCustomer = () => {
     };
 
     const handleCustomerGroupChange = (e) => {
-        const { value } = e.target;
+        const {value} = e.target;
         setCustomer((prevCustomer) => ({
             ...prevCustomer,
             customerGroup: {
@@ -150,31 +127,34 @@ const UpdateCustomer = () => {
         }
     };
 
-    const handleCancel = () => { navigate(ROUTES.CUSTOMER_LIST); };
+    const handleCancel = () => {
+        navigate(ROUTES.CUSTOMER_LIST);
+    };
 
     if (loading) {
-        return <Loading />;
+        return <Loading/>;
     }
 
     return (
         <Container className={classes.mainContainer}>
             <Breadcrumbs aria-label="breadcrumb">
-                <Home />
-                <CustomerList />
-                <Typography sx={{ color: 'text.primary' }}>Edit Customer</Typography>
+                <Home/>
+                <CustomerList/>
+                <Typography sx={{color: 'text.primary'}}>Edit Customer</Typography>
             </Breadcrumbs>
-            <PageTitle title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.CUSTOMER).replace(':name', customer.firstName)} />
+            <PageTitle
+                title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.CUSTOMER).replace(':name', customer.firstName)}/>
             <Container maxWidth="lg">
-                <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
+                <Paper elevation={4} className={classes.formContainer} sx={{borderRadius: 4}}>
                     <form>
-                        <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
-                        <ErrorAlert message={errorMessage} />
+                        <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')}/>
+                        <ErrorAlert message={errorMessage}/>
                         <Grid2 container spacing={2}>
                             <Grid2 size={4}>
-                                <ReadOnlyField label={LABEL.CUSTOMER_ID} value={customer.customerId} />
+                                <ReadOnlyField label={LABEL.CUSTOMER_ID} value={customer.customerId}/>
                             </Grid2>
                             <Grid2 size={8}>
-                                <ReadOnlyField label={LABEL.CUSTOMER_USERNAME} value={customer.username} />
+                                <ReadOnlyField label={LABEL.CUSTOMER_USERNAME} value={customer.username}/>
                             </Grid2>
                             <Grid2 size={6}>
                                 <EditableDropDown
@@ -182,7 +162,10 @@ const UpdateCustomer = () => {
                                     name="customergroup"
                                     value={customer.customerGroup.customerGroupId}
                                     onChange={handleCustomerGroupChange}
-                                    options={customerGroups.map((customerGroup) => ({ value: customerGroup.customerGroupId, label: customerGroup.name }))}
+                                    options={customerGroups.map((customerGroup) => ({
+                                        value: customerGroup.customerGroupId,
+                                        label: customerGroup.name
+                                    }))}
                                     error={!!formError.customerGroup}
                                     helperText={formError.customerGroup}
                                     required
@@ -277,8 +260,8 @@ const UpdateCustomer = () => {
                             </Grid2>
                         </Grid2>
                         <Box className={classes.formButtonsContainer}>
-                            <UpdateButton onClick={handleSubmit} isSaving={isSaving} />
-                            <CancelButton onClick={handleCancel} />
+                            <UpdateButton onClick={handleSubmit} isSaving={isSaving}/>
+                            <CancelButton onClick={handleCancel}/>
                         </Box>
                     </form>
                 </Paper>

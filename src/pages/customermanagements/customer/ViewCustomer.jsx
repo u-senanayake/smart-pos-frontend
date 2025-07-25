@@ -1,25 +1,25 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { Container, Typography, Box, Paper, Grid2, Breadcrumbs, } from "@mui/material";
+import React, {useEffect, useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
+import {Box, Breadcrumbs, Container, Grid2, Paper, Typography,} from "@mui/material";
 //Service
 import CustomerService from '../../../services/CustomerService';
 //Utils
-import { formatDate } from "../../../utils/Dateutils";
+import {formatDate} from "../../../utils/Dateutils";
 
-import { Loading, } from "../../../components/PageElements/Loading";
+import {Loading,} from "../../../components/PageElements/Loading";
 import ErrorMessage from "../../../components/DialogBox/ErrorMessage";
-import { ReadOnlyField, PageTitle } from "../../../components/PageElements/CommonElements";
-import { Home, CustomerList } from "../../../components/PageElements/BreadcrumbsLinks";
-import { EditButton, CancelButton } from "../../../components/PageElements/Buttons";
-import { EnabledIcon, LockedIcon } from "../../../components/PageElements/IconButtons";
-import { useStyles } from "../../../style/makeStyle";
+import {PageTitle, ReadOnlyField} from "../../../components/PageElements/CommonElements";
+import {CustomerList, Home} from "../../../components/PageElements/BreadcrumbsLinks";
+import {CancelButton, EditButton} from "../../../components/PageElements/Buttons";
+import {EnabledIcon, LockedIcon} from "../../../components/PageElements/IconButtons";
+import {useStyles} from "../../../style/makeStyle";
 
 import * as MESSAGE from '../../../utils/const/Message';
-import * as LABEL from '../../../utils/const/FieldLabels';
+import * as LABEL from './utils/customerLabels';
 import * as ROUTES from '../../../utils/const/RouteProperty';
 
 const ViewCustomer = () => {
-    const { customerId } = useParams();
+    const {customerId} = useParams();
     const [customer, setCustomer] = useState(null);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState(null);
@@ -44,7 +44,7 @@ const ViewCustomer = () => {
     };
 
     if (loading) {
-        return <Loading />;
+        return <Loading/>;
     }
 
     if (errorMessage) {
@@ -60,65 +60,72 @@ const ViewCustomer = () => {
     return (
         <Container className={classes.mainContainer}>
             <Breadcrumbs aria-label="breadcrumb">
-                <Home />
-                <CustomerList />
-                <Typography sx={{ color: 'text.primary' }}>View Customer</Typography>
+                <Home/>
+                <CustomerList/>
+                <Typography sx={{color: 'text.primary'}}>View Customer</Typography>
             </Breadcrumbs>
-            <PageTitle title={LABEL.PAGE_TITLE_VIEW.replace(':type', LABEL.CUSTOMER).replace(':name', customer.firstName)} />
+            <PageTitle
+                title={LABEL.PAGE_TITLE_VIEW.replace(':type', LABEL.CUSTOMER).replace(':name', customer.firstName)}/>
             <Container maxWidth="lg">
-                <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
+                <Paper elevation={4} className={classes.formContainer} sx={{borderRadius: 4}}>
                     <Grid2 container spacing={2}>
                         <Grid2 size={4}>
-                            <ReadOnlyField label={LABEL.CUSTOMER_ID} value={customer.customerId} />
+                            <ReadOnlyField label={LABEL.CUSTOMER_ID} value={customer.customerId}/>
                         </Grid2>
-                        <Grid2 size={8}><ReadOnlyField label={LABEL.CUSTOMER_USERNAME} value={customer.username} /></Grid2>
+                        <Grid2 size={8}><ReadOnlyField label={LABEL.CUSTOMER_USERNAME}
+                                                       value={customer.username}/></Grid2>
                         <Grid2 size={6}>
-                            <ReadOnlyField label={LABEL.CUSTOMER_GROUP} value={customer.customerGroup.name} />
-                        </Grid2>
-                        <Grid2 size={6}>
-                            <ReadOnlyField label={LABEL.CUSTOMER_NAME} value={`${customer.firstName} ${customer.lastName}`} />
+                            <ReadOnlyField label={LABEL.CUSTOMER_GROUP} value={customer.customerGroup.name}/>
                         </Grid2>
                         <Grid2 size={6}>
-                            <ReadOnlyField label={LABEL.CUSTOMER_EMAIL} value={customer.email} />
+                            <ReadOnlyField label={LABEL.CUSTOMER_NAME}
+                                           value={`${customer.firstName} ${customer.lastName}`}/>
                         </Grid2>
                         <Grid2 size={6}>
-                            <ReadOnlyField label={LABEL.CUSTOMER_PHONE} value={customer.phoneNo1} />
+                            <ReadOnlyField label={LABEL.CUSTOMER_EMAIL} value={customer.email}/>
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <ReadOnlyField label={LABEL.CUSTOMER_PHONE} value={customer.phoneNo1}/>
                         </Grid2>
                         <Grid2 size={12}>
-                            <ReadOnlyField label={LABEL.CUSTOMER_ADDRS} value={customer.address} />
+                            <ReadOnlyField label={LABEL.CUSTOMER_ADDRS} value={customer.address}/>
                         </Grid2>
                         <Grid2 size={6}>
-                            <EnabledIcon enabled={customer.enabled} />
+                            <EnabledIcon enabled={customer.enabled}/>
                         </Grid2>
                         <Grid2 size={6}>
-                            <LockedIcon locked={customer.locked} />
+                            <LockedIcon locked={customer.locked}/>
                         </Grid2>
                         <Grid2 size={6}>
-                            <ReadOnlyField label={LABEL.CUSTOMER_CREATED_AT} value={formatDate(customer.createdAt)} />
+                            <ReadOnlyField label={LABEL.CUSTOMER_CREATED_AT} value={formatDate(customer.createdAt)}/>
                         </Grid2>
                         <Grid2 size={6}>
-                            <ReadOnlyField label={LABEL.CUSTOMER_CREATED_BY} value={`${customer.createdUser.firstName} ${customer.createdUser.lastName} (${customer.createdUser.username})`} />
+                            <ReadOnlyField label={LABEL.CUSTOMER_CREATED_BY}
+                                           value={`${customer.createdUser.firstName} ${customer.createdUser.lastName} (${customer.createdUser.username})`}/>
                         </Grid2>
                         <Grid2 size={6}>
-                            <ReadOnlyField label={LABEL.CUSTOMER_UPDATED_AT} value={formatDate(customer.updatedAt)} />
+                            <ReadOnlyField label={LABEL.CUSTOMER_UPDATED_AT} value={formatDate(customer.updatedAt)}/>
                         </Grid2>
                         <Grid2 size={6}>
-                            <ReadOnlyField label={LABEL.CUSTOMER_UPDATED_BY} value={`${customer.updatedUser.firstName} ${customer.updatedUser.lastName} (${customer.updatedUser.username})`} />
+                            <ReadOnlyField label={LABEL.CUSTOMER_UPDATED_BY}
+                                           value={`${customer.updatedUser.firstName} ${customer.updatedUser.lastName} (${customer.updatedUser.username})`}/>
                         </Grid2>
                         {customer.deleted && (
                             <>
                                 <Grid2 size={6}>
-                                    <ReadOnlyField label={LABEL.CUSTOMER_DELETED_AT} value={formatDate(customer.deletedAt)} />
+                                    <ReadOnlyField label={LABEL.CUSTOMER_DELETED_AT}
+                                                   value={formatDate(customer.deletedAt)}/>
                                 </Grid2>
                                 <Grid2 size={6}>
-                                    <ReadOnlyField label={LABEL.CUSTOMER_DELETED_BY} value={`${customer.deletedUser?.firstName} ${customer.deletedUser?.lastName} (${customer.deletedUser?.username})`} />
+                                    <ReadOnlyField label={LABEL.CUSTOMER_DELETED_BY}
+                                                   value={`${customer.deletedUser?.firstName} ${customer.deletedUser?.lastName} (${customer.deletedUser?.username})`}/>
                                 </Grid2>
                             </>
                         )}
                     </Grid2>
                     <Box className={classes.formButtonsContainer}>
-                        <EditButton onClick={handleUpdate} />
-                        <CancelButton onClick={handleCancel} />
+                        <EditButton onClick={handleUpdate}/>
+                        <CancelButton onClick={handleCancel}/>
                     </Box>
                 </Paper>
             </Container>
