@@ -20,7 +20,7 @@ import * as APP_PROPERTY from '../../../utils/const/AppProperty';
 import * as ROUTES from '../../../utils/const/RouteProperty';
 
 import {useStyles} from "../../../style/makeStyle";
-import ImageCreate from '../../../components/PageElements/ImageCreate';
+import ImageCreate from '../../../components/image/ImageCreate';
 
 const CreateProduct = () => {
     const [product, setProduct] = useState({

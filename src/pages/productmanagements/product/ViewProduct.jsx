@@ -12,8 +12,8 @@ import {Home, ProductList} from "../../../components/PageElements/BreadcrumbsLin
 import {CancelButton, EditButton} from "../../../components/PageElements/Buttons";
 import {EnabledIcon,} from "../../../components/PageElements/IconButtons";
 import {useStyles} from "../../../style/makeStyle";
-import ImageSlider from '../../../components/PageElements/ImageSlider';
-import {ImageAvatar} from '../../../components/PageElements/ImageAvatar';
+import ImageSlider from '../../../components/image/ImageSlider';
+import {ImageAvatar} from '../../../components/image/ImageAvatar';
 import * as LABEL from './utils/productLabel';
 import * as APP_PROPERTY from '../../../utils/const/AppProperty';
 import * as MESSAGE from '../../../utils/const/Message';

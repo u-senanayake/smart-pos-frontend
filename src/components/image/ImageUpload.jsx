@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { Paper, Box, Typography } from "@mui/material";
 
-import * as LABEL from '../../utils/const/FieldLabels';
 import * as MESSAGE from '../../utils/const/Message';
 import ImageService from '../../services/ImageService';
 
-function ImageUpload({ classes, imageType, typeId, setSuccessMessage, setErrorMessage , refreshImageList}) {
+function ImageUpload({ classes, imageType, typeId, setSuccessMessage, setErrorMessage , refreshImageList, typeLabel}) {
 
     const [file, setFile] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
@@ -22,7 +21,7 @@ function ImageUpload({ classes, imageType, typeId, setSuccessMessage, setErrorMe
         formData.append("file", file);
         ImageService.uploadImage(formData, imageType, typeId)
             .then(() => {
-                setSuccessMessage(MESSAGE.UPDATE_SUCCESS.replace(':type', LABEL.PRODUCT));
+                setSuccessMessage(MESSAGE.UPDATE_SUCCESS.replace(':type', typeLabel));
                 refreshImageList();
             })
             .catch((error) => {
@@ -34,9 +33,9 @@ function ImageUpload({ classes, imageType, typeId, setSuccessMessage, setErrorMe
                         : (errData.message || JSON.stringify(errData));
                     setErrorMessage(errMsg);
                 } else {
-                    setErrorMessage(MESSAGE.UPDATE_ERROR_MSG.replace(':type', LABEL.PRODUCT));
+                    setErrorMessage(MESSAGE.UPDATE_ERROR_MSG.replace(':type', typeLabel));
                 }
-                console.error(MESSAGE.UPDATE_ERROR.replace(':type', LABEL.PRODUCT), error.response);
+                console.error(MESSAGE.UPDATE_ERROR.replace(':type', typeLabel), error.response);
             })
             .finally(() => {
                 setIsUploading(false);

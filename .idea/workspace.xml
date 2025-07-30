@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b42bc28e-1b91-4597-8439-520b15221238" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/smart-pos-frontend.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/customermanagements/customer/utils/customerFieldProperty.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/customermanagements/customer/utils/customerLabels.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/customermanagements/customer/utils/validateCustomerForm.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/customermanagements/customergroup/utils/customerGroupFieldProperty.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/customermanagements/customergroup/utils/customerGroupLabels.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/customermanagements/customergroup/utils/validateCustomerGroupForm.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/productmanagements/inventory/utils/inventoryLabel.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/brand/utils/brandFieldProperty.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/brand/utils/brandLabel.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/brand/utils/validateBrandForm.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/category/utils/categoryFieldProperty.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/category/utils/categoryLabel.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/category/utils/validateCategoryForm.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/distributor/utils/distributerFieldProperty.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/distributor/utils/distributorLabel.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/distributor/utils/validateDistributorForm.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/utils/productFieldProperty.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/utils/productLabel.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/utils/validateProductForm.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/PageElements/CommonElements.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PageElements/CommonElements.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/PageElements/Image.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PageElements/Image.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/customermanagements/customer/CreateCustomer.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/customermanagements/customer/CreateCustomer.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/customermanagements/customer/CustomerList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/customermanagements/customer/CustomerList.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/customermanagements/customer/UpdateCustomer.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/customermanagements/customer/UpdateCustomer.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/customermanagements/customer/ViewCustomer.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/customermanagements/customer/ViewCustomer.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/customermanagements/customergroup/CreateCustomerGroup.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/customermanagements/customergroup/CreateCustomerGroup.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/customermanagements/customergroup/CustomerGroupList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/customermanagements/customergroup/CustomerGroupList.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/customermanagements/customergroup/UpdateCustomerGroup.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/customermanagements/customergroup/UpdateCustomerGroup.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/customermanagements/customergroup/ViewCustomerGroup.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/customermanagements/customergroup/ViewCustomerGroup.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/productmanagements/inventory/AddStockDialog.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/productmanagements/inventory/AddStockDialog.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/productmanagements/inventory/AdjustStockDialog.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/productmanagements/inventory/AdjustStockDialog.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/productmanagements/inventory/InventoryList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/productmanagements/inventory/InventoryList.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/productmanagements/inventory/UpdateStockAlertDialog.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/productmanagements/inventory/UpdateStockAlertDialog.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/productmanagements/product/CreateProduct.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/CreateProduct.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/productmanagements/product/ProductList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/ProductList.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/productmanagements/product/UpdateProduct.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/UpdateProduct.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/productmanagements/product/ViewProduct.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/ViewProduct.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/productmanagements/product/brand/BrandList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/brand/BrandList.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/productmanagements/product/brand/CreateBrand.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/brand/CreateBrand.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/productmanagements/product/brand/Updatebrand.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/brand/Updatebrand.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/productmanagements/product/brand/ViewBrand.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/brand/ViewBrand.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/productmanagements/product/category/CategoryList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/category/CategoryList.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/productmanagements/product/category/CreateCategory.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/category/CreateCategory.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/productmanagements/product/category/UpdateCategory.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/category/UpdateCategory.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/productmanagements/product/category/ViewCategory.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/category/ViewCategory.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/productmanagements/product/distributor/CreateDistributor.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/distributor/CreateDistributor.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/productmanagements/product/distributor/DistributorList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/distributor/DistributorList.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/productmanagements/product/distributor/UpdateDistributor.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/distributor/UpdateDistributor.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/productmanagements/product/distributor/ViewDistributor.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/productmanagements/product/distributor/ViewDistributor.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/const/FieldLabels.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/const/FieldLabels.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/const/FieldProperty.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/const/FieldProperty.jsx" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FormatOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;u-senanayake&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/u-senanayake/smart-pos-frontend.git&quot;,
+    &quot;accountId&quot;: &quot;6b47c394-9bde-4b8e-9fab-f490ce0c2220&quot;
+  }
+}</component>
+  <component name="OptimizeOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="30M9Nyryb0NwNZOcJpxUdUatzIH" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Node.js.CreateCustomer.jsx.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "latest-ui-change",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "C:/dev/src/workspace-smartpos/smart-pos-frontend",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "actions.on.save",
+    "ts.external.directory.path": "C:\\dev\\ide\\IntelliJ IDEA 2025.1\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\dev\src\workspace-smartpos\smart-pos-frontend\src\pages\customermanagements\customer\utils" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.26927.53" />
+        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.26927.53" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b42bc28e-1b91-4597-8439-520b15221238" name="Changes" comment="" />
+      <created>1753426538843</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1753426538843</updated>
+      <workItem from="1753426540231" duration="729000" />
+      <workItem from="1753427637482" duration="474000" />
+      <workItem from="1753428283071" duration="7275000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

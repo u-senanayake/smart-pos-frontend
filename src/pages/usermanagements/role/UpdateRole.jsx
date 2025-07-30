@@ -13,9 +13,9 @@ import { SuccessAlert, ErrorAlert, } from '../../../components/DialogBox/Alerts'
 
 import { useStyles } from "../../../style/makeStyle";
 
+import * as LABEL from './utils/roleLabel';
+import * as PROPERTY from './utils/roleFieldProperty';
 import * as MESSAGE from '../../../utils/const/Message';
-import * as PROPERTY from '../../../utils/const/FieldProperty';
-import * as LABEL from '../../../utils/const/FieldLabels';
 import * as APP_PROPERTY from '../../../utils/const/AppProperty';
 import * as ROUTES from '../../../utils/const/RouteProperty';
 
@@ -95,7 +95,7 @@ const UpdateRole = () => {
                 <Typography sx={{ color: 'text.primary' }}>Edit Role</Typography>
             </Breadcrumbs>
 
-            <PageTitle title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.ROLE) .replace(':name', roleName)} />
+            <PageTitle title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.ROLE).replace(':name', roleName)} />
             <Container maxWidth="sm" >
                 <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
                     <form>

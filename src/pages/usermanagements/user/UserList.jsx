@@ -16,7 +16,7 @@ import UserService from "../../../services/UserService";
 //Utils
 import { formatPhoneNumber, renderStatusIcon, renderLockIcon, } from "../../../utils/utils";
 
-import * as LABEL from '../../../utils/const/FieldLabels';
+import * as LABEL from './utils/userLabel';
 import * as MESSAGE from '../../../utils/const/Message';
 import * as ROUTES from '../../../utils/const/RouteProperty';
 

@@ -4,18 +4,15 @@ import { useNavigate } from 'react-router-dom';
 
 import UserService from '../../../services/UserService';
 import RoleService from '../../../services/RoleService';
-
-import { validateEmail, validatePassword, validateRequired, validateLength, validateExactLength } from '../../../utils/Validations';
-
 import { Loading } from '../../../components/PageElements/Loading';
 import { Home, UserList } from "../../../components/PageElements/BreadcrumbsLinks";
 import { EditableTextField, EditableDropDown, PageTitle } from "../../../components/PageElements/CommonElements";
 import { SaveButton, CancelButton } from "../../../components/PageElements/Buttons";
 import { SuccessAlert, ErrorAlert, } from '../../../components/DialogBox/Alerts';
+import { validateForm } from './utils/validateUserForm';
 
-import * as LABEL from '../../../utils/const/FieldLabels';
+import * as LABEL from './utils/userLabel';
 import * as MESSAGE from '../../../utils/const/Message';
-import * as PROPERTY from '../../../utils/const/FieldProperty';
 import * as APP_PROPERTY from '../../../utils/const/AppProperty';
 import * as ROUTES from '../../../utils/const/RouteProperty';
 
@@ -46,33 +43,6 @@ const CreateUser = () => {
   const navigate = useNavigate();
   const classes = useStyles();
 
-  const validateForm = (user) => {
-    const errors = {};
-    //Username
-    if (!validateRequired(user.username)) errors.username = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.USER_USERNAME);
-    if (!validateLength(user.username, PROPERTY.USER_USERNAME_MIN, PROPERTY.USER_NAME_MAX)) errors.username = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.USER_USERNAME).replace(':min', PROPERTY.USER_USERNAME_MIN).replace(':max', PROPERTY.USER_NAME_MAX);
-    //Role
-    if (!validateRequired(user.role)) errors.role = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.USER_ROLE);
-    //First Name
-    if (!validateRequired(user.firstName)) errors.firstName = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.USER_FIRST_NAME);
-    if (!validateLength(user.firstName, PROPERTY.USER_NAME_MIN, PROPERTY.USER_NAME_MAX)) errors.firstName = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.USER_FIRST_NAME).replace(':min', PROPERTY.USER_NAME_MIN).replace(':max', PROPERTY.USER_NAME_MAX);
-    //Last Name
-    if (!validateRequired(user.lastName)) errors.lastName = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.USER_LAST_NAME);
-    if (!validateLength(user.lastName, PROPERTY.USER_NAME_MIN, PROPERTY.USER_NAME_MAX)) errors.lastName = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.USER_LAST_NAME).replace(':min', PROPERTY.USER_NAME_MIN).replace(':max', PROPERTY.USER_NAME_MAX);
-    //Email
-    if (!validateRequired(user.email)) errors.email = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.USER_EMAIL);
-    if (!validateEmail(user.email)) errors.email = MESSAGE.INVALID_EMAIL;
-    //Address
-    if (!validateRequired(user.address)) errors.address = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.USER_ADDRS);
-    if (!validateLength(user.address, PROPERTY.USER_ADDRESS_MIN, PROPERTY.USER_ADDRESS_MAX)) errors.address = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.USER_ADDRS).replace(':min', PROPERTY.USER_ADDRESS_MIN).replace(':max', PROPERTY.USER_ADDRESS_MAX);
-    //Phone 1
-    if (!validateRequired(user.phoneNo1)) errors.phoneNo1 = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.USER_PHONE1);
-    if (!validateExactLength(user.phoneNo1, PROPERTY.USER_PHONE_LENGTH)) errors.phoneNo1 = MESSAGE.FIELD_LENGTH.replace(':fieldName', LABEL.USER_PHONE1).replace(':number', PROPERTY.USER_PHONE_LENGTH);
-    //password
-    if (!validatePassword(user.password)) errors.password = MESSAGE.FIELD_LENGTH2.replace(':fieldName', LABEL.USER_PASS).replace(':number', PROPERTY.USER_PASS_LENGTH);
-    if (user.password !== user.confirmPassword) errors.confirmPassword = MESSAGE.INVALID_PASS;
-    return errors;
-  };
 
   useEffect(() => {
     RoleService.getRoles()
@@ -177,7 +147,7 @@ const CreateUser = () => {
             <Grid2 container spacing={2}>
               <Grid2 size={6}>
                 <EditableTextField
-                  label={LABEL.USER_USERNAME}
+                  label={LABEL.USERNAME}
                   name="username"
                   value={user.username}
                   onChange={handleChange}
@@ -187,7 +157,7 @@ const CreateUser = () => {
               </Grid2>
               <Grid2 size={6}>
                 <EditableDropDown
-                  label={LABEL.USER_ROLE}
+                  label={LABEL.ROLE}
                   name="role"
                   value={user.role.roleId}
                   onChange={handleRoleChange}
@@ -199,7 +169,7 @@ const CreateUser = () => {
               </Grid2>
               <Grid2 size={6}>
                 <EditableTextField
-                  label={LABEL.USER_FIRST_NAME}
+                  label={LABEL.FIRST_NAME}
                   name="firstName"
                   value={user.firstName}
                   onChange={handleChange}
@@ -209,7 +179,7 @@ const CreateUser = () => {
               </Grid2>
               <Grid2 size={6}>
                 <EditableTextField
-                  label={LABEL.USER_LAST_NAME}
+                  label={LABEL.LAST_NAME}
                   name="lastName"
                   value={user.lastName}
                   onChange={handleChange}
@@ -219,7 +189,7 @@ const CreateUser = () => {
               </Grid2>
               <Grid2 size={12}>
                 <EditableTextField
-                  label={LABEL.USER_EMAIL}
+                  label={LABEL.EMAIL}
                   name="email"
                   value={user.email}
                   onChange={handleChange}
@@ -229,7 +199,7 @@ const CreateUser = () => {
               </Grid2>
               <Grid2 size={12}>
                 <EditableTextField
-                  label={LABEL.USER_ADDRS}
+                  label={LABEL.ADDRS}
                   name="address"
                   value={user.address}
                   onChange={handleChange}
@@ -239,7 +209,7 @@ const CreateUser = () => {
               </Grid2>
               <Grid2 size={6}>
                 <EditableTextField
-                  label={LABEL.USER_PHONE1}
+                  label={LABEL.PHONE1}
                   name="phoneNo1"
                   type="tel"
                   value={user.phoneNo1}
@@ -250,7 +220,7 @@ const CreateUser = () => {
               </Grid2>
               <Grid2 size={6}>
                 <EditableTextField
-                  label={LABEL.USER_PHONE2}
+                  label={LABEL.PHONE2}
                   name="phoneNo2"
                   type="tel"
                   value={user.phoneNo2}
@@ -261,7 +231,7 @@ const CreateUser = () => {
               </Grid2>
               <Grid2 size={6}>
                 <EditableTextField
-                  label={LABEL.USER_PASS}
+                  label={LABEL.PASSWORD}
                   name="password"
                   type="password"
                   value={user.password}
@@ -272,7 +242,7 @@ const CreateUser = () => {
               </Grid2>
               <Grid2 size={6}>
                 <EditableTextField
-                  label={LABEL.USER_CNFPASS}
+                  label={LABEL.CONFIRM_PASSWORD}
                   name="confirmPassword"
                   type="password"
                   value={user.confirmPassword}
@@ -291,7 +261,7 @@ const CreateUser = () => {
                       color="primary"
                     />
                   }
-                  label={LABEL.USER_ENABLED}
+                  label={LABEL.ENABLED}
                 />
               </Grid2>
               <Grid2 size={6}>
@@ -304,7 +274,7 @@ const CreateUser = () => {
                       color="primary"
                     />
                   }
-                  label={LABEL.USER_LOCKED}
+                  label={LABEL.LOCKED}
                 />
               </Grid2>
             </Grid2>

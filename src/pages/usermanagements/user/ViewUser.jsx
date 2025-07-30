@@ -15,8 +15,8 @@ import { EditButton, CancelButton } from "../../../components/PageElements/Butto
 import { EnabledIcon, LockedIcon } from "../../../components/PageElements/IconButtons";
 import { useStyles } from "../../../style/makeStyle";
 
+import * as LABEL from './utils/userLabel';
 import * as MESSAGE from '../../../utils/const/Message';
-import * as LABEL from '../../../utils/const/FieldLabels';
 import * as ROUTES from '../../../utils/const/RouteProperty';
 
 const ViewUser = () => {
@@ -77,12 +77,12 @@ const ViewUser = () => {
             </Grid2>
             <Grid2 size={8}>
               <Grid2 container spacing={2}>
-                <Grid2 size={6}><ReadOnlyField2 label={LABEL.USER_ROLE} value={user.role.roleName} /></Grid2>
-                <Grid2 size={6}><ReadOnlyField2 label={LABEL.USER_USERNAME} value={`${user.username} (${user.userId}) `} /></Grid2>
-                <Grid2 size={6}><ReadOnlyField2 label={LABEL.USER_EMAIL} value={user.email} /></Grid2>
-                <Grid2 size={6}><ReadOnlyField2 label={LABEL.USER_ADDRS} value={user.address} /></Grid2>
-                <Grid2 size={6}><ReadOnlyField2 label={LABEL.USER_PHONE1} value={formatPhoneNumber(user.phoneNo1)} /></Grid2>
-                <Grid2 size={6}><ReadOnlyField2 label={LABEL.USER_PHONE2} value={formatPhoneNumber(user.phoneNo2)} /></Grid2>
+                <Grid2 size={6}><ReadOnlyField2 label={LABEL.ROLE} value={user.role.roleName} /></Grid2>
+                <Grid2 size={6}><ReadOnlyField2 label={LABEL.USERNAME} value={`${user.username} (${user.userId}) `} /></Grid2>
+                <Grid2 size={6}><ReadOnlyField2 label={LABEL.EMAIL} value={user.email} /></Grid2>
+                <Grid2 size={6}><ReadOnlyField2 label={LABEL.ADDRS} value={user.address} /></Grid2>
+                <Grid2 size={6}><ReadOnlyField2 label={LABEL.PHONE1} value={formatPhoneNumber(user.phoneNo1)} /></Grid2>
+                <Grid2 size={6}><ReadOnlyField2 label={LABEL.PHONE2} value={formatPhoneNumber(user.phoneNo2)} /></Grid2>
                 <Grid2 size={6}><EnabledIcon enabled={user.enabled} /></Grid2>
                 <Grid2 size={6}><LockedIcon locked={user.locked} /></Grid2>
               </Grid2>
@@ -95,13 +95,13 @@ const ViewUser = () => {
         </Paper>
         <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
           <Grid2 container spacing={2}>
-            <Grid2 size={6}><ReadOnlyField3 label={LABEL.USER_CREATED_AT} value={formatDate(user.createdAt)} /></Grid2>
-            <Grid2 size={6}><ReadOnlyField3 label={LABEL.USER_CREATED_BY} value={`${user.createdUser.firstName} ${user.createdUser.lastName} (${user.createdUser.username})`} /></Grid2>
-            <Grid2 size={6}><ReadOnlyField3 label={LABEL.USER_UPDATED_AT} value={formatDate(user.updatedAt)} /></Grid2>
-            <Grid2 size={6}><ReadOnlyField3 label={LABEL.USER_UPDATED_BY} value={`${user.updatedUser.firstName} ${user.updatedUser.lastName} (${user.updatedUser.username})`} /></Grid2>
+            <Grid2 size={6}><ReadOnlyField3 label={LABEL.CREATED_AT} value={formatDate(user.createdAt)} /></Grid2>
+            <Grid2 size={6}><ReadOnlyField3 label={LABEL.CREATED_BY} value={`${user.createdUser.firstName} ${user.createdUser.lastName} (${user.createdUser.username})`} /></Grid2>
+            <Grid2 size={6}><ReadOnlyField3 label={LABEL.UPDATED_AT} value={formatDate(user.updatedAt)} /></Grid2>
+            <Grid2 size={6}><ReadOnlyField3 label={LABEL.UPDATED_BY} value={`${user.updatedUser.firstName} ${user.updatedUser.lastName} (${user.updatedUser.username})`} /></Grid2>
             {user.deleted && (<>
-              <Grid2 size={6}><ReadOnlyField3 label={LABEL.USER_DELETED_AT} value={formatDate(user.deletedAt)} /></Grid2>
-              <Grid2 size={6}><ReadOnlyField3 label={LABEL.USER_DELETED_BY} value={`${user.deletedUser?.firstName} ${user.deletedUser?.lastName} (${user.deletedUser?.username})`} /></Grid2>
+              <Grid2 size={6}><ReadOnlyField3 label={LABEL.DELETED_AT} value={formatDate(user.deletedAt)} /></Grid2>
+              <Grid2 size={6}><ReadOnlyField3 label={LABEL.DELETED_BY} value={`${user.deletedUser?.firstName} ${user.deletedUser?.lastName} (${user.deletedUser?.username})`} /></Grid2>
             </>)}
           </Grid2>
         </Paper>

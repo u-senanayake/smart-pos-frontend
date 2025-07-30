@@ -17,7 +17,7 @@ import RoleService from "../../../services/RoleService";
 import { renderStatusIcon } from "../../../utils/utils";
 import { formatDate } from '../../../utils/Dateutils';
 
-import * as LABEL from '../../../utils/const/FieldLabels';
+import * as LABEL from './utils/roleLabel';
 import * as MESSAGE from '../../../utils/const/Message';
 import * as ROUTES from '../../../utils/const/RouteProperty';
 
@@ -147,7 +147,7 @@ const RoleList = () => {
         <AddNewButton url={ROUTES.ROLE_CREATE} />
       </div >
       <DataTable rows={roles} columns={columns} getRowId={(row) => row.roleId} />
-      <DeleteConfirmDialog open={dialogOpen} onDelete={deleteRole} onCancel={() => setDialogOpen(false)} id={selectedId} type={LABEL.ROLE}/>
+      <DeleteConfirmDialog open={dialogOpen} onDelete={deleteRole} onCancel={() => setDialogOpen(false)} id={selectedId} type={LABEL.ROLE} />
     </Container>
   );
 };

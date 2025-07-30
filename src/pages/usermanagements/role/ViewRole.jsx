@@ -10,12 +10,12 @@ import ErrorMessage from "../../../components/DialogBox/ErrorMessage";
 import { ReadOnlyField, PageTitle } from "../../../components/PageElements/CommonElements";
 import { Home, RoleList } from "../../../components/PageElements/BreadcrumbsLinks";
 import { EditButton, CancelButton } from "../../../components/PageElements/Buttons";
-import { EnabledIcon,} from "../../../components/PageElements/IconButtons";
+import { EnabledIcon, } from "../../../components/PageElements/IconButtons";
 
 import { useStyles } from "../../../style/makeStyle";
 
+import * as LABEL from './utils/roleLabel';
 import * as MESSAGE from '../../../utils/const/Message';
-import * as LABEL from '../../../utils/const/FieldLabels';
 import * as ROUTES from '../../../utils/const/RouteProperty';
 
 const ViewRole = () => {
@@ -78,7 +78,7 @@ const ViewRole = () => {
               <ReadOnlyField label={LABEL.ROLE_DESC} value={role.description} />
             </Grid2>
             <Grid2 size={6}>
-              <EnabledIcon enabled={role.enabled}/>
+              <EnabledIcon enabled={role.enabled} />
             </Grid2>
             <Grid2 size={6}></Grid2>
             <Grid2 size={6}>

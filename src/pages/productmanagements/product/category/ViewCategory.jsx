@@ -11,7 +11,7 @@ import {CategoryList, Home} from "../../../../components/PageElements/Breadcrumb
 import {CancelButton, EditButton} from "../../../../components/PageElements/Buttons";
 import {EnabledIcon,} from "../../../../components/PageElements/IconButtons";
 import {useStyles} from "../../../../style/makeStyle";
-import {ImageAvatar} from '../../../../components/PageElements/ImageAvatar';
+import {ImageAvatar} from '../../../../components/image/ImageAvatar';
 
 import * as LABEL from './utils/categoryLabel';
 import * as MESSAGE from '../../../../utils/const/Message';

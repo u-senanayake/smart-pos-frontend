@@ -15,9 +15,9 @@ import { SuccessAlert, ErrorAlert, } from '../../../components/DialogBox/Alerts'
 
 import { useStyles } from "../../../style/makeStyle";
 
+import * as LABEL from './utils/userLabel';
+import * as PROPERTY from './utils/userFieldProperty';
 import * as MESSAGE from '../../../utils/const/Message';
-import * as PROPERTY from '../../../utils/const/FieldProperty';
-import * as LABEL from '../../../utils/const/FieldLabels';
 import * as APP_PROPERTY from '../../../utils/const/AppProperty';
 import * as ROUTES from '../../../utils/const/RouteProperty';
 
@@ -70,22 +70,22 @@ const UpdateUser = () => {
   const validateForm = (user) => {
     const errors = {};
     // Username
-    if (!validateRequired(user.username)) errors.username = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.USER_USERNAME);
-    if (!validateLength(user.username, PROPERTY.USER_USERNAME_MIN, PROPERTY.USER_USERNAME_MAX)) errors.username = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.USER_USERNAME).replace(':min', PROPERTY.USER_USERNAME_MIN).replace(':max', PROPERTY.USER_USERNAME_MAX);
+    if (!validateRequired(user.username)) errors.username = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.USERNAME);
+    if (!validateLength(user.username, PROPERTY.USER_USERNAME_MIN, PROPERTY.USER_USERNAME_MAX)) errors.username = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.USERNAME).replace(':min', PROPERTY.USER_USERNAME_MIN).replace(':max', PROPERTY.USER_USERNAME_MAX);
     //Role
-    if (!validateRequired(user.role)) errors.role = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.USER_ROLE);
+    if (!validateRequired(user.role)) errors.role = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.ROLE);
     // First name
-    if (!validateRequired(user.firstName)) errors.firstName = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.USER_FIRST_NAME);
-    if (!validateLength(user.firstName, 1, 50)) errors.firstName = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.USER_FIRST_NAME).replace(':min', PROPERTY.USER_NAME_MIN).replace(':max', PROPERTY.USER_NAME_MAX);
+    if (!validateRequired(user.firstName)) errors.firstName = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.FIRST_NAME);
+    if (!validateLength(user.firstName, 1, 50)) errors.firstName = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.FIRST_NAME).replace(':min', PROPERTY.USER_NAME_MIN).replace(':max', PROPERTY.USER_NAME_MAX);
     // Last name
-    if (!validateRequired(user.lastName)) errors.lastName = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.USER_LAST_NAME);
-    if (!validateLength(user.lastName, 1, 50)) errors.lastName = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.USER_LAST_NAME).replace(':min', PROPERTY.USER_NAME_MIN).replace(':max', PROPERTY.USER_NAME_MAX);
+    if (!validateRequired(user.lastName)) errors.lastName = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.LAST_NAME);
+    if (!validateLength(user.lastName, 1, 50)) errors.lastName = MESSAGE.FIELD_MIN_MAX.replace(':fieldName', LABEL.LAST_NAME).replace(':min', PROPERTY.USER_NAME_MIN).replace(':max', PROPERTY.USER_NAME_MAX);
     // Email
-    if (!validateRequired(user.email)) errors.email = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.USER_EMAIL);
+    if (!validateRequired(user.email)) errors.email = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.EMAIL);
     if (!validateEmail(user.email)) errors.email = MESSAGE.INVALID_EMAIL;
     // Phone number 1
-    if (!validateRequired(user.phoneNo1)) errors.phoneNo1 = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.USER_PHONE1);
-    if (!validateExactLength(user.phoneNo1, 10)) errors.phoneNo1 = MESSAGE.FIELD_LENGTH.replace(':fieldName', LABEL.USER_PHONE1).replace(':number', PROPERTY.USER_PHONE_LENGTH);
+    if (!validateRequired(user.phoneNo1)) errors.phoneNo1 = MESSAGE.FIELD_REQUIRED.replace(':fieldName', LABEL.PHONE1);
+    if (!validateExactLength(user.phoneNo1, 10)) errors.phoneNo1 = MESSAGE.FIELD_LENGTH.replace(':fieldName', LABEL.PHONE1).replace(':number', PROPERTY.USER_PHONE_LENGTH);
     return errors;
   };
 
@@ -167,14 +167,14 @@ const UpdateUser = () => {
 
             <Grid2 container spacing={2}>
               <Grid2 size={4}>
-                <ReadOnlyField label={LABEL.USER_ID} value={user.userId} />
+                <ReadOnlyField label={LABEL.ID} value={user.userId} />
               </Grid2>
               <Grid2 size={4}>
-                <ReadOnlyField label={LABEL.USER_USERNAME} value={user.username} />
+                <ReadOnlyField label={LABEL.USERNAME} value={user.username} />
               </Grid2>
               <Grid2 size={4}>
                 <EditableDropDown
-                  label={LABEL.USER_ROLE}
+                  label={LABEL.ROLE}
                   name="role"
                   value={user.role.roleId}
                   onChange={handleRoleChange}
@@ -187,7 +187,7 @@ const UpdateUser = () => {
               </Grid2>
               <Grid2 size={6}>
                 <EditableTextField
-                  label={LABEL.USER_FIRST_NAME}
+                  label={LABEL.FIRST_NAME}
                   name="firstName"
                   value={user.firstName}
                   onChange={handleChange}
@@ -197,7 +197,7 @@ const UpdateUser = () => {
               </Grid2>
               <Grid2 size={6}>
                 <EditableTextField
-                  label={LABEL.USER_LAST_NAME}
+                  label={LABEL.LAST_NAME}
                   name="lastName"
                   value={user.lastName}
                   onChange={handleChange}
@@ -207,7 +207,7 @@ const UpdateUser = () => {
               </Grid2>
               <Grid2 size={12}>
                 <EditableTextField
-                  label={LABEL.USER_EMAIL}
+                  label={LABEL.EMAIL}
                   name="email"
                   value={user.email}
                   onChange={handleChange}
@@ -217,7 +217,7 @@ const UpdateUser = () => {
               </Grid2>
               <Grid2 size={12}>
                 <EditableTextField
-                  label={LABEL.USER_ADDRS}
+                  label={LABEL.ADDRS}
                   name="address"
                   value={user.address}
                   onChange={handleChange}
@@ -227,7 +227,7 @@ const UpdateUser = () => {
               </Grid2>
               <Grid2 size={6}>
                 <EditableTextField
-                  label={LABEL.USER_PHONE1}
+                  label={LABEL.PHONE1}
                   name="phoneNo1"
                   type="tel"
                   value={user.phoneNo1}
@@ -238,7 +238,7 @@ const UpdateUser = () => {
               </Grid2>
               <Grid2 size={6}>
                 <EditableTextField
-                  label={LABEL.USER_PHONE2}
+                  label={LABEL.PHONE2}
                   name="phoneNo2"
                   type="tel"
                   value={user.phoneNo2}
@@ -257,7 +257,7 @@ const UpdateUser = () => {
                       color="primary"
                     />
                   }
-                  label={LABEL.USER_ENABLED}
+                  label={LABEL.ENABLED}
                 />
               </Grid2>
               <Grid2 size={6}>
@@ -270,7 +270,7 @@ const UpdateUser = () => {
                       color="primary"
                     />
                   }
-                  label={LABEL.USER_LOCKED}
+                  label={LABEL.LOCKED}
                 />
               </Grid2>
             </Grid2>

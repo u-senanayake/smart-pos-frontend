@@ -7,7 +7,7 @@ import {
     Button,
 } from "@mui/material";
 import * as MESSAGE from '../../utils/const/Message';
-import * as LABEL from '../../utils/const/FieldLabels';
+import * as LABEL from './utils/dialogLable.jsx';
 
 const DeleteConfirmDialog= ({ open, onDelete, onCancel, id, type }) => {
 

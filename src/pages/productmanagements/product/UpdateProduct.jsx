@@ -1,16 +1,16 @@
-import {useEffect, useState} from 'react';
-import {Box, Breadcrumbs, Container, FormControlLabel, Grid2, Paper, Switch, Typography,} from '@mui/material';
-import {useNavigate, useParams} from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Box, Breadcrumbs, Container, FormControlLabel, Grid2, Paper, Switch, Typography, } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
 import ProductService from '../../../services/ProductService';
 import CategoryService from '../../../services/CategoryService';
 import DistributorService from '../../../services/DistributorService';
-import {formatDate, formatDateToYYYYMMDD} from '../../../utils/Dateutils';
-import {formatPrice,} from "../../../utils/utils";
+import { formatDate, formatDateToYYYYMMDD } from '../../../utils/Dateutils';
+import { formatPrice, } from "../../../utils/utils";
 import AddStockDialog from '../inventory/AddStockDialog';
 import AdjustStockDialog from '../inventory/AdjustStockDialog';
 import UpdateStockAlertDialog from '../inventory/UpdateStockAlertDialog';
-import {Loading,} from '../../../components/PageElements/Loading';
-import {Home, ProductList} from "../../../components/PageElements/BreadcrumbsLinks";
+import { Loading, } from '../../../components/PageElements/Loading';
+import { Home, ProductList } from "../../../components/PageElements/BreadcrumbsLinks";
 import {
     AddStockButton,
     AdjustStockButton,
@@ -25,19 +25,19 @@ import {
     PageTitle2,
     ReadOnlyField
 } from "../../../components/PageElements/CommonElements";
-import {ErrorAlert, SuccessAlert,} from '../../../components/DialogBox/Alerts';
-import ImageUpload from "./../../../components/PageElements/ImageUpload";
-import ImageListDisplay from '../../../components/PageElements/ImageListDisplay';
-import {validateForm} from './utils/validateProductForm';
+import { ErrorAlert, SuccessAlert, } from '../../../components/DialogBox/Alerts';
+import ImageUpload from "./../../../components/image/ImageUpload";
+import ImageListDisplay from '../../../components/image/ImageListDisplay';
+import { validateForm } from './utils/validateProductForm';
 import * as LABEL from './utils/productLabel';
 import * as MESSAGE from '../../../utils/const/Message';
 import * as APP_PROPERTY from '../../../utils/const/AppProperty';
 import * as ROUTES from '../../../utils/const/RouteProperty';
 //Styles
-import {useStyles} from "../../../style/makeStyle";
+import { useStyles } from "../../../style/makeStyle";
 
 const UpdateProduct = () => {
-    const {id} = useParams();
+    const { id } = useParams();
     const [product, setProduct] = useState({
         productName: '',
         description: '',
@@ -143,19 +143,19 @@ const UpdateProduct = () => {
 
     // Handle input change
     const handleChange = (e) => {
-        const {name, value} = e.target;
+        const { name, value } = e.target;
         setProduct((prevProduct) => ({
             ...prevProduct,
             [name]: ['price', 'costPrice', 'minPrice', 'inventory.quantity', 'inventory.stockWarningLevel', 'inventory.stockAlertLevel'].includes(name)
                 ? Number(value) // Parse number fields as Number
                 : value
         }));
-        setFormError((prevErrors) => ({...prevErrors, [name]: undefined})); // Clear specific field error
+        setFormError((prevErrors) => ({ ...prevErrors, [name]: undefined })); // Clear specific field error
     };
 
     // Handle checkbox change
     const handleCheckboxChange = (e) => {
-        const {name, checked} = e.target;
+        const { name, checked } = e.target;
         setProduct((prevProduct) => ({
             ...prevProduct,
             [name]: checked
@@ -164,26 +164,26 @@ const UpdateProduct = () => {
 
     // Handle category change
     const handleCategoryChange = (e) => {
-        const {value} = e.target;
+        const { value } = e.target;
         setProduct((prevProduct) => ({
             ...prevProduct,
             category: {
                 categoryId: value
             }
         }));
-        setFormError((prevErrors) => ({...prevErrors, category: undefined})); // Clear category error
+        setFormError((prevErrors) => ({ ...prevErrors, category: undefined })); // Clear category error
     };
 
     // Handle distributor change
     const handleDistributorChange = (e) => {
-        const {value} = e.target;
+        const { value } = e.target;
         setProduct((prevProduct) => ({
             ...prevProduct,
             distributor: {
                 distributorId: value
             }
         }));
-        setFormError((prevErrors) => ({...prevErrors, distributor: undefined})); // Clear distributor error
+        setFormError((prevErrors) => ({ ...prevErrors, distributor: undefined })); // Clear distributor error
     };
 
     const refreshImageList = () => {
@@ -243,29 +243,29 @@ const UpdateProduct = () => {
     };
 
     if (loading) {
-        return <Loading/>;
+        return <Loading />;
     }
 
     return (
         <Container className={classes.mainContainer}>
             <Breadcrumbs aria-label="breadcrumb">
-                <Home/>
-                <ProductList/>
-                <Typography sx={{color: 'text.primary'}}>Edit Product</Typography>
+                <Home />
+                <ProductList />
+                <Typography sx={{ color: 'text.primary' }}>Edit Product</Typography>
             </Breadcrumbs>
             <PageTitle
-                title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.PRODUCT).replace(':name', product.productId)}/>
+                title={LABEL.PAGE_TITLE_UPDATE.replace(':type', LABEL.PRODUCT).replace(':name', product.productId)} />
             <Container maxWidth="lg">
-                <Paper elevation={4} className={classes.formContainer} sx={{borderRadius: 4}}>
+                <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
                     <form>
-                        <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')}/>
-                        <ErrorAlert message={errorMessage}/>
+                        <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
+                        <ErrorAlert message={errorMessage} />
                         <Grid2 container spacing={2}>
                             <Grid2 size={4}>
-                                <ReadOnlyField label={LABEL.PRODUCT_ID} value={product.id}/>
+                                <ReadOnlyField label={LABEL.PRODUCT_ID} value={product.id} />
                             </Grid2>
                             <Grid2 size={4}>
-                                <ReadOnlyField label={LABEL.PRODUCT_PRODUCT_ID} value={product.productId}/>
+                                <ReadOnlyField label={LABEL.PRODUCT_PRODUCT_ID} value={product.productId} />
                             </Grid2>
                             <Grid2 size={4}>
                                 <EditableTextField
@@ -397,28 +397,28 @@ const UpdateProduct = () => {
                             </Grid2>
                             <Grid2 size={6}></Grid2>
                         </Grid2>
-                        <Paper elevation={4} className={classes.formContainer} sx={{borderRadius: 4}}>
-                            <PageTitle2 title={LABEL.INVENTORY}/>
+                        <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
+                            <PageTitle2 title={LABEL.INVENTORY} />
                             <Grid2 container spacing={2}>
                                 <Grid2 size={6}>
-                                    <Paper elevation={1} className={classes.formContainer} sx={{borderRadius: 4}}>
-                                        <ReadOnlyField label={LABEL.INVENTORY_QTY} value={product.inventory.quantity}/>
+                                    <Paper elevation={1} className={classes.formContainer} sx={{ borderRadius: 4 }}>
+                                        <ReadOnlyField label={LABEL.INVENTORY_QTY} value={product.inventory.quantity} />
                                         <Box className={classes.formButtonsContainer}>
-                                            <AddStockButton onClick={handleOpenAddStockDialog}/>
-                                            <AdjustStockButton onClick={handleOpenAdjustStockDialog}/>
+                                            <AddStockButton onClick={handleOpenAddStockDialog} />
+                                            <AdjustStockButton onClick={handleOpenAdjustStockDialog} />
                                         </Box>
                                     </Paper>
                                     <ReadOnlyField label={LABEL.INVENTORY_LAST_UPDATED}
-                                                   value={formatDate(product.inventory.lastUpdated)}/>
+                                        value={formatDate(product.inventory.lastUpdated)} />
                                 </Grid2>
                                 <Grid2 size={6}>
-                                    <Paper elevation={1} className={classes.formContainer} sx={{borderRadius: 4}}>
+                                    <Paper elevation={1} className={classes.formContainer} sx={{ borderRadius: 4 }}>
                                         <ReadOnlyField label={LABEL.INVENTORY_WAR_LEV}
-                                                       value={formatPrice(product.inventory.stockWarningLevel)}/>
+                                            value={formatPrice(product.inventory.stockWarningLevel)} />
                                         <ReadOnlyField label={LABEL.INVENTORY_ALR_LEV}
-                                                       value={formatPrice(product.inventory.stockAlertLevel)}/>
+                                            value={formatPrice(product.inventory.stockAlertLevel)} />
                                         <Box className={classes.formButtonsContainer}>
-                                            <UpdateStockButton onClick={handleOpenUpdateStockAlertDialog}/>
+                                            <UpdateStockButton onClick={handleOpenUpdateStockAlertDialog} />
                                         </Box>
                                     </Paper>
                                 </Grid2>
@@ -435,16 +435,16 @@ const UpdateProduct = () => {
                                 onClose={handleCloseAddStockDialog}
                                 productId={product.id}
                                 inventory={product.inventory}
-                                onStockAdded={handleStockAdded}/>
+                                onStockAdded={handleStockAdded} />
                             <AdjustStockDialog
                                 open={openAdjustStockDialog}
                                 onClose={handleCloseAdjustStockDialog}
                                 productId={product.id}
                                 inventory={product.inventory}
-                                onStockAdjusted={handleStockAdded}/>
+                                onStockAdjusted={handleStockAdded} />
                         </Paper>
-                        <Paper elevation={4} className={classes.formContainer} sx={{borderRadius: 4}}>
-                            <PageTitle2 title={"Images"}/>
+                        <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
+                            <PageTitle2 title={"Images"} />
                             <Grid2 container spacing={2}>
                                 <Grid2 size={6}>
                                     <ImageUpload
@@ -454,6 +454,7 @@ const UpdateProduct = () => {
                                         setSuccessMessage={setSuccessMessage}
                                         setErrorMessage={setErrorMessage}
                                         refreshImageList={refreshImageList}
+                                        typeLabel={LABEL.PRODUCT}
                                     />
                                 </Grid2>
                                 <Grid2 size={6}>
@@ -469,8 +470,8 @@ const UpdateProduct = () => {
                             </Grid2>
                         </Paper>
                         <Box className={classes.formButtonsContainer}>
-                            <UpdateButton onClick={handleSubmit} isSaving={isSaving}/>
-                            <CancelButton onClick={handleCancel}/>
+                            <UpdateButton onClick={handleSubmit} isSaving={isSaving} />
+                            <CancelButton onClick={handleCancel} />
                         </Box>
                     </form>
                 </Paper>

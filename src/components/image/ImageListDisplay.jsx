@@ -2,7 +2,7 @@
 import { Box, IconButton, Avatar } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import * as APP_PROPERTY from '../../utils/const/AppProperty';
-import * as LABEL from '../../utils/const/FieldLabels';
+import * as LABEL from './utils/imageLable';
 import * as MESSAGE from '../../utils/const/Message';
 import ImageService from '../../services/ImageService';
 

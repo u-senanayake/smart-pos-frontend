@@ -10,7 +10,7 @@ import {DeleteIcon, EditIcon, PreviewIcon} from "../../../../components/PageElem
 import {Home} from "../../../../components/PageElements/BreadcrumbsLinks";
 import ErrorMessage from "../../../../components/DialogBox/ErrorMessage";
 import DeleteConfirmDialog from "../../../../components/DialogBox/DeleteConfirmDialog";
-import {IconAvatar} from '../../../../components/PageElements/ImageAvatar';
+import {IconAvatar} from '../../../../components/image/ImageAvatar';
 import DistributorService from "../../../../services/DistributorService";
 import {renderStatusIcon} from "../../../../utils/utils";
 

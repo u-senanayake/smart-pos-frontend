@@ -10,7 +10,7 @@ import {NameTitle, ReadOnlyField2, ReadOnlyField3} from "../../../../components/
 import {BrandList, Home} from "../../../../components/PageElements/BreadcrumbsLinks";
 import {CancelButton, EditButton} from "../../../../components/PageElements/Buttons";
 import {EnabledIcon,} from "../../../../components/PageElements/IconButtons";
-import {ImageAvatar} from '../../../../components/PageElements/ImageAvatar';
+import {ImageAvatar} from '../../../../components/image/ImageAvatar';
 
 import {useStyles} from "../../../../style/makeStyle";
 
