@@ -4,3 +4,5 @@ export const PRODUCT_TYPE = "product";
 export const DISTRIBUTOR_TYPE = "distributor";
 export const CATEGORY_TYPE = "category";
 export const BRAND_TYPE = "brand";
+export const CUSTOMER_TYPE = "customer";
+export const USER_TYPE = "user";

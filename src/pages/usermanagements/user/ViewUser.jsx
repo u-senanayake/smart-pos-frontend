@@ -14,10 +14,12 @@ import { Home, UserList } from "../../../components/PageElements/BreadcrumbsLink
 import { EditButton, CancelButton } from "../../../components/PageElements/Buttons";
 import { EnabledIcon, LockedIcon } from "../../../components/PageElements/IconButtons";
 import { useStyles } from "../../../style/makeStyle";
+import { ImageAvatar } from '../../../components/image/ImageAvatar';
 
 import * as LABEL from './utils/userLabel';
 import * as MESSAGE from '../../../utils/const/Message';
 import * as ROUTES from '../../../utils/const/RouteProperty';
+import * as APP_PROPERTY from '../../../utils/const/AppProperty';
 
 const ViewUser = () => {
 
@@ -71,8 +73,12 @@ const ViewUser = () => {
           <Grid2 container spacing={2}>
             <Grid2 size={4} >
               <Grid2 container spacing={2}>
-                <Grid2 size={12} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}><NameTitle value={`${user.firstName} ${user.lastName}`} /></Grid2>
-                <Grid2 size={12} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}><Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" sx={{ width: 200, height: 200 }} /></Grid2>
+                <Grid2 size={12} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <NameTitle value={`${user.firstName} ${user.lastName}`} />
+                </Grid2>
+                <Grid2 size={12} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <ImageAvatar type={APP_PROPERTY.USER_TYPE} typeId={user.userId} imageId={user.image.imageId} />
+                </Grid2>
               </Grid2>
             </Grid2>
             <Grid2 size={8}>
@@ -91,7 +97,7 @@ const ViewUser = () => {
         </Paper>
         <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
           <PageTitle2 title={"Bio"} />
-          <ReadOnlyField3  value={user.bio || "No bio available."} />
+          <ReadOnlyField3 value={user.bio || "No bio available."} />
         </Paper>
         <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
           <Grid2 container spacing={2}>
