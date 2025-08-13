@@ -1,22 +1,31 @@
-import React, {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
-import {Box, Breadcrumbs, Container, FormControlLabel, Grid2, Paper, Switch, Typography} from '@mui/material';
+"use server";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button, Box, Breadcrumbs, Container, FormControlLabel, Grid2, IconButton, Paper, Switch, Typography } from '@mui/material';
 import CategoryService from '../../../../services/CategoryService';
+import Recycling from '@mui/icons-material/Recycling';
 
-import {CategoryList, Home} from "../../../../components/PageElements/BreadcrumbsLinks";
-import {EditableTextField, PageTitle} from "../../../../components/PageElements/CommonElements";
-import {CancelButton, SaveButton} from "../../../../components/PageElements/Buttons";
-import {ErrorAlert, SuccessAlert,} from '../../../../components/DialogBox/Alerts';
-import {validateForm} from './utils/validateCategoryForm';
+
+import { CategoryList, Home } from "../../../../components/PageElements/BreadcrumbsLinks";
+import { EditableTextField, PageTitle } from "../../../../components/PageElements/CommonElements";
+import { CancelButton, SaveButton } from "../../../../components/PageElements/Buttons";
+import { ErrorAlert, SuccessAlert, } from '../../../../components/DialogBox/Alerts';
+import { validateForm } from './utils/validateCategoryForm';
 
 import * as LABEL from './utils/categoryLabel';
 import * as MESSAGE from '../../../../utils/const/Message';
 import * as APP_PROPERTY from '../../../../utils/const/AppProperty';
 import * as ROUTES from '../../../../utils/const/RouteProperty';
 
-import {useStyles} from "../../../../style/makeStyle";
+import { useStyles } from "../../../../style/makeStyle";
+
+import { getAnswerFromOpenAI } from '../../../../utils/openai';
+
+
 
 const CreateCategory = () => {
+
+    //console.log(getAnswerFromOpenAI("Create a new category for products in our management system. The category should have a name, description, and a prefix. The name should be between 3 to 50 characters, the description between 10 to 200 characters, and the prefix should be exactly 3 characters long. The category should also have an enabled status."));
 
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
@@ -31,7 +40,7 @@ const CreateCategory = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const category = {name, description, catPrefix, enabled};
+        const category = { name, description, catPrefix, enabled };
         const validationErrors = validateForm(category);
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
@@ -57,19 +66,29 @@ const CreateCategory = () => {
         navigate(ROUTES.CATEGORY_LIST);
     };
 
+    const handleGenerateDescription = async () => {
+        try {
+            const text = await getAnswerFromOpenAI("Write a short description for a category named " + name + ". The description should be between 10 to 200 characters long.");
+            setDescription(text);
+        } catch (err) {
+            console.error("Failed to fetch description:", err);
+        } finally {
+        }
+    };
+
     return (
         <Container className={classes.mainContainer}>
             <Breadcrumbs aria-label="breadcrumb">
-                <Home/>
-                <CategoryList/>
-                <Typography sx={{color: 'text.primary'}}>Create Category</Typography>
+                <Home />
+                <CategoryList />
+                <Typography sx={{ color: 'text.primary' }}>Create Category</Typography>
             </Breadcrumbs>
-            <PageTitle title={LABEL.PAGE_TITLE_CREATE.replace(':type', LABEL.CATEGORY)}/>
+            <PageTitle title={LABEL.PAGE_TITLE_CREATE.replace(':type', LABEL.CATEGORY)} />
             <Container maxWidth="lg">
-                <Paper elevation={4} className={classes.formContainer} sx={{borderRadius: 4}}>
+                <Paper elevation={4} className={classes.formContainer} sx={{ borderRadius: 4 }}>
                     <form>
-                        <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')}/>
-                        <ErrorAlert message={errorMessage}/>
+                        <SuccessAlert message={successMessage} onClose={() => setSuccessMessage('')} />
+                        <ErrorAlert message={errorMessage} />
                         <Grid2 container spacing={2}>
                             <Grid2 size={6}>
                                 <EditableTextField
@@ -103,7 +122,7 @@ const CreateCategory = () => {
                                     helperText={formError.catPrefix}
                                 />
                             </Grid2>
-                            <Grid2 size={12}>
+                            <Grid2 size={11}>
                                 <EditableTextField
                                     label={LABEL.DESCRIPTION}
                                     name="description"
@@ -117,6 +136,14 @@ const CreateCategory = () => {
                                     }}
                                     error={!!formError.description}
                                     helperText={formError.description}
+                                />
+                            </Grid2>
+                            <Grid2 size={1}>
+                                <Button variant="outlined"
+                                    startIcon={<Recycling />}
+                                    onClick={() => {
+                                        handleGenerateDescription();
+                                    }}
                                 />
                             </Grid2>
                             <Grid2 size={6}>
@@ -140,8 +167,8 @@ const CreateCategory = () => {
                             </Grid2>
                         </Grid2>
                         <Box className={classes.formButtonsContainer}>
-                            <SaveButton onClick={handleSubmit} isSaving={isSaving}/>
-                            <CancelButton onClick={handleCancel}/>
+                            <SaveButton onClick={handleSubmit} isSaving={isSaving} />
+                            <CancelButton onClick={handleCancel} />
                         </Box>
                     </form>
                 </Paper>
