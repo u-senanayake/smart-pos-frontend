@@ -9,8 +9,8 @@ export const ImageAvatar = ({ type, typeId, imageId }) => {
   const imageUrl = getImageUrl(type, typeId, imageId);
   return (
     <Avatar
-      alt={"Distributor"}
-      src={imageUrl}
+      alt="Distributor"
+      src={imageId === null ? undefined : imageUrl}
       sx={{ width: 100, height: 100 }}
     />
   );
@@ -19,6 +19,7 @@ export const ImageAvatar = ({ type, typeId, imageId }) => {
 export const IconAvatar = ({ type, typeId, imageId }) => {
   const imageUrl = getImageUrl(type, typeId, imageId);
   return (
+
     <Avatar
       alt={"Distributor"}
       src={imageUrl}

@@ -1,35 +1,57 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import {
-    Box, Typography, Paper, TextField, Autocomplete, Button, Card, CardActionArea, CardMedia, CardContent,
-    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, Grid2,
-} from '@mui/material';
-import { Edit, Delete, Save, Cancel } from '@mui/icons-material';
-// Services
+    AppBar, Container, Stack, Typography, Autocomplete, TextField, Grid2, Paper,
+    TableContainer, Table, TableHead, TableRow, TableCell, TableBody, IconButton, Card, CardActionArea, CardMedia, CardContent,
+    List, ListItem, Checkbox, ListItemButton, ListItemAvatar, Avatar, ListItemText
+} from "@mui/material";
+
+import { Home, Settings, Add, Cancel, FolderOpen, Save, People, Payment } from '@mui/icons-material';
+import { NameTitle, PageTitle2, ReadOnlyField2, ReadOnlyField3 } from "../../../components/PageElements/CommonElements";
+import { Edit, Delete } from '@mui/icons-material';
+import { ImageAvatar, IconAvatar } from '../../../components/image/ImageAvatar';
+import SaleItemDialog from './utils/SaleItemDialog';
+import PaymentDialog from './utils/PaymentDialog';
+
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Button from '@mui/material/Button';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+
 import ProductService from "../../../services/ProductService";
 import CustomerService from "../../../services/CustomerService";
 import SaleService from "../../../services/SaleService";
 import SaleItemService from "../../../services/SaleItemService";
-// Style
-import POSHeader from './POSHeader';
-import { ErrorDialog } from '../../../utils/FieldUtils'
+import CategoryService from "../../../services/CategoryService";
 
+import * as ROUTES from '../../../utils/const/RouteProperty';
 import * as APP_PROPERTY from '../../../utils/const/AppProperty';
+
+const buttonStyle = {
+    color: '#fff',
+    px: 2,
+    '&:hover': {
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    },
+};
+
 const PosPage = () => {
-    const [products, setProducts] = useState([]);
-    const [customers, setCustomers] = useState([]);
+
+    const [saleId, setSaleId] = useState(null);
+
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [saleItems, setSaleItems] = useState([]);
-    const [saleId, setSaleId] = useState(null);
-    const [saleItem, setSaleItem] = useState({
-        saleId: '',
-        productId: '',
-        quantity: '',
-        pricePerUnit: '',
-        itemDiscountVal: null,
-        itemDiscountPer: null,
-        totalPrice: ''
-    });
+    const [customers, setCustomers] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [currentDateTime, setCurrentDateTime] = useState(new Date());
     const [editingItemId, setEditingItemId] = useState(null);
+
+    const [checked, setChecked] = React.useState([1]);
+
+    const [openAddStockDialog, setOpenSalesItemDialog] = useState(false);
+    const [openPaymentDialog, setOpenPaymentDialog] = useState(false);
+
     const [editedItem, setEditedItem] = useState({
         salesItemId: null,
         saleId: null,
@@ -49,74 +71,138 @@ const PosPage = () => {
         itemDiscountVal: 0,
         totalPrice: 0
     });
-    const [payment, setPayment] = useState({
-        cashAmount: 0,
-        creditCardAmount: 0,
-        creditCardReference: '',
-        qrAmount: 0,
-        qrReference: '',
-        chequeAmount: 0,
-        chequeReference: '',
-        dueAmount: 0,
-        dueReference: ''
-    });
+
     const [serverError, setServerError] = useState('');
     const [windowHeight, setWindowHeight] = useState(window.innerHeight);
     const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
 
-    //Set window height
+    const navigate = useNavigate(); // Initialize navigate
+
+
+    const appBarHeight = windowHeight / 100 * 8;
+    const salesItemHeight = windowHeight / 100 * 65;
+    const invoiceDetailsContentHeight = windowHeight / 100 * 23;
+
     useEffect(() => {
+        fetchInitialData();
+        handleNewSale();
+
+        const timerId = setInterval(() => {
+            setCurrentDateTime(new Date());
+        }, 1000);
+
         const handleResize = () => {
             setWindowHeight(window.innerHeight);
         };
+        window.addEventListener("resize", handleResize);
 
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    const appBarHeight = windowHeight / 100 * 10; // 10% of the window height for the app bar
-    const productSearchHeight = windowHeight / 100 * 10; // 10% of the window height for the product search
-    const salesItemHeight = windowHeight / 100 * 50; // 50% of the window height for the sales items
-    const invoiceDetailsContentHeight = windowHeight / 100 * 23; // 23% of the window height for the invoice details content
-    const productContentHeight = windowHeight / 100 * 60; // 85% of the window height for the product content
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // Fetch Products
-                const productResponse = await ProductService.getProducts();
-                setProducts(productResponse.data);
-            } catch (error) {
-                if (error.response && error.response.data) {
-                    setServerError('Fetching product: ' + error.response.data);
-                } else {
-                    console.error("Error fetching products:", error);
-                }
-            }
-
-            try {
-                // Fetch Customers
-                const customerResponse = await CustomerService.getCustomers();
-                setCustomers(customerResponse.data);
-            } catch (error) {
-                if (error.response && error.response.data) {
-                    setServerError('Fetching customer: ' + error.response.data);
-                } else {
-                    console.error("Error fetching customers:", error);
-                }
-            }
+        return () => {
+            clearInterval(timerId);
+            window.removeEventListener("resize", handleResize);
         };
-
-        fetchData();
     }, []);
 
-    // Create Image URL for Product
+
+    const fetchInitialData = async () => {
+        try {
+            // Fetch Products
+            const productResponse = await ProductService.getProducts();
+            setProducts(productResponse.data);
+        } catch (error) {
+            if (error.response && error.response.data) {
+                setServerError('Fetching product: ' + error.response.data);
+            } else {
+                console.error("Error fetching products:", error);
+            }
+        }
+
+        try {
+            // Fetch Customers
+            const customerResponse = await CustomerService.getCustomers();
+            setCustomers(customerResponse.data);
+        } catch (error) {
+            if (error.response && error.response.data) {
+                setServerError('Fetching customer: ' + error.response.data);
+            } else {
+                console.error("Error fetching customers:", error);
+            }
+        }
+
+        try {
+            // Fetch Categories
+            const CategoryResponse = await CategoryService.getAllCategories();
+            setCategories(CategoryResponse.data);
+        } catch (error) {
+            if (error.response && error.response.data) {
+                setServerError('Fetching categories: ' + error.response.data);
+            } else {
+                console.error("Error fetching categories:", error);
+            }
+        }
+    };
+
+    const fetchSaleItems = async (saleId) => {
+        try {
+            const response = await SaleItemService.getSaleItemBySaleId(saleId);
+            setSaleItems(response.data);
+        } catch (error) {
+            console.error('Failed to fetch sale items:', error);
+            setServerError('Featching sale items: ' + error.response.data);
+        }
+    };
+
     const createImageUrl = (product) => {
         if (!product || !product.images || product.images.length === 0) return '';
         return `${APP_PROPERTY.FILE_SERVER_URL}${APP_PROPERTY.PRODUCT_TYPE}/${product.id}/${product.images[0].imageId}`;
     };
 
-    // Handle Product Selection
+    const handleNewSale = async () => {
+        try {
+            const response = await SaleService.createSale({ customerId: 1 }); // Create a new sale with default customer
+            navigate(ROUTES.SALES_POS_OPEN.replace(':saleId', response.data.saleId)); // Navigate to the new sale
+            setSaleId(response.data.saleId); // Set the sale ID
+            setSaleItems([]); // Reset sale items
+            setSelectedCustomer(null); // Reset selected customer
+        } catch (error) {
+            console.error("Failed to create new sale:", error);
+        }
+    };
+
+    const handleCancelSale = async () => {
+        if (saleId && window.confirm("Are you sure you want to cancel this sale?")) {
+            try {
+                await SaleService.deleteSale(saleId); // Delete the current sale
+                const response = await SaleService.createSale({ customerId: 1 }); // Create a new sale
+                navigate(ROUTES.SALES_POS_OPEN.replace(':saleId', response.data.saleId)); // Navigate to the new sale
+            } catch (error) {
+                console.error("Failed to cancel and create a new sale:", error);
+            }
+        }
+    };
+
+    const handleOpenSale = () => {
+        navigate(ROUTES.SALES_DRAFTLIST); // Navigate to the ListDrafts page
+    };
+
+    const handleCustomerChange = async (event, newValue) => {
+        setSelectedCustomer(newValue);
+        if (newValue && saleId) {
+            const updateSale = {
+                totalAmount: 0,
+                totalItemCount: 0,
+                paymentStatus: 'PENDING',
+                customerId: newValue.customerId
+            };
+            try {
+                await SaleService.updateSale(saleId, updateSale);
+                console.log('Sale updated:', updateSale);
+            } catch (error) {
+                console.error('Failed to update customer:', error);
+                setServerError('Update customer: ' + error.response.data);
+            }
+        }
+    };
+
     const handleProductChange = async (event, newValue) => {
         if (newValue && saleId) {
             const newSaleItem = {
@@ -140,612 +226,378 @@ const PosPage = () => {
         }
     };
 
-    // Handle Customer Selection
-    const handleCustomerChange = async (event, newValue) => {
-        setSelectedCustomer(newValue);
-        if (newValue && saleId) {
-            const updateSale = {
-                totalAmount: 0,
-                totalItemCount: 0,
-                paymentStatus: 'PENDING',
-                customerId: newValue.customerId
-            };
-            try {
-                await SaleService.updateSale(saleId, updateSale);
-                console.log('Sale updated:', updateSale);
-            } catch (error) {
-                console.error('Failed to update customer:', error);
-                setServerError('Update customer: ' + error.response.data);
-            }
+    const handleCategoryToggle = (value) => () => {
+        const currentIndex = checked.indexOf(value);
+        const newChecked = [...checked];
+
+        if (currentIndex === -1) {
+            newChecked.push(value);
+        } else {
+            newChecked.splice(currentIndex, 1);
+        }
+
+        setChecked(newChecked);
+    };
+
+    const handleOpenSalesitemDialog = (saleItemId) => {
+        setEditingItemId(saleItemId);
+        setOpenSalesItemDialog(true);
+    };
+
+    const handleCloseSalesItemDialog = (updated) => {
+        setOpenSalesItemDialog(false);
+        if (updated && saleId) {
+            fetchSaleItems(saleId);
         }
     };
 
-    // Initialize Sale on page load
-    useEffect(() => {
-        const createSale = async () => {
-            try {
-                // Initialize sale with default customer (ID: 1)
-                const initialSale = {
-                    customerId: 1
-                };
-                const response = await SaleService.createSale(initialSale);
-                setSaleId(response.data.saleId);
-                setSelectedCustomer({ customerId: 1 }); // Set default customer in state
-                console.log('Sale created:', response.data);
-            } catch (error) {
-                console.error('Failed to create sale:', error);
-                setServerError('Create sale: ' + error.response.data);
-            }
-        };
-        createSale();
-    }, []);
+    const handleOpenPaymentDialog = () => {
+        setOpenPaymentDialog(true);
+    };
 
-    // Fetch Sale Items for the current Sale
-    const fetchSaleItems = async (saleId) => {
-        try {
-            const response = await SaleItemService.getSaleItemBySaleId(saleId);
-            setSaleItems(response.data);
-        } catch (error) {
-            console.error('Failed to fetch sale items:', error);
-            setServerError('Featching sale items: ' + error.response.data);
+    const handleClosePaymentDialog = (updated) => {
+        setOpenPaymentDialog(false);
+        if (updated && saleId) {
+            fetchSaleItems(saleId);
         }
     };
 
-    useEffect(() => {
-        if (saleId) fetchSaleItems(saleId);
-    }, [saleId]);
-
-    //Handle cancel edit
-    const handleCancelEdit = () => {
-        setEditingItemId(null);
-        setEditedItem({});
-    };
-
-    // Handle Edit Sale Item
-    const handleEditItem = (item) => {
-        setEditingItemId(item.salesItemId);
-        setEditedItem({
-            salesItemId: item.salesItemId,
-            saleId: item.saleId,
-            product: {
-                id: item.product.id,
-                productId: item.product.productId,
-                sku: item.product.sku,
-                price: item.product.price,
-                name: item.product.name,
-                maxDiscount: item.product.maxDiscount,
-                description: item.product.description,
-                costPrice: item.product.costPrice,
-            },
-            quantity: item.quantity || 1,
-            pricePerUnit: item.pricePerUnit || item.product.price || 0,
-            itemDiscountPer: item.itemDiscountPer || 0,
-            itemDiscountVal: item.itemDiscountVal || 0,
-            totalPrice: item.totalPrice || (item.product.price || 0),
-        });
-    };
-
-
-    // Handle Edit Sale Item Change
-    const handleEditChange = (event) => {
-        const { name, value } = event.target;
-
-        setEditedItem((prevItem) => {
-            // Parse numeric fields
-            const numericValue =
-                ["quantity", "pricePerUnit", "itemDiscountPer", "itemDiscountVal"].includes(name)
-                    ? parseFloat(value) || 0
-                    : value;
-
-            // Create a new object with updated fields
-            const updatedItem = {
-                ...prevItem,
-                [name]: numericValue,
-            };
-
-            // Recalculate `itemDiscountVal` if `itemDiscountPer` changes
-            if (name === "itemDiscountPer") {
-                updatedItem.itemDiscountVal = (updatedItem.pricePerUnit * numericValue) / 100;
-            }
-
-            // Recalculate `itemDiscountPer` if `itemDiscountVal` changes
-            if (name === "itemDiscountVal") {
-                updatedItem.itemDiscountPer = (numericValue * 100) / updatedItem.pricePerUnit || 0;
-            }
-
-            // Recalculate `totalPrice`
-            const discountValue =
-                updatedItem.itemDiscountPer > 0
-                    ? (updatedItem.pricePerUnit * updatedItem.itemDiscountPer) / 100
-                    : updatedItem.itemDiscountVal || 0;
-
-            updatedItem.totalPrice =
-                (updatedItem.pricePerUnit - discountValue) * updatedItem.quantity;
-
-            // Ensure `totalPrice` is valid and not negative
-            if (updatedItem.totalPrice < 0) {
-                updatedItem.totalPrice = 0;
-            }
-
-            return updatedItem; // Return the updated item
-        });
-    };
-
-    //handle save sales item
-    // Save edited item
-    const handleSaveEdit = async () => {
-        try {
-            const response = await SaleItemService.updateSaleItem(editedItem, editedItem.salesItemId);
-            const updatedItems = saleItems.map(item =>
-                item.salesItemId === editedItem.salesItemId ? response.data : item
-            );
-            setSaleItems(updatedItems);
-            setEditingItemId(null);
-            setEditedItem({});
-        } catch (error) {
-            setServerError('Failed to update sale item: ' + error.response?.data);
-            setIsErrorDialogOpen(true);
-        }
-    };
-
-    // Handle Delete Sale Item
-    const handleDeleteItem = async (salesItemId) => {
-        const confirmDelete = window.confirm("Are you sure you want to delete this item?");
-        if (confirmDelete) {
-            try {
-                await SaleItemService.deleteSaleItem(salesItemId);
-                fetchSaleItems(saleId);  // Refresh list
-            } catch (error) {
-                console.error("Failed to delete item:", error);
-                setServerError('Delete sale item: ' + error.response.data);
-            }
-        }
-    };
-
-    // Calculate invoice summary
-    const invoiceSummary = saleItems.length === 0
-        ? {
-            itemCount: 0,
-            totalQuantity: 0,
-            totalDiscountPercentage: 0,
-            totalDiscountValue: 0,
-            totalAmount: 0
-        }
-        : {
-            itemCount: saleItems.length,
-            totalQuantity: saleItems.reduce((sum, item) => sum + item.quantity, 0),
-            totalDiscountPercentage: saleItems.reduce((sum, item) => sum + (item.itemDiscountPer || 0), 0),
-            totalDiscountValue: saleItems.reduce((sum, item) => sum + (item.itemDiscountVal || 0), 0),
-            totalAmount: saleItems.reduce((sum, item) => sum + item.totalPrice, 0),
-        };
-
-    // Add handler for payment changes
-    const handlePaymentChange = (event) => {
-        const { name, value } = event.target;
-
-        // Check if field is a numeric amount field
-        const isAmountField = ['cashAmount', 'creditCardAmount', 'qrAmount', 'chequeAmount'].includes(name);
-
-        // Convert to number for amount fields, keep string for reference fields
-        const processedValue = isAmountField ? (parseFloat(value) || 0) : value;
-
-        setPayment(prev => {
-            const updated = {
-                ...prev,
-                [name]: processedValue
-            };
-
-            // Calculate remaining balance only for amount changes
-            if (isAmountField) {
-                const totalPaid = updated.cashAmount +
-                    updated.creditCardAmount +
-                    updated.qrAmount +
-                    updated.chequeAmount;
-                updated.remainBalance = invoiceSummary.totalAmount - totalPaid;
-            }
-
-            return updated;
-        });
-    };
-    const handleFinalize = () => {
-        // Finalize logic here
-        if (!selectedCustomer || saleItems.length === 0) {
-            alert('Please select a customer and add at least one product to finalize the sale.');
-            return;
-        }
-
-        const saleData = {
-            customerId: selectedCustomer.id,
-            items: saleItems.map(item => ({
-                productId: item.product.id,
-                quantity: item.quantity,
-                pricePerUnit: item.pricePerUnit,
-                itemDiscountVal: item.itemDiscountVal,
-                itemDiscountPer: item.itemDiscountPer,
-                totalPrice: item.totalPrice
-            }))
-        };
-        const paymentData = {
-            customerId: selectedCustomer.id,
-            totalAmount: invoiceSummary.totalAmount,
-            totalItemCount: invoiceSummary.itemCount,
-            payment: payment
-        }
-
-        SaleService.finalyzeSale(saleId, paymentData)
-            .then((res) => {
-                alert('Sale finalized successfully!');
-                // Reset state or navigate to another page if needed
-            })
-            .catch((error) => {
-                console.error('Error finalizing sale:', error);
-                alert('Failed to finalize sale. Please try again.');
-            });
-    };
-
-    const validateItem = () => {
-        const errors = {};
-        if (!saleItem.productId) errors.productId = "Product is required.";
-        if (!saleItem.quantity || saleItem.quantity <= 0) errors.quantity = "Quantity must be greater than 0.";
-        if (!saleItem.pricePerUnit || saleItem.pricePerUnit <= 0) errors.pricePerUnit = "Price per unit must be greater than 0.";
-
-        //setFormErrors(errors);
-        return Object.keys(errors).length === 0; // Return true if no errors
-    };
-
-    // Handle Server Error
-    const serverErrorMessages = Object.values(serverError);
-
-    useEffect(() => {
-        if (serverError) {
-            setIsErrorDialogOpen(true);
-        }
-    }, [serverError]);
-
-    const handleCloseErrorDialog = () => {
-        setIsErrorDialogOpen(false);
-        setServerError('');
-    };
 
     return (
         <Box sx={{ position: 'relative', padding: 0 }}>
-            <POSHeader appBarHeight={appBarHeight} saleId={saleId} />
-            <ErrorDialog open={isErrorDialogOpen} message={serverError} onClose={handleCloseErrorDialog} />
-            <Box sx={{ mt: 1 }}>
-                <Grid2 container spacing={2}>
-                    <Grid2 item size={7}>
-                        <Paper sx={{ p: 1, maxHeight: productSearchHeight, overflowY: "auto" }}>
-                            <Grid2 container spacing={2}>
-                                <Grid2 item size={6}>
-                                    <Autocomplete
-                                        options={products}
-                                        getOptionLabel={(option) => `${option.productId} ${option.productName}`}
-                                        onChange={handleProductChange}
-                                        renderInput={(params) => (
-                                            <TextField {...params} label="Select Product" variant="outlined" />
-                                        )}
-                                    />
+            <AppBar
+                position="static"
+                sx={{ height: appBarHeight, justifyContent: "center" }}
+            >
+                <Container maxWidth="xl">
+                    <Toolbar
+                        disableGutters
+                        sx={{
+                            minHeight: appBarHeight - 4, // leave 2px margin top & bottom
+                            px: 2,
+                            display: "flex",
+                            alignItems: "center",   // vertical alignment
+                        }}
+                    >
+                        <DashboardIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+
+                        <Typography
+                            variant="h6"
+                            noWrap
+                            component={Link}
+                            to="/"
+                            sx={{
+                                mr: 2,
+                                display: { xs: 'none', md: 'flex' },
+                                fontWeight: 700,
+                                color: 'inherit',
+                                textDecoration: 'none',
+                                lineHeight: 1,   // keep aligned
+                            }}
+                        >
+                            Dashboard
+                        </Typography>
+
+                        <Box sx={{ flexGrow: 1, display: "flex", alignItems: "center" }}>
+                            <Button
+                                startIcon={<Add />}
+                                onClick={handleNewSale}
+                                sx={{
+                                    ...buttonStyle,
+                                    backgroundColor: 'success.main',
+                                    '&:hover': { backgroundColor: 'success.dark' },
+                                    mr: 1,
+                                }}
+                                size="small"
+                            >
+                                New
+                            </Button>
+
+                            <Button
+                                startIcon={<Cancel />}
+                                onClick={handleCancelSale}
+                                sx={{
+                                    ...buttonStyle,
+                                    backgroundColor: 'error.main',
+                                    '&:hover': { backgroundColor: 'error.dark' },
+                                    mr: 1,
+                                }}
+                                size="small"
+                            >
+                                Cancel
+                            </Button>
+
+                            <Button
+                                startIcon={<FolderOpen />}
+                                onClick={handleOpenSale}
+                                sx={{
+                                    ...buttonStyle,
+                                    backgroundColor: 'info.main',
+                                    '&:hover': { backgroundColor: 'info.dark' },
+                                    mr: 1,
+                                }}
+                                size="small"
+                            >
+                                Open
+                            </Button>
+
+                        </Box>
+                        <Typography
+                            variant="h6"
+                            sx={{
+                                color: '#fff',
+                                ml: 2,
+                                display: "flex",
+                                alignItems: "center",
+                                height: "100%",
+                            }}
+                        >
+                            {currentDateTime.toLocaleDateString()} {currentDateTime.toLocaleTimeString()}
+                        </Typography>
+                    </Toolbar>
+                </Container>
+            </AppBar>
+            <Grid2 container spacing={1} sx={{ paddingTop: 0, paddingLeft: 1, paddingRight: 1, paddingBottom: 0, height: salesItemHeight }}>
+                {/* Sales Items */}
+                <Grid2 size={4}>
+                    <Paper sx={{ p: 1, mt: 1, overflowY: "auto", height: salesItemHeight }}>
+                        <Grid2 container spacing={1} sx={{ padding: 1 }}>
+                            <Grid2 size={12}>
+                                <ReadOnlyField3
+                                    value={`Invoice # ${saleId}` || 'Not created'}
+                                    variant="filled"
+                                    size="small"
+                                    sx={{ ml: 2, width: 200 }}
+                                />
+                            </Grid2>
+                            <Grid2 container spacing={1} sx={{ padding: 0 }}>
+                                {saleItems.length === 0 ? (
+                                    <Typography>No items added yet.</Typography>
+                                ) : (
+                                    <TableContainer component={Paper}>
+                                        <Table>
+                                            <TableHead>
+                                                <TableRow>
+                                                    <TableCell><strong>Product ID</strong></TableCell>
+                                                    <TableCell><strong>Product Name</strong></TableCell>
+                                                    <TableCell><strong>Quantity</strong></TableCell>
+                                                    <TableCell><strong>Price</strong></TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                {saleItems.map((item) => {
+                                                    const currentItem = item;
+                                                    return (
+                                                        <TableRow key={item.salesItemId} onClick={() => handleOpenSalesitemDialog(item.salesItemId)}>
+                                                            {/* Product ID */}
+                                                            <TableCell>{currentItem.product?.productId || "N/A"}</TableCell>
+                                                            {/* Product Name */}
+                                                            <TableCell>{currentItem.product?.productName || "N/A"}</TableCell>
+                                                            {/* Quantity */}
+                                                            <TableCell>{currentItem.quantity}</TableCell>
+                                                            {/* Total Price */}
+                                                            <TableCell>{`$${currentItem.totalPrice.toFixed(2) || "0.00"}`}</TableCell>
+                                                        </TableRow>
+                                                    );
+                                                })}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                )}
+                                <SaleItemDialog
+                                    open={openAddStockDialog}
+                                    onClose={handleCloseSalesItemDialog}
+                                    saleId={saleId}
+                                    editingItemId={editingItemId}
+                                />
+                                <PaymentDialog
+                                    open={openPaymentDialog}
+                                    onClose={handleClosePaymentDialog}
+                                    saleId={saleId} 
+                                    // saleItems={saleItems}
+                                    // selectedCustomer={selectedCustomer}
+                                />
                                 </Grid2>
-                                <Grid2 item size={6}>
-                                    <Autocomplete
-                                        value={selectedCustomer}
-                                        onChange={(event, newValue) => {
-                                            setSelectedCustomer(newValue);
-                                            handleCustomerChange(event, newValue);
-                                        }}
-                                        options={customers}
-                                        getOptionLabel={(option) => option ? `${option.customerId} ${option.firstName}  ${option.lastName} ` : ''}
-                                        renderInput={(params) => (
-                                            <TextField {...params} label="Select Customer" variant="outlined" />
-                                        )}
-                                        isOptionEqualToValue={(option, value) =>
-                                            option.customerId === value?.customerId
+                        </Grid2>
+                    </Paper>
+                </Grid2>
+                {/* Category list */}
+                <Grid2 size={3}>
+                    <Paper sx={{ p: 1, mt: 1, height: salesItemHeight, overflowY: "auto" }}>
+                        <List dense sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                            {categories.map((value) => {
+                                const labelId = `checkbox-list-secondary-label-${value}`;
+                                return (
+                                    <ListItem
+                                        key={value}
+                                        secondaryAction={
+                                            <Checkbox
+                                                edge="end"
+                                                onChange={handleCategoryToggle(value)}
+                                                checked={checked.includes(value)}
+                                                inputProps={{ 'aria-labelledby': labelId }}
+                                            />
                                         }
-                                    />
-                                </Grid2>
-                            </Grid2>
-                        </Paper>
-                        {/* SALE ITEMS LIST */}
-                        <Paper sx={{ p: 2, mt: 1, height: salesItemHeight, overflowY: "auto" }}>
-                            {saleItems.length === 0 ? (
-                                <Typography>No items added yet.</Typography>
-                            ) : (
-                                <TableContainer component={Paper}>
-                                    <Table>
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell><strong>Product ID</strong></TableCell>
-                                                <TableCell><strong>Product Name</strong></TableCell>
-                                                <TableCell><strong>Quantity</strong></TableCell>
-                                                <TableCell><strong>Price/Unit ($)</strong></TableCell>
-                                                <TableCell><strong>Discount (%)</strong></TableCell>
-                                                <TableCell><strong>Total ($)</strong></TableCell>
-                                                <TableCell><strong>Actions</strong></TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {saleItems.map((item) => {
-                                                const isEditing = editingItemId === item.salesItemId;
-                                                const currentItem = isEditing ? editedItem : item; // Use editedItem if editing, otherwise item
-                                                return (
-                                                    <TableRow key={item.salesItemId}>
-                                                        {/* Product ID */}
-                                                        <TableCell>{currentItem.product?.productId || "N/A"}</TableCell>
-
-                                                        {/* Product Name */}
-                                                        <TableCell>{currentItem.product?.name || "N/A"}</TableCell>
-
-                                                        {/* Quantity */}
-                                                        <TableCell>
-                                                            {isEditing ? (
-                                                                <TextField
-                                                                    name="quantity"
-                                                                    type="number"
-                                                                    value={currentItem.quantity || ""}
-                                                                    onChange={handleEditChange}
-                                                                    size="small"
-                                                                    error={currentItem.quantity <= 0}
-                                                                    helperText={currentItem.quantity <= 0 ? "Quantity must be greater than 0" : ""}
-                                                                />
-                                                            ) : (
-                                                                currentItem.quantity
-                                                            )}
-                                                        </TableCell>
-
-                                                        {/* Price Per Unit */}
-                                                        <TableCell>
-                                                            {isEditing ? (
-                                                                <TextField
-                                                                    name="pricePerUnit"
-                                                                    type="number"
-                                                                    value={currentItem.pricePerUnit || ""}
-                                                                    onChange={handleEditChange}
-                                                                    size="small"
-                                                                />
-                                                            ) : (
-                                                                `$${currentItem.pricePerUnit?.toFixed(2) || "0.00"}`
-                                                            )}
-                                                        </TableCell>
-
-                                                        {/* Discount Percentage */}
-                                                        <TableCell>
-                                                            {isEditing ? (
-                                                                <TextField
-                                                                    name="itemDiscountPer"
-                                                                    type="number"
-                                                                    value={currentItem.itemDiscountPer || ""}
-                                                                    onChange={handleEditChange}
-                                                                    size="small"
-                                                                />
-                                                            ) : (
-                                                                `${currentItem.itemDiscountPer || 0}%`
-                                                            )}
-                                                        </TableCell>
-
-                                                        {/* Total Price */}
-                                                        <TableCell>
-                                                            {`$${(isEditing ? currentItem.totalPrice : item.totalPrice).toFixed(2) || "0.00"}`}
-                                                        </TableCell>
-
-                                                        {/* Actions */}
-                                                        <TableCell>
-                                                            {isEditing ? (
-                                                                <>
-                                                                    <IconButton color="success" onClick={handleSaveEdit}>
-                                                                        <Save />
-                                                                    </IconButton>
-                                                                    <IconButton color="error" onClick={handleCancelEdit}>
-                                                                        <Cancel />
-                                                                    </IconButton>
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    <IconButton color="primary" onClick={() => handleEditItem(item)}>
-                                                                        <Edit />
-                                                                    </IconButton>
-                                                                    <IconButton color="error" onClick={() => handleDeleteItem(item.salesItemId)}>
-                                                                        <Delete />
-                                                                    </IconButton>
-                                                                </>
-                                                            )}
-                                                        </TableCell>
-                                                    </TableRow>
-                                                );
-                                            })}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
-                            )}
-                        </Paper>
-                    </Grid2>
-                    <Grid2 item size={5}>
-                        <Paper sx={{ p: 2, maxHeight: productContentHeight, overflowY: "auto" }}>
-                            <Grid2 container spacing={2}>
-                                {products.map((product) => (
-                                    <Grid2 item size={3} key={product.productId}>
-                                        <Card>
-                                            <CardActionArea>
-                                                <CardMedia
-                                                    component="img"
-                                                    height="100"
-                                                    image={createImageUrl(product)}
-                                                    alt={product.productName}
-                                                />
-                                                <CardContent>
-                                                    <Typography gutterBottom variant="h6">
-                                                        {product.productName}
-                                                    </Typography>
-                                                    <Typography variant="body2" color="text.secondary">
-                                                        ${product.price}
-                                                    </Typography>
-                                                </CardContent>
-                                            </CardActionArea>
-                                        </Card>
-                                    </Grid2>
-                                ))}
-                            </Grid2>
-                        </Paper>
-                    </Grid2>
+                                        disablePadding
+                                    >
+                                        <ListItemButton>
+                                            <ListItemAvatar>
+                                                {value.image == null ?
+                                                    <IconAvatar type={APP_PROPERTY.CATEGORY_TYPE} typeId={value.categoryId} imageId={""} />
+                                                    :
+                                                    <IconAvatar type={APP_PROPERTY.CATEGORY_TYPE} typeId={value.categoryId} imageId={value.image.imageId} />
+                                                }
+                                            </ListItemAvatar>
+                                            <ListItemText id={labelId} primary={value.name} />
+                                        </ListItemButton>
+                                    </ListItem>
+                                );
+                            })}
+                        </List>
+                    </Paper>
                 </Grid2>
-                <Grid2 container spacing={2}>
-                    <Grid2 size={4}>
-                        <Paper sx={{ p: 1, mt: 1, height: invoiceDetailsContentHeight }}>
-                            <Grid2 container spacing={1} alignItems="center">
-                                <Grid2 size={3}>
-                                    <Typography variant="subtitle2">Items</Typography>
-                                    <Typography variant="h6">{invoiceSummary.itemCount}</Typography>
-                                </Grid2>
-                                <Grid2 size={3}>
-                                    <Typography variant="subtitle2">Quantity</Typography>
-                                    <Typography variant="h6">{invoiceSummary.totalQuantity}</Typography>
-                                </Grid2>
-                                <Grid2 size={3}>
-                                    <Typography variant="subtitle2">Discount(%)</Typography>
-                                    <Typography variant="h6">{invoiceSummary.totalDiscountPercentage}%</Typography>
-                                </Grid2>
-                                <Grid2 size={3}>
-                                    <Typography variant="subtitle2">Discount</Typography>
-                                    <Typography variant="h6">${(invoiceSummary.totalDiscountValue || 0).toFixed(2)}</Typography>
-                                </Grid2>
-                                <Grid2 size={6}>
-                                    <Typography variant="subtitle2">Total Amount</Typography>
-                                    <Typography variant="h6" color="primary">${(invoiceSummary.totalAmount || 0).toFixed(2)}</Typography>
-                                </Grid2>
-                                <Grid2 size={6}>
-                                    <Typography variant="subtitle2">Due Amount</Typography>
-                                    <Typography variant="h6" color="error">${(payment.remainBalance || 0).toFixed(2)}</Typography>
-                                </Grid2>
+                {/* Product */}
+                <Grid2 size={5}>
+                    <Paper sx={{ p: 2, mt: 1, height: salesItemHeight, overflowY: "auto" }}>
+                        <Grid2 container spacing={2}>
+                            <Grid2 size={12}>
+                                <Autocomplete
+                                    options={products}
+                                    getOptionLabel={(option) => `${option.productId} ${option.productName}`}
+                                    onChange={handleProductChange}
+                                    renderInput={(params) => (
+                                        <TextField {...params} label="Select Product" variant="standard" />
+                                    )}
+                                />
                             </Grid2>
-                        </Paper>
-                    </Grid2>
-                    <Grid2 size={8}>
-                        <Paper sx={{ p: 1, mt: 0.5, height: invoiceDetailsContentHeight }}>
-                            <Grid2 container spacing={1} sx={{ mt: 0.5, p: 0 }}>
-                                <Grid2 size={2.4} >
-                                    {/* <Typography variant="subtitle2">Cash</Typography> */}
-                                    <TextField
-                                        label="Cash Amount"
-                                        name="cashAmount"
-                                        size="small"
-                                        type="number"
-                                        value={payment.cashAmount}
-                                        onChange={handlePaymentChange}
-                                        fullWidth
-                                        variant="outlined"
-                                        margin="normal"
-                                    />
+                            {products.map((product) => (
+                                <Grid2 item size={3} key={product.productId}>
+                                    <Card sx={{ width: 120, height: 120, marginBottom: 2 }}
+                                        onClick={() => handleProductChange(null, product)}>
+                                        <CardActionArea>
+                                            <CardMedia
+                                                component="img"
+                                                height="50"
+                                                image={createImageUrl(product)}
+                                                alt={product.productName}
+                                            />
+                                            <CardContent>
+                                                <Typography gutterBottom variant="h7">
+                                                    {product.productName}
+                                                </Typography>
+                                                <Typography variant="body2" color="text.secondary">
+                                                    ${product.price}
+                                                </Typography>
+                                            </CardContent>
+                                        </CardActionArea>
+                                    </Card>
                                 </Grid2>
-                                <Grid2 size={2.4}>
-                                    {/* <Typography variant="subtitle2">Card</Typography> */}
-                                    <TextField
-                                        label="Card Amount"
-                                        name="creditCardAmount"
-                                        size="small"
-                                        type="number"
-                                        value={payment.creditCardAmount}
-                                        onChange={handlePaymentChange}
-                                        fullWidth
-                                        variant="outlined"
-                                        margin="normal"
-                                    />
-                                    <TextField
-                                        label="Card Reference"
-                                        name="creditCardReference"
-                                        size="small"
-                                        value={payment.creditCardReference}
-                                        onChange={handlePaymentChange}
-                                        fullWidth
-                                        variant="outlined"
-                                        margin="normal"
-                                        sx={{ mt: 0.5 }}
-                                    />
-                                </Grid2>
-                                <Grid2 size={2.4}>
-                                    {/* <Typography variant="subtitle2">QR</Typography> */}
-                                    <TextField
-                                        label="QR Amount"
-                                        name="qrAmount"
-                                        size="small"
-                                        value={payment.qrAmount}
-                                        onChange={handlePaymentChange}
-                                        fullWidth
-                                        variant="outlined"
-                                        margin="normal"
-                                    />
-                                    <TextField
-                                        label="QR Reference"
-                                        name="qrReference"
-                                        size="small"
-                                        value={payment.qrReference}
-                                        onChange={handlePaymentChange}
-                                        fullWidth
-                                        variant="outlined"
-                                        margin="normal"
-                                        sx={{ mt: 0.5 }}
-                                    />
-                                </Grid2>
-                                <Grid2 size={2.4}>
-                                    {/* <Typography variant="subtitle2">Cheque</Typography> */}
-                                    <TextField
-                                        label="Cheque Amount"
-                                        name="chequeAmount"
-                                        size="small"
-                                        value={payment.chequeAmount}
-                                        onChange={handlePaymentChange}
-                                        fullWidth
-                                        variant="outlined"
-                                        margin="normal"
-                                    />
-                                    <TextField
-                                        label="Cheque Reference"
-                                        name="chequeReference"
-                                        size="small"
-                                        value={payment.chequeReference}
-                                        onChange={handlePaymentChange}
-                                        fullWidth
-                                        variant="outlined"
-                                        margin="normal"
-                                        sx={{ mt: 0.5 }}
-                                    />
-                                </Grid2>
-                                <Grid2 size={2.4}>
-                                    {/* <Typography variant="subtitle2">Credit</Typography> */}
-                                    <TextField
-                                        label="Credit Amount"
-                                        name="dueAmount"
-                                        size="small"
-                                        value={payment.dueAmount}
-                                        onChange={handlePaymentChange}
-                                        fullWidth
-                                        variant="outlined"
-                                        margin="normal"
-                                    />
-                                    <TextField
-                                        label="Credit Reference"
-                                        name="dueReference"
-                                        size="small"
-                                        value={payment.dueReference}
-                                        onChange={handlePaymentChange}
-                                        fullWidth
-                                        variant="outlined"
-                                        margin="normal"
-                                        sx={{ mt: 0.5 }}
-                                    />
-                                </Grid2>
+                            ))}
+                        </Grid2>
+                    </Paper>
+                </Grid2>
+            </Grid2>
+            {/* Invoive details */}
+            <Grid2 container spacing={1} sx={{ padding: 1, height: invoiceDetailsContentHeight }}>
+                <Grid2 size={4}>
+                    <Paper sx={{ p: 1, mt: 1, height: invoiceDetailsContentHeight, overflowY: "auto" }}>
+                        <Grid2 container spacing={0}>
+                            <Grid2 size={8}>
+                                <Typography variant="h6">Total</Typography>
                             </Grid2>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-evenly', mt: 0.5 }}  >
-                                <Button variant="contained" color="error" onClick={handleFinalize}>
-                                    Finalyze Credit Sale
+                            <Grid2 size={4} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                <Typography variant="h6" >${saleItems.reduce((total, item) => total + item.totalPrice, 0).toFixed(2)}</Typography>
+                            </Grid2>
+                            <Grid2 size={8}>
+                                <Typography variant="body1">Net</Typography>
+                            </Grid2>
+                            <Grid2 size={4} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                <ReadOnlyField3 value={saleItems.length} />
+                            </Grid2>
+                            <Grid2 size={8}>
+                                <Typography variant="body1">Tax</Typography>
+                            </Grid2>
+                            <Grid2 size={4} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                <ReadOnlyField3 />
+                            </Grid2>
+                            <Box sx={{ flexGrow: 1, display: "flex", alignItems: "center" }}>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    startIcon={<Payment />}
+                                    onClick={handleOpenPaymentDialog}
+                                >
+                                    Payment
                                 </Button>
-                                <Button variant="contained" color="primary" onClick={handleFinalize} >
-                                    Finalyze Cash Sale
-                                </Button>
+
                             </Box>
-                        </Paper>
-                    </Grid2>
+
+                        </Grid2>
+                    </Paper>
                 </Grid2>
-            </Box>
+                {/* Customer */}
+                <Grid2 size={8}>
+                    <Paper sx={{ p: 1, mt: 1, height: invoiceDetailsContentHeight, overflowY: "auto" }}>
+                        <Grid2 container spacing={0}>
+                            <Grid2 size={7}>
+                                <Grid2 container spacing={1} sx={{ padding: 1 }}>
+                                    <Grid2 size={4}
+                                        sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                        {selectedCustomer === null || selectedCustomer.image == null ? (
+                                            <IconAvatar type={APP_PROPERTY.CUSTOMER_TYPE} />
+                                        ) : (
+                                            <IconAvatar type={APP_PROPERTY.CUSTOMER_TYPE} typeId={selectedCustomer.customerId} imageId={selectedCustomer.image.imageId} />
+                                        )}
+                                        <ReadOnlyField3
+                                            value={selectedCustomer ? `${selectedCustomer.customerId} ${selectedCustomer.firstName}  ${selectedCustomer.lastName} ` : 'Open Customer'}
+                                        />
+                                    </Grid2>
+                                    <Grid2 size={8}>
+                                        <Grid2 container spacing={1} sx={{ padding: 1 }}>
+                                            <Grid2 size={6}>
+                                                <ReadOnlyField2
+                                                    label="Ponts"
+                                                    value={selectedCustomer ? selectedCustomer.firstName : '0'}
+                                                />
+                                            </Grid2>
+                                            <Grid2 size={6}>
+                                                <ReadOnlyField2
+                                                    label="Visits"
+                                                    value={selectedCustomer ? selectedCustomer.firstName : '0'}
+                                                />
+                                            </Grid2>
+                                        </Grid2>
+                                    </Grid2>
+                                </Grid2>
+                            </Grid2>
+                            <Grid2 size={5} sx={{ display: 'flex', }}>
+                                <Autocomplete
+                                    value={selectedCustomer}
+                                    onChange={(event, newValue) => {
+                                        setSelectedCustomer(newValue);
+                                        handleCustomerChange(event, newValue);
+                                    }}
+                                    options={customers}
+                                    getOptionLabel={(option) =>
+                                        option ? `${option.customerId} ${option.firstName} ${option.lastName}` : ''
+                                    }
+                                    renderInput={(params) => (
+                                        <TextField {...params} label="Select Customer" variant="standard" size="small" />
+                                    )}
+                                    isOptionEqualToValue={(option, value) =>
+                                        option.customerId === value?.customerId
+                                    }
+                                    sx={{ width: 300, ml: 2 }}
+                                />
+                            </Grid2>
+                        </Grid2>
+                    </Paper>
+                </Grid2>
+            </Grid2>
+
+
         </Box>
+
     );
 };
 

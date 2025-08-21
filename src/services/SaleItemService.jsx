@@ -15,15 +15,21 @@ class SaleItemService {
         return response;
     }
 
+    async getSaleItemBySaleIdAndSalesItemId(saleId, salesItemId) {
+        AuthService.setAuthHeader();
+        const response = await axios.get(`${API_URL}/sale/${saleId}/${salesItemId}`);
+        return response;
+    }
+
     async deleteSaleItem(saleItemId) {
         AuthService.setAuthHeader();
         const response = await axios.delete(`${API_URL}/${saleItemId}`);
         return response;
     }
 
-    async updateSaleItem(salesItem, salesItemId) {
+    async updateSaleItem(saleId, salesItemId, salesItem) {
         AuthService.setAuthHeader();
-        const response = await axios.put(`${API_URL}/${salesItemId}`, salesItem);
+        const response = await axios.put(`${API_URL}/${saleId}/${salesItemId}`, salesItem);
         return response;
     }
 };

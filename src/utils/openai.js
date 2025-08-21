@@ -4,7 +4,7 @@ import OpenAI from "openai"; // Default export from the new SDK.
 
 // Initialize OpenAI with your API key
 const openai = new OpenAI({
-    apiKey:  process.env.OPENAI_API_KEY,
+     apiKey: process.env.OPENAI_API_KEY,
 });
 
 

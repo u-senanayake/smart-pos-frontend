@@ -107,7 +107,6 @@ import UserList from './pages/usermanagements/user/UserList';
 const Layout = ({ children }) => {
 
     const location = useLocation();
-    const isLoginPage = location.pathname === "/login";
 
     return (
         <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -115,13 +114,8 @@ const Layout = ({ children }) => {
             {/* <Header /> */}
 
             {/* Main Content */}
-            {/* <Box sx={{ display: "flex", flex: 1 }}> */}
-            {isLoginPage
-                ? children // No Sidebar on login page
-                : <Sidebar children={children} />}
-            {/* </Box> */}
+            <Sidebar children={children} />
 
-            {/* Conditionally Render Footer */}
             {/* <Footer /> */}
         </Box>
     );

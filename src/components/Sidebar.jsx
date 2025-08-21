@@ -25,9 +25,9 @@ import SecurityIcon from '@mui/icons-material/Security';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { Typography, } from "@mui/material";
-
+import { useLocation } from 'react-router-dom';
 import AuthService from '../services/AuthService';
-
+import { Box } from "@mui/material";
 const NAVIGATION = [
     {
         kind: 'header',
@@ -40,7 +40,7 @@ const NAVIGATION = [
     },
     {
         kind: 'divider',
-         roles: ['admin', 'sales'],
+        roles: ['admin', 'sales'],
     },
     {
         kind: 'header',
@@ -279,7 +279,7 @@ function filterNavigationByRole(navigation, userRoleName) {
 }
 
 function DashboardLayoutBasic({ children }) {
-    
+
     const user = AuthService.getCurrentUser();
     const userRoleName = user && user.role && user.role.roleName ? user.role.roleName : null;
 
@@ -321,26 +321,44 @@ function DashboardLayoutBasic({ children }) {
             navigate('/login');
         },
     }), [navigate]);
+    
+    const location = useLocation();
+    const isPosPage = location.pathname.includes("/sales/pos") || location.pathname.includes("/sales/pos/:saleId");
+    const isLoginPage = location.pathname === "/login";
 
     return (
-        <AppProvider
-            session={session}
-            authentication={authentication}
-            navigation={filteredNavigation}
-            theme={demoTheme}
-            branding={{
-                title: (
-                    <Typography variant="h6" className="!font-bold font-sans">
-                        Your Title
-                    </Typography>
-                ),
-                //logo: <img src="/logo.png" alt="logo" />,
-            }}
-        >
-            <DashboardLayout>
-                {children}
-            </DashboardLayout>
-        </AppProvider>
+        <Box>
+            {isPosPage || isLoginPage? (
+                <AppProvider
+                    session={session}
+                    authentication={authentication}
+                    theme={demoTheme}
+                >
+                    <Box>
+                        {children}
+                    </Box>
+                </AppProvider>
+            ) : (
+                <AppProvider
+                    session={session}
+                    authentication={authentication}
+                    navigation={filteredNavigation}
+                    theme={demoTheme}
+                    branding={{
+                        title: (
+                            <Typography variant="h6" className="!font-bold font-sans">
+                                Your Title
+                            </Typography>
+                        ),
+                        //logo: <img src="/logo.png" alt="logo" />,
+                    }}
+                >
+                    <DashboardLayout>
+                        {children}
+                    </DashboardLayout>
+                </AppProvider>
+            )}
+        </Box>
     );
 }
 

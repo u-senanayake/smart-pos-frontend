@@ -1,52 +1,111 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AuthService from './../services/AuthService';
 import axios from 'axios';
-
+import { AppBar, Toolbar, Typography, IconButton, Button, Box, Grid2, Autocomplete, TextField, Container } from '@mui/material';
+import { NameTitle, PageTitle2, ReadOnlyField2, ReadOnlyField3 } from "../components/PageElements/CommonElements";
+import {useStyles} from "../style/makeStyle";
+import CustomerService from "../services/CustomerService";
 const TestPage = () => {
-    const [file, setFile] = useState(null);
-    const [message, setMessage] = useState('');
 
-    const handleFileChange = (e) => {
-        setFile(e.target.files[0]);
-    };
+    const [currentDateTime, setCurrentDateTime] = useState(new Date());
+    const [selectedCustomer, setSelectedCustomer] = useState(null);
+    const [saleId, setSaleId] = useState(null);
+    const [serverError, setServerError] = useState('');
+    const [customers, setCustomers] = useState([]);
+    const classes = useStyles();
+    useEffect(() => {
+        const timerId = setInterval(() => {
+            setCurrentDateTime(new Date());
+        }, 1000);
+        return () => clearInterval(timerId);
+    }, []);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!file) {
-            setMessage('Please select a file first.');
-            return;
-        }
-        const formData = new FormData();
-        formData.append('image', file);
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowHeight(window.innerHeight);
+        };
 
-        try {
-            AuthService.setAuthHeader();
-            const response = await axios.post('/api/v1/product/img', formData);
-            if (response.status === 200) {
-                setMessage('File uploaded successfully!');
-            } else {
-                setMessage('Upload failed.');
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // Fetch Customers
+                const customerResponse = await CustomerService.getCustomers();
+                setCustomers(customerResponse.data);
+            } catch (error) {
+                if (error.response && error.response.data) {
+                    setServerError('Fetching customer: ' + error.response.data);
+                } else {
+                    console.error("Error fetching customers:", error);
+                }
             }
-        } catch (err) {
-            setMessage('An error occurred.');
+        };
+
+        fetchData();
+    }, []);
+    const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+    const appBarHeight = windowHeight / 100 * 7; // 10% of the window height for the app bar
+
+    // Handle Customer Selection
+    const handleCustomerChange = async (event, newValue) => {
+        setSelectedCustomer(newValue);
+        if (newValue && saleId) {
+            const updateSale = {
+                totalAmount: 0,
+                totalItemCount: 0,
+                paymentStatus: 'PENDING',
+                customerId: newValue.customerId
+            };
+            try {
+                //await SaleService.updateSale(saleId, updateSale);
+                //console.log('Sale updated:', updateSale);
+            } catch (error) {
+                console.error('Failed to update customer:', error);
+                setServerError('Update customer: ' + error.response.data);
+            }
         }
     };
 
     return (
-        <div>
-            <h1>Test Page</h1>
-            <p>This is a basic test page.</p>
-            <form onSubmit={handleSubmit}>
-                <input type="file" accept="image/*" onChange={handleFileChange} />
-                <button type="submit">Submit</button>
-            </form>
-            {file && (
-                <div>
-                    <p>Selected file: {file.name}</p>
-                </div>
-            )}
-            {message && <p>{message}</p>}
-        </div>
+        <Container className={classes.mainContainer}>
+             <AppBar position="fixed"  sx={{ height: appBarHeight, marginTop: '70px', }}>
+                <Typography variant="h6" >Invoice #</Typography>
+                {/*<Grid2 container spacing={2} >
+                    <Grid2 size={7}>
+                        <Autocomplete
+                            value={selectedCustomer}
+                            onChange={(event, newValue) => {
+                                setSelectedCustomer(newValue);
+                                handleCustomerChange(event, newValue);
+                            }}
+                            options={customers}
+                            getOptionLabel={(option) => option ? `${option.customerId} ${option.firstName}  ${option.lastName} ` : ''}
+                            renderInput={(params) => (
+                                <TextField {...params} label="Select Customer" variant="outlined" />
+                            )}
+                            isOptionEqualToValue={(option, value) =>
+                                option.customerId === value?.customerId
+                            }
+                        />
+                    </Grid2>
+                    <Grid2 size={2} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Grid2 container spacing={2} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <Grid2 size={5}><Typography variant="h6" >Invoice #</Typography></Grid2>
+                            <Grid2 size={7}><ReadOnlyField2 value={`00000001`} /></Grid2>
+                        </Grid2>
+                    </Grid2>
+                    <Grid2 size={3} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <Typography variant="h6" sx={{ color: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            {currentDateTime.toLocaleDateString()} {currentDateTime.toLocaleTimeString()}
+                        </Typography>
+                    </Grid2>
+                </Grid2>*/}
+
+            </AppBar> 
+        </Container>
+
     );
 };
 
